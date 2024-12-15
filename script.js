@@ -1,3 +1,36 @@
+// Load the size data
+let sizeData;
+
+fetch('MQ_Sizes_Unit_Color_and_Links.json')
+    .then(response => response.json())
+    .then(data => {
+        sizeData = data;
+    })
+    .catch(error => console.error('Error loading size data:', error));
+
+document.getElementById('numWindows').addEventListener('input', function () {
+    const numWindows = parseInt(this.value);
+    const windowInputsDiv = document.getElementById('windowInputs');
+    windowInputsDiv.innerHTML = '';
+
+    for (let i = 1; i <= numWindows; i++) {
+        windowInputsDiv.innerHTML += `
+            <h3>Window ${i}</h3>
+            <label for="height${i}">Enter Height:</label>
+            <input type="number" id="height${i}" placeholder="Enter height">
+            <label for="width${i}">Enter Width:</label>
+            <input type="number" id="width${i}" placeholder="Enter width">
+            <label for="color${i}">Select Color:</label>
+            <select id="color${i}">
+                <option value="BK">Black</option>
+                <option value="GR">Grey</option>
+                <option value="CR">Cream</option>
+                <option value="WH">White</option>
+            </select>
+        `;
+    }
+});
+
 function calculateSizes() {
     const unit = document.getElementById('unit').value;
     const numWindows = parseInt(document.getElementById('numWindows').value);
