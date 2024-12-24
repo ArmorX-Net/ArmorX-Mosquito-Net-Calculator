@@ -50,7 +50,7 @@ function calculateSizes() {
     for (let i = 1; i <= numWindows; i++) {
         const height = parseFloat(document.getElementById(`height${i}`).value);
         const width = parseFloat(document.getElementById(`width${i}`).value);
-        const color = document.getElementById(`color${i}`).value;
+        const color = document.getElementById(`color${i}`).value.toUpperCase(); // Normalize color to uppercase
 
         if (!height || !width || height <= 0 || width <= 0) {
             resultsDiv.innerHTML += `<p>Please enter valid dimensions for Window ${i}.</p>`;
@@ -67,7 +67,7 @@ function calculateSizes() {
             normalizedWidth = width * 30.48;
         }
 
-        console.log(`Normalized Height: ${normalizedHeight}, Normalized Width: ${normalizedWidth}`); // Debug: Check normalization
+        console.log(`Window ${i}: Normalized Height = ${normalizedHeight}, Normalized Width = ${normalizedWidth}, Color = ${color}`);
 
         // Check for exact matches in the JSON data
         const exactMatch = sizeData.find(size => {
@@ -75,7 +75,7 @@ function calculateSizes() {
                 size.Unit === 'Cm' &&
                 ((size.Height === normalizedHeight && size.Width === normalizedWidth) ||
                     (size.Height === normalizedWidth && size.Width === normalizedHeight)) &&
-                size.Color === color
+                size.Color.toUpperCase() === color
             );
         });
 
@@ -83,9 +83,9 @@ function calculateSizes() {
         if (exactMatch) {
             resultsDiv.innerHTML += `
                 <h3>Exact Match for Window ${i}</h3>
-                <p>Size: ${exactMatch.Size} (${exactMatch.Unit})</p>
-                <p>Color: ${color}</p>
-                <p><a href="${exactMatch.Amazon_Link}" target="_blank">Buy Now on Amazon</a></p>
+                <p>Size of Window Frame: ${exactMatch.Size} (${exactMatch.Unit})</p>
+                <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
+                <p><a href="${exactMatch.Amazon_Link}" target="_blank">Click Here for Amazon Product Link</a></p>
             `;
         } else {
             resultsDiv.innerHTML += `<p>No exact match found for Window ${i}.</p>`;
