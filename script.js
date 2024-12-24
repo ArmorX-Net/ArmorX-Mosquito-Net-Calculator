@@ -75,12 +75,11 @@ function calculateSizes() {
 
         // Check for exact matches in the JSON data
         const exactMatch = sizeData.find(size => {
-            console.log('Comparing with dataset entry:', size); // Debug dataset entry
             return (
-                size.Unit === 'Cm' &&
-                ((size.Height === normalizedHeight && size.Width === normalizedWidth) ||
-                    (size.Height === normalizedWidth && size.Width === normalizedHeight)) &&
-                size.Color.toUpperCase() === color
+                size['Unit'] === 'Cm' &&
+                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
+                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+                size['Color'].toUpperCase() === color
             );
         });
 
@@ -88,9 +87,9 @@ function calculateSizes() {
         if (exactMatch) {
             resultsDiv.innerHTML += `
                 <h3>Exact Match for Window ${i}</h3>
-                <p>Size of Window Frame: ${exactMatch.Size} (${exactMatch.Unit})</p>
+                <p>Size of Window Frame: ${exactMatch['Size(HxW)']} (${exactMatch.Unit})</p>
                 <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
-                <p><a href="${exactMatch.Amazon_Link}" target="_blank">Click Here for Amazon Product Link</a></p>
+                <p><a href="${exactMatch['Amazon_Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
             `;
             console.log(`Exact match found for Window ${i}:`, exactMatch); // Debug exact match
         } else {
