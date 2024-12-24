@@ -70,17 +70,17 @@ function calculateSizes() {
             normalizedWidth = width * 2.54;
             normalizedUnit = 'Cm';
         } else if (unit === 'Feet') {
-            normalizedHeight = height * 30.48; // Convert feet to cm for comparison
-            normalizedWidth = width * 30.48;
-            normalizedUnit = 'Feet';
+            normalizedUnit = 'Feet'; // Keep Feet as is
+        } else {
+            normalizedUnit = 'Cm'; // For Cm, keep as is
         }
 
-        console.log(`Window ${i} - Normalized Dimensions: Height = ${normalizedHeight}, Width = ${normalizedWidth}, Color = ${color}`);
+        console.log(`Window ${i} - Normalized Dimensions: Height = ${normalizedHeight}, Width = ${normalizedWidth}, Unit = ${normalizedUnit}, Color = ${color}`);
 
         // Check for exact matches
         const exactMatch = sizeData.find(size => {
             return (
-                size['Unit'] === normalizedUnit &&
+                size['Unit'] === normalizedUnit && // Match the unit directly
                 ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
                     (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
                 size['Color'].toUpperCase() === color
@@ -103,7 +103,7 @@ function calculateSizes() {
         let smallestDifference = Infinity;
 
         sizeData.forEach(size => {
-            if (size['Unit'] !== 'Cm' && size['Unit'] !== 'Feet') return; // Skip unsupported units
+            if (size['Unit'] !== 'Cm') return; // Closest match only in Cm
 
             // Calculate differences for both orientations
             const diff1 = Math.abs(size['Height(H)'] - normalizedHeight) + Math.abs(size['Width(W)'] - normalizedWidth);
