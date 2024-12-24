@@ -68,19 +68,19 @@ function calculateSizes() {
         if (unit === 'Inch') {
             normalizedHeight = height * 2.54; // Convert inches to cm
             normalizedWidth = width * 2.54;
-            normalizedUnit = 'Cm';
+            normalizedUnit = 'Cm'; // Use Cm for dataset comparison
         } else if (unit === 'Feet') {
-            normalizedUnit = 'Feet'; // Keep Feet as is
-        } else {
-            normalizedUnit = 'Cm'; // For Cm, keep as is
+            normalizedHeight = height * 30.48; // Convert feet to cm
+            normalizedWidth = width * 30.48;
+            normalizedUnit = 'Feet'; // Exact matches will still use Feet
         }
 
-        console.log(`Window ${i} - Normalized Dimensions: Height = ${normalizedHeight}, Width = ${normalizedWidth}, Unit = ${normalizedUnit}, Color = ${color}`);
+        console.log(`Window ${i} - Normalized Dimensions: Height = ${normalizedHeight}, Width = ${normalizedWidth}, Color = ${color}`);
 
         // Check for exact matches
         const exactMatch = sizeData.find(size => {
             return (
-                size['Unit'] === normalizedUnit && // Match the unit directly
+                size['Unit'] === normalizedUnit && // Match the user's input unit directly
                 ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
                     (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
                 size['Color'].toUpperCase() === color
@@ -98,7 +98,7 @@ function calculateSizes() {
             continue;
         }
 
-        // Find closest match
+        // Find closest match in Cm
         let closestMatch = null;
         let smallestDifference = Infinity;
 
@@ -131,3 +131,4 @@ function calculateSizes() {
         }
     }
 }
+
