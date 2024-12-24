@@ -84,17 +84,15 @@ function calculateSizes() {
         });
 
         // Display exact match result
-        if (exactMatch) {
-            resultsDiv.innerHTML += `
-                <h3>Exact Match for Window ${i}</h3>
-                <p>Size of Window Frame: ${exactMatch['Size(HxW)']} (${exactMatch['Unit']})</p>
-                <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
-                <p><a href="${exactMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
-            `;
-            console.log(`Exact match found for Window ${i}:`, exactMatch); // Debug exact match
-        } else {
-            resultsDiv.innerHTML += `<p>No exact match found for Window ${i}.</p>`;
-            console.warn(`No exact match found for Window ${i}.`);
-        }
-    }
+if (exactMatch) {
+    resultsDiv.innerHTML += `
+        <h3>Exact Match for Window ${i}</h3>
+        <p>Size of Window Frame: ${exactMatch['Size(HxW)']} (${exactMatch['Unit']})</p>
+        <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
+        <p><a href="${exactMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
+    `;
+    console.log(`Exact match found for Window ${i}:`, exactMatch); // Debug exact match
+} else {
+    resultsDiv.innerHTML += `<p>No exact match found for Window ${i}.</p>`;
+    console.warn(`No exact match found for Window ${i}.`);
 }
