@@ -91,7 +91,7 @@ if (exactMatch) {
         <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
         <p><a href="${exactMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
     `;
-    console.log(`Exact match found for Window ${i}:`, exactMatch); // Debug exact match
+    console.log(`Amazon Link: ${exactMatch['Amazon Link']}`); // Debug: Log the Amazon Link
 } else {
     resultsDiv.innerHTML += `<p>No exact match found for Window ${i}.</p>`;
     console.warn(`No exact match found for Window ${i}.`);
