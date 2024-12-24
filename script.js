@@ -36,7 +36,8 @@ document.getElementById('numWindows').addEventListener('input', function () {
         console.warn('Invalid number of windows entered.');
     }
 });
-// Calculate Size
+
+// Function to calculate sizes and find matches
 function calculateSizes() {
     const unit = document.getElementById('unit').value;
     const numWindows = parseInt(document.getElementById('numWindows').value);
