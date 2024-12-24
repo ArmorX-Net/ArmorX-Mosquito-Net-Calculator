@@ -9,6 +9,32 @@ fetch('MQ_Sizes_Unit_Color_and_Links.json')
     })
     .catch(error => console.error('Error loading size data:', error));
 
+// Generate dynamic inputs when the user enters the number of windows
+document.getElementById('numWindows').addEventListener('input', function () {
+    const numWindows = parseInt(this.value);
+    const windowInputsDiv = document.getElementById('windowInputs');
+    windowInputsDiv.innerHTML = ''; // Clear any previous inputs
+
+    if (numWindows > 0) {
+        for (let i = 1; i <= numWindows; i++) {
+            windowInputsDiv.innerHTML += `
+                <h3>Window ${i}</h3>
+                <label for="height${i}">Enter Height:</label>
+                <input type="number" id="height${i}" placeholder="Enter height">
+                <label for="width${i}">Enter Width:</label>
+                <input type="number" id="width${i}" placeholder="Enter width">
+                <label for="color${i}">Select Color:</label>
+                <select id="color${i}">
+                    <option value="BK">Black</option>
+                    <option value="GR">Grey</option>
+                    <option value="CR">Cream</option>
+                    <option value="WH">White</option>
+                </select>
+            `;
+        }
+    }
+});
+
 // Function to calculate sizes and find matches
 function calculateSizes() {
     const unit = document.getElementById('unit').value;
