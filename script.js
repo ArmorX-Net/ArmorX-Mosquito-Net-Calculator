@@ -15,7 +15,7 @@ document.getElementById('numWindows').addEventListener('input', function () {
     const windowInputsDiv = document.getElementById('windowInputs');
     windowInputsDiv.innerHTML = ''; // Clear any previous inputs
 
-    if (numWindows > 0) {
+    if (!isNaN(numWindows) && numWindows > 0) { // Ensure valid input
         for (let i = 1; i <= numWindows; i++) {
             windowInputsDiv.innerHTML += `
                 <h3>Window ${i}</h3>
@@ -32,6 +32,8 @@ document.getElementById('numWindows').addEventListener('input', function () {
                 </select>
             `;
         }
+    } else {
+        console.warn('Invalid number of windows entered.');
     }
 });
 
