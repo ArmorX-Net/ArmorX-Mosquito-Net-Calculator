@@ -44,16 +44,20 @@ function calculateSizes() {
 
     if (!sizeData) {
         resultsDiv.innerHTML = 'Size data is not available. Please try again later.';
+        console.error('Size data is not loaded. Check JSON file.');
         return;
     }
+
+    console.log('Loaded size data:', sizeData); // Debug JSON data
 
     for (let i = 1; i <= numWindows; i++) {
         const height = parseFloat(document.getElementById(`height${i}`).value);
         const width = parseFloat(document.getElementById(`width${i}`).value);
-        const color = document.getElementById(`color${i}`).value.toUpperCase(); // Normalize color to uppercase
+        const color = document.getElementById(`color${i}`).value.toUpperCase(); // Normalize color
 
         if (!height || !width || height <= 0 || width <= 0) {
             resultsDiv.innerHTML += `<p>Please enter valid dimensions for Window ${i}.</p>`;
+            console.warn(`Invalid dimensions for Window ${i}.`);
             continue;
         }
 
@@ -67,10 +71,11 @@ function calculateSizes() {
             normalizedWidth = width * 30.48;
         }
 
-        console.log(`Window ${i}: Normalized Height = ${normalizedHeight}, Normalized Width = ${normalizedWidth}, Color = ${color}`);
+        console.log(`Window ${i} - Normalized Dimensions: Height = ${normalizedHeight}, Width = ${normalizedWidth}, Color = ${color}`);
 
         // Check for exact matches in the JSON data
         const exactMatch = sizeData.find(size => {
+            console.log('Comparing with dataset entry:', size); // Debug dataset entry
             return (
                 size.Unit === 'Cm' &&
                 ((size.Height === normalizedHeight && size.Width === normalizedWidth) ||
@@ -87,8 +92,10 @@ function calculateSizes() {
                 <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
                 <p><a href="${exactMatch.Amazon_Link}" target="_blank">Click Here for Amazon Product Link</a></p>
             `;
+            console.log(`Exact match found for Window ${i}:`, exactMatch); // Debug exact match
         } else {
             resultsDiv.innerHTML += `<p>No exact match found for Window ${i}.</p>`;
+            console.warn(`No exact match found for Window ${i}.`);
         }
     }
 }
