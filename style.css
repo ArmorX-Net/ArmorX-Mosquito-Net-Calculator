@@ -95,15 +95,18 @@ a:hover {
 /* Popup styles */
 .popup {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1000;
     padding: 20px;
     border-radius: 8px;
     font-family: Arial, sans-serif;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 300px;
+    max-width: 90%;
+    width: 300px;
     animation: fadeIn 0.3s ease-in-out;
+    text-align: center;
 }
 
 .popup.success {
@@ -120,12 +123,13 @@ a:hover {
 
 .popup h3 {
     margin: 0 0 10px;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .popup p {
     margin: 0;
     font-size: 14px;
+    word-wrap: break-word;
 }
 
 .popup button {
@@ -134,7 +138,7 @@ a:hover {
     border: none;
     color: #007bff;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .popup button:hover {
@@ -149,5 +153,53 @@ a:hover {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+        padding: 15px;
+        margin-top: 10px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    label {
+        font-size: 13px;
+    }
+
+    input, select, button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    button {
+        font-size: 16px;
+    }
+
+    #results {
+        padding: 10px;
+    }
+
+    .popup {
+        max-width: 95%;
+        width: auto;
+        padding: 15px;
+    }
+
+    .popup h3 {
+        font-size: 16px;
+    }
+
+    .popup p {
+        font-size: 13px;
+    }
+
+    .popup button {
+        font-size: 14px;
     }
 }
