@@ -68,22 +68,22 @@ function calculateSizes() {
         if (unit === 'Inch') {
             normalizedHeight = height * 2.54;
             normalizedWidth = width * 2.54;
-            normalizedUnit = 'Cm';
+            normalizedUnit = 'Cm'; // Convert inches to cm for matching
         } else if (unit === 'Feet') {
-            normalizedHeight = height * 30.48;
-            normalizedWidth = width * 30.48;
+            normalizedHeight = height; // Keep as feet for matching
+            normalizedWidth = width;
             normalizedUnit = 'Feet';
         }
 
-        console.log(`User Input for Window ${i}: Height = ${normalizedHeight} ${normalizedUnit}, Width = ${normalizedWidth} ${normalizedUnit}, Color = ${color}`);
+        console.log(`Window ${i}: Normalized Input - Height: ${normalizedHeight} ${normalizedUnit}, Width: ${normalizedWidth} ${normalizedUnit}, Color: ${color}`);
 
-        // Find exact match based on dataset unit
+        // Exact Match Logic
         const exactMatch = sizeData.find(size => {
             return (
                 size['Unit'] === normalizedUnit && // Match units
-                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
-                 (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
-                size['Color'].toUpperCase() === color
+                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) || 
+                 (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) && // Interchangeable dimensions
+                size['Color'].toUpperCase() === color // Match color
             );
         });
 
@@ -98,35 +98,39 @@ function calculateSizes() {
             continue;
         }
 
-        // Find closest match in cm
-        let closestMatch = null;
-        let smallestDifference = Infinity;
+        // Closest Match Logic (Only for 'Cm')
+        if (normalizedUnit === 'Cm') {
+            let closestMatch = null;
+            let smallestDifference = Infinity;
 
-        sizeData.forEach(size => {
-            if (size['Unit'] !== 'Cm') return; // Only compare in cm for closest match
+            sizeData.forEach(size => {
+                if (size['Unit'] !== 'Cm') return; // Only find closest match in cm
 
-            const diff1 = Math.abs(size['Height(H)'] - normalizedHeight) + Math.abs(size['Width(W)'] - normalizedWidth);
-            const diff2 = Math.abs(size['Height(H)'] - normalizedWidth) + Math.abs(size['Width(W)'] - normalizedHeight);
+                const diff1 = Math.abs(size['Height(H)'] - normalizedHeight) + Math.abs(size['Width(W)'] - normalizedWidth);
+                const diff2 = Math.abs(size['Height(H)'] - normalizedWidth) + Math.abs(size['Width(W)'] - normalizedHeight);
 
-            const difference = Math.min(diff1, diff2);
+                const difference = Math.min(diff1, diff2);
 
-            if (difference < smallestDifference) {
-                smallestDifference = difference;
-                closestMatch = size;
+                if (difference < smallestDifference) {
+                    smallestDifference = difference;
+                    closestMatch = size;
+                }
+            });
+
+            if (closestMatch) {
+                resultsDiv.innerHTML += `
+                    <h3>Closest Match for Window ${i}</h3>
+                    <p>Size: ${closestMatch['Size(HxW)']} (${closestMatch['Unit']})</p>
+                    <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
+                    <p><a href="${closestMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
+                `;
+                console.log(`Closest match found for Window ${i}:`, closestMatch);
+            } else {
+                resultsDiv.innerHTML += `<p>No suitable match found for Window ${i}.</p>`;
+                console.warn(`No suitable match found for Window ${i}.`);
             }
-        });
-
-        if (closestMatch) {
-            resultsDiv.innerHTML += `
-                <h3>Closest Match for Window ${i}</h3>
-                <p>Size: ${closestMatch['Size(HxW)']} (${closestMatch['Unit']})</p>
-                <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
-                <p><a href="${closestMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
-            `;
-            console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
-            resultsDiv.innerHTML += `<p>No suitable match found for Window ${i}.</p>`;
-            console.warn(`No suitable match found for Window ${i}.`);
+            resultsDiv.innerHTML += `<p>No exact match found for Window ${i}. Please check your inputs or try a different unit.</p>`;
         }
     }
 }
