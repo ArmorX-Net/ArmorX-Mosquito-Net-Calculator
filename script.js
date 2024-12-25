@@ -103,7 +103,7 @@ function calculateSizes() {
         let smallestDifference = Infinity;
 
         sizeData.forEach(size => {
-            if (size['Unit'] !== 'Cm') return; // Closest match only in cm
+            if (size['Unit'] !== 'Cm' || size['Color'].toUpperCase() !== color) return; // Match color and unit
 
             const diff1 = Math.abs(size['Height(H)'] - normalizedHeight) + Math.abs(size['Width(W)'] - normalizedWidth);
             const diff2 = Math.abs(size['Height(H)'] - normalizedWidth) + Math.abs(size['Width(W)'] - normalizedHeight);
@@ -130,3 +130,4 @@ function calculateSizes() {
         }
     }
 }
+
