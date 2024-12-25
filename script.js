@@ -40,7 +40,7 @@ document.getElementById('numWindows').addEventListener('input', function () {
 
 // Calculate sizes and find matches
 function calculateSizes() {
-    const unit = document.getElementById('unit').value;
+    const unit = document.getElementById('unit').value; // User-selected unit
     const numWindows = parseInt(document.getElementById('numWindows').value);
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = ''; // Clear previous results
@@ -64,7 +64,7 @@ function calculateSizes() {
 
         let normalizedHeight = height, normalizedWidth = width, normalizedUnit = unit;
 
-        // Normalize dimensions if needed
+        // Normalize dimensions based on user-selected unit
         if (unit === 'Inch') {
             normalizedHeight = height * 2.54;
             normalizedWidth = width * 2.54;
@@ -75,10 +75,12 @@ function calculateSizes() {
             normalizedUnit = 'Feet';
         }
 
-        // Find exact match
+        console.log(`User Input for Window ${i}: Height = ${normalizedHeight} ${normalizedUnit}, Width = ${normalizedWidth} ${normalizedUnit}, Color = ${color}`);
+
+        // Find exact match based on dataset unit
         const exactMatch = sizeData.find(size => {
             return (
-                size['Unit'] === normalizedUnit &&
+                size['Unit'] === normalizedUnit && // Match units
                 ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
                  (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
                 size['Color'].toUpperCase() === color
@@ -92,6 +94,7 @@ function calculateSizes() {
                 <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
                 <p><a href="${exactMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
             `;
+            console.log(`Exact match found for Window ${i}:`, exactMatch);
             continue;
         }
 
@@ -100,7 +103,7 @@ function calculateSizes() {
         let smallestDifference = Infinity;
 
         sizeData.forEach(size => {
-            if (size['Unit'] !== 'Cm') return;
+            if (size['Unit'] !== 'Cm') return; // Only compare in cm for closest match
 
             const diff1 = Math.abs(size['Height(H)'] - normalizedHeight) + Math.abs(size['Width(W)'] - normalizedWidth);
             const diff2 = Math.abs(size['Height(H)'] - normalizedWidth) + Math.abs(size['Width(W)'] - normalizedHeight);
@@ -120,8 +123,10 @@ function calculateSizes() {
                 <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
                 <p><a href="${closestMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
             `;
+            console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
             resultsDiv.innerHTML += `<p>No suitable match found for Window ${i}.</p>`;
+            console.warn(`No suitable match found for Window ${i}.`);
         }
     }
 }
