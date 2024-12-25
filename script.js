@@ -9,11 +9,11 @@ fetch('MQ_Sizes_Unit_Color_and_Links.json')
     })
     .catch(error => console.error('Error loading size data:', error));
 
-// Generate dynamic inputs when the user enters the number of windows
+// Generate dynamic inputs based on the number of windows
 document.getElementById('numWindows').addEventListener('input', function () {
     const numWindows = parseInt(this.value);
     const windowInputsDiv = document.getElementById('windowInputs');
-    windowInputsDiv.innerHTML = ''; // Clear any previous inputs
+    windowInputsDiv.innerHTML = ''; // Clear previous inputs
 
     if (!isNaN(numWindows) && numWindows > 0) {
         for (let i = 1; i <= numWindows; i++) {
@@ -50,12 +50,10 @@ function calculateSizes() {
         return;
     }
 
-    console.log('Loaded size data:', sizeData); // Debug JSON data
-
     for (let i = 1; i <= numWindows; i++) {
         const height = parseFloat(document.getElementById(`height${i}`).value);
         const width = parseFloat(document.getElementById(`width${i}`).value);
-        const color = document.getElementById(`color${i}`).value.toUpperCase(); // Normalize color to uppercase
+        const color = document.getElementById(`color${i}`).value.toUpperCase();
 
         if (!height || !width || height <= 0 || width <= 0) {
             resultsDiv.innerHTML += `<p>Please enter valid dimensions for Window ${i}.</p>`;
@@ -63,26 +61,25 @@ function calculateSizes() {
             continue;
         }
 
-        // Normalize dimensions based on unit
         let normalizedHeight = height, normalizedWidth = width, normalizedUnit = unit;
+
+        // Normalize dimensions if needed
         if (unit === 'Inch') {
-            normalizedHeight = height * 2.54; // Convert inches to cm
+            normalizedHeight = height * 2.54;
             normalizedWidth = width * 2.54;
-            normalizedUnit = 'Cm'; // Use Cm for dataset comparison
+            normalizedUnit = 'Cm';
         } else if (unit === 'Feet') {
-            normalizedHeight = height * 30.48; // Convert feet to cm
+            normalizedHeight = height * 30.48;
             normalizedWidth = width * 30.48;
-            normalizedUnit = 'Feet'; // Exact matches will still use Feet
+            normalizedUnit = 'Feet';
         }
 
-        console.log(`Window ${i} - Normalized Dimensions: Height = ${normalizedHeight}, Width = ${normalizedWidth}, Color = ${color}`);
-
-        // Check for exact matches
+        // Find exact match
         const exactMatch = sizeData.find(size => {
             return (
-                size['Unit'] === normalizedUnit && // Match the user's input unit directly
+                size['Unit'] === normalizedUnit &&
                 ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
-                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+                 (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
                 size['Color'].toUpperCase() === color
             );
         });
@@ -90,22 +87,20 @@ function calculateSizes() {
         if (exactMatch) {
             resultsDiv.innerHTML += `
                 <h3>Exact Match for Window ${i}</h3>
-                <p>Size of Window Frame: ${exactMatch['Size(HxW)']} (${exactMatch['Unit']})</p>
+                <p>Size: ${exactMatch['Size(HxW)']} (${exactMatch['Unit']})</p>
                 <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
                 <p><a href="${exactMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
             `;
-            console.log(`Exact match found for Window ${i}:`, exactMatch); // Debug exact match
             continue;
         }
 
-        // Find closest match in Cm
+        // Find closest match in cm
         let closestMatch = null;
         let smallestDifference = Infinity;
 
         sizeData.forEach(size => {
-            if (size['Unit'] !== 'Cm') return; // Closest match only in Cm
+            if (size['Unit'] !== 'Cm') return;
 
-            // Calculate differences for both orientations
             const diff1 = Math.abs(size['Height(H)'] - normalizedHeight) + Math.abs(size['Width(W)'] - normalizedWidth);
             const diff2 = Math.abs(size['Height(H)'] - normalizedWidth) + Math.abs(size['Width(W)'] - normalizedHeight);
 
@@ -120,15 +115,12 @@ function calculateSizes() {
         if (closestMatch) {
             resultsDiv.innerHTML += `
                 <h3>Closest Match for Window ${i}</h3>
-                <p>Size of Window Frame: ${closestMatch['Size(HxW)']} (${closestMatch['Unit']})</p>
+                <p>Size: ${closestMatch['Size(HxW)']} (${closestMatch['Unit']})</p>
                 <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
                 <p><a href="${closestMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
             `;
-            console.log(`Closest match found for Window ${i}:`, closestMatch); // Debug closest match
         } else {
             resultsDiv.innerHTML += `<p>No suitable match found for Window ${i}.</p>`;
-            console.warn(`No suitable match found for Window ${i}.`);
         }
     }
 }
-
