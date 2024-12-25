@@ -42,11 +42,9 @@ document.getElementById('numWindows').addEventListener('input', function () {
 function calculateSizes() {
     const unit = document.getElementById('unit').value; // User-selected unit
     const numWindows = parseInt(document.getElementById('numWindows').value);
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = ''; // Clear previous results
 
     if (!sizeData) {
-        resultsDiv.innerHTML = 'Size data is not available. Please try again later.';
+        alert('Size data is not available. Please try again later.');
         console.error('Size data is not loaded. Check JSON file.');
         return;
     }
@@ -57,7 +55,7 @@ function calculateSizes() {
         const color = document.getElementById(`color${i}`).value.toUpperCase();
 
         if (!height || !width || height <= 0 || width <= 0) {
-            resultsDiv.innerHTML += `<p>Please enter valid dimensions for Window ${i}.</p>`;
+            alert(`Please enter valid dimensions for Window ${i}.`);
             console.warn(`Invalid dimensions for Window ${i}.`);
             continue;
         }
@@ -88,12 +86,11 @@ function calculateSizes() {
         });
 
         if (exactMatch) {
-            resultsDiv.innerHTML += `
-                <h3>Exact Match for Window ${i}</h3>
-                <p>Size: ${exactMatch['Size(HxW)']} (${exactMatch['Unit']})</p>
-                <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
-                <p><a href="${exactMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
-            `;
+            showPopup(
+                'READY SIZE AVAILABLE ✅',
+                `Order Now on Amazon: <a href="${exactMatch['Amazon Link']}" target="_blank">${exactMatch['Size(HxW)']}</a> (${exactMatch['Unit']})`,
+                'success'
+            );
             console.log(`Exact match found for Window ${i}:`, exactMatch);
             continue;
         }
@@ -117,17 +114,30 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
-            resultsDiv.innerHTML += `
-                <h3>Closest Match for Window ${i}</h3>
-                <p>Size: ${closestMatch['Size(HxW)']} (${closestMatch['Unit']})</p>
-                <p>Color: ${color === 'BK' ? 'Black' : color === 'GR' ? 'Grey' : color === 'CR' ? 'Cream' : 'White'}</p>
-                <p><a href="${closestMatch['Amazon Link']}" target="_blank">Click Here for Amazon Product Link</a></p>
-            `;
+            showPopup(
+                'CLOSEST MATCH FOUND',
+                `Order on Amazon: <a href="${closestMatch['Amazon Link']}" target="_blank">${closestMatch['Size(HxW)']}</a> (${closestMatch['Unit']})<br>
+                 <strong>IMP:</strong> <a href="https://wa.link/8h5hho" target="_blank">Click HERE</a> after placing the order to send customization request to +91 73046 92553.`,
+                'info'
+            );
             console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
-            resultsDiv.innerHTML += `<p>No suitable match found for Window ${i}. Please check your inputs.</p>`;
+            alert(`No suitable match found for Window ${i}. Please check your inputs.`);
             console.warn(`No suitable match found for Window ${i}.`);
         }
     }
+}
+
+// Popup Functionality
+function showPopup(title, message, type) {
+    const popup = document.createElement('div');
+    popup.className = `popup ${type}`;
+    popup.innerHTML = `
+        <h3>${title}</h3>
+        <p>${message}</p>
+        <button onclick="this.parentElement.remove()">Close</button>
+    `;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 10000); // Auto-close after 10 seconds
 }
 
