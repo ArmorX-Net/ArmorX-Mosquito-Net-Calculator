@@ -1,7 +1,8 @@
 // Load the size data from the JSON file
 let sizeData;
 
-fetch('MQ_Sizes_Unit_Color_and_Links.json')
+// Fetch the JSON data and prevent caching issues
+fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
     .then(response => response.json())
     .then(data => {
         sizeData = data;
@@ -37,7 +38,7 @@ document.getElementById('numWindows').addEventListener('input', function () {
     }
 });
 
-// Function to calculate sizes and find matches
+// Calculate sizes and find matches
 function calculateSizes() {
     const unit = document.getElementById('unit').value;
     const numWindows = parseInt(document.getElementById('numWindows').value);
