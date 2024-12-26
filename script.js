@@ -58,7 +58,7 @@ function updatePlaceholders() {
     }
 }
 
-// Generate a WhatsApp link with customization details
+// Function to generate a WhatsApp link with customization details
 function generateWhatsAppLink(customizationDetails) {
     if (customizationDetails.length === 0) return; // No details, no link
 
@@ -66,7 +66,8 @@ function generateWhatsAppLink(customizationDetails) {
         `Hello Team ARMORX,\n\nPlease make note of my customization:\n${customizationDetails.join('\n')}\n\nThank you.`
     );
 
-    const whatsappLink = `https://wa.me/?text=${message}`;
+    // Pre-select the contact number
+    const whatsappLink = `https://wa.me/917304692553?text=${message}`;
 
     const messageArea = document.getElementById('messageArea');
     messageArea.innerHTML += `
