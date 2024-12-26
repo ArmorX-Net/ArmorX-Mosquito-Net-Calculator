@@ -115,10 +115,15 @@ function calculateSizes() {
         if (exactMatch) {
             messageArea.innerHTML += `
                 <div class="message success">
-                    <h3>CONGRATULATIONS! YOUR EXACT SIZE IS AVAILABLE ✅</h3>
-                    <p>Size (HxW): ${height} x ${width} ${unit}</p>
-                    <p>Color: ${getColorName(color)}</p>
-                    <p><a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">CLICK HERE: To Order Directly on Amazon</a></p>
+                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                    <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
+                    <p><strong>Size (HxW):</strong> ${height} x ${width} ${unit}</p>
+                    <p><strong>Color:</strong> ${getColorName(color)}</p>
+                    <p>
+                        <a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+                            CLICK HERE: To Order Directly on Amazon
+                        </a>
+                    </p>
                 </div>
             `;
             console.log(`Exact match found for Window ${i}:`, exactMatch);
@@ -150,16 +155,23 @@ function calculateSizes() {
         if (closestMatch) {
             messageArea.innerHTML += `
                 <div class="message info">
-                    <h3>CLOSEST MATCH FOUND</h3>
-                    <p>Custom Size Needed (HxW): ${height} x ${width} ${unit}</p>
-                    <p>Custom Size Needed in Cm (HxW): ${normalizedHeight.toFixed(2)} x ${normalizedWidth.toFixed(2)} Cm</p>
-                    <p>Size To Order on Amazon (HxW): 
-                        <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">${closestMatch['Size(HxW)']} Cm</a>
+                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                    <h4>CLOSEST MATCH FOUND</h4>
+                    <p style="margin-bottom: 10px; font-weight: bold; color: green; font-size: 16px;">
+                        We will Customize for you for <span style="font-size: 18px;">FREE</span>: Follow below Steps:
                     </p>
-                    <p>Color: ${getColorName(color)}</p>
-                    <p style="margin-top: 10px;">NEXT STEPS: After placing the order 
+                    <p><strong>Custom Size Needed (HxW):</strong> ${height} x ${width} ${unit}</p>
+                    <p><strong>Custom Size Needed in Cm (HxW):</strong> ${normalizedHeight.toFixed(2)} x ${normalizedWidth.toFixed(2)} Cm</p>
+                    <p>
+                        <strong>Size To Order on Amazon (HxW):</strong> 
+                        <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
+                            CLICK HERE
+                        </a>: ${closestMatch['Size(HxW)']} Cm
+                    </p>
+                    <p><strong>Color:</strong> ${getColorName(color)}</p>
+                    <p style="margin-top: 10px;"><strong>NEXT STEPS:</strong> After placing the order 
                         <a href="https://wa.link/8h5hho" target="_blank" style="color: green; font-weight: bold;">
-                            <img src="https://i.postimg.cc/Z5qJ54NZ/whatsapp-icon.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
+                            <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
                             CLICK HERE
                         </a> to send customization request to +91-73046 92553.
                     </p>
@@ -167,7 +179,10 @@ function calculateSizes() {
             `;
             console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
-            messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>`;
+            messageArea.innerHTML += `
+                <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
+            `;
             console.warn(`No suitable match found for Window ${i}.`);
         }
     }
@@ -188,3 +203,4 @@ function getColorName(colorCode) {
             return 'Unknown';
     }
 }
+
