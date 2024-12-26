@@ -211,4 +211,31 @@ function calculateSizes() {
         } else {
             messageArea.innerHTML += `
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                <p
+                               <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
+            `;
+            console.warn(`No suitable match found for Window ${i}.`);
+        }
+    }
+}
+
+// Helper function to get color name
+function getColorName(colorCode) {
+    switch (colorCode) {
+        case 'BK':
+            return 'Black';
+        case 'GR':
+            return 'Grey';
+        case 'CR':
+            return 'Cream';
+        case 'WH':
+            return 'White';
+        default:
+            return 'Unknown';
+    }
+}
+
+// Helper function to round to nearest 0.5 (For Display Only)
+function roundToNearestHalf(value) {
+    return Math.round(value * 2) / 2; // Rounds to the nearest 0.5
+}
+
