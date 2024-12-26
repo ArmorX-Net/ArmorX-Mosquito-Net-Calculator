@@ -19,7 +19,7 @@ document.getElementById('numWindows').addEventListener('input', function () {
 
     if (!isNaN(numWindows) && numWindows > 0) {
         for (let i = 1; i <= numWindows; i++) {
-            windowInputsDiv.innerHTML += 
+            windowInputsDiv.innerHTML += `
                 <div class="window-input">
                     <h3>Window ${i}</h3>
                     <label for="height${i}">Enter Height:</label>
@@ -34,7 +34,7 @@ document.getElementById('numWindows').addEventListener('input', function () {
                         <option value="WH">White</option>
                     </select>
                 </div>
-            ;
+            `;
         }
         windowInputsDiv.style.display = 'block'; // Show the inputs container
     } else {
@@ -50,10 +50,10 @@ function updatePlaceholders() {
 
     if (!isNaN(numWindows) && numWindows > 0) {
         for (let i = 1; i <= numWindows; i++) {
-            const heightInput = document.getElementById(height${i});
-            const widthInput = document.getElementById(width${i});
-            if (heightInput) heightInput.placeholder = Enter Height in ${selectedUnit};
-            if (widthInput) widthInput.placeholder = Enter Width in ${selectedUnit};
+            const heightInput = document.getElementById(`height${i}`);
+            const widthInput = document.getElementById(`width${i}`);
+            if (heightInput) heightInput.placeholder = `Enter Height in ${selectedUnit}`;
+            if (widthInput) widthInput.placeholder = `Enter Width in ${selectedUnit}`;
         }
     }
 }
@@ -73,13 +73,13 @@ function calculateSizes() {
     }
 
     for (let i = 1; i <= numWindows; i++) {
-        const height = parseFloat(document.getElementById(height${i}).value);
-        const width = parseFloat(document.getElementById(width${i}).value);
-        const color = document.getElementById(color${i}).value.toUpperCase();
+        const height = parseFloat(document.getElementById(`height${i}`).value);
+        const width = parseFloat(document.getElementById(`width${i}`).value);
+        const color = document.getElementById(`color${i}`).value.toUpperCase();
 
         if (!height || !width || height <= 0 || width <= 0) {
-            messageArea.innerHTML += <p class="error">Please enter valid dimensions for Window ${i}.</p>;
-            console.warn(Invalid dimensions for Window ${i}.);
+            messageArea.innerHTML += `<p class="error">Please enter valid dimensions for Window ${i}.</p>`;
+            console.warn(`Invalid dimensions for Window ${i}.`);
             continue;
         }
 
@@ -89,31 +89,59 @@ function calculateSizes() {
 
         // Normalize dimensions based on user-selected unit
         if (unit === 'Inch') {
+            const heightInFeet = height / 12; // Convert to feet for exact match
+            const widthInFeet = width / 12;
+
+            // Check for exact match in feet
+            const exactMatchFeet = sizeData.find((size) => {
+                return (
+                    size['Unit'] === 'Feet' &&
+                    ((size['Height(H)'] === heightInFeet && size['Width(W)'] === widthInFeet) ||
+                        (size['Height(H)'] === widthInFeet && size['Width(W)'] === heightInFeet)) &&
+                    size['Color'].toUpperCase() === color
+                );
+            });
+
+            if (exactMatchFeet) {
+                messageArea.innerHTML += `
+                    <div class="message success">
+                        <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                        <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
+                        <p>Size (HxW): <strong>${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet</strong></p>
+                        <p>Color: <strong>${getColorName(color)}</strong></p>
+                        <p>
+                            <a href="${exactMatchFeet['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+                                CLICK HERE: To Order Directly on Amazon
+                            </a>
+                        </p>
+                    </div>
+                `;
+                console.log(`Exact match found for Window ${i} in Feet:`, exactMatchFeet);
+                continue;
+            }
+
+            // Convert inches to cm for closest match
             normalizedHeight = height * 2.54;
             normalizedWidth = width * 2.54;
-            normalizedUnit = 'Cm'; // Convert inches to cm
-        } else if (unit === 'Feet') {
-            normalizedHeight = height * 30.48;
-            normalizedWidth = width * 30.48;
-            normalizedUnit = 'Cm'; // Convert feet to cm for closest match logic
+            normalizedUnit = 'Cm';
         }
 
         console.log(
-            Window ${i}: Normalized Input - Height: ${normalizedHeight} Cm, Width: ${normalizedWidth} Cm, Color: ${color}
+            `Window ${i}: Normalized Input - Height: ${normalizedHeight} ${normalizedUnit}, Width: ${normalizedWidth} ${normalizedUnit}, Color: ${color}`
         );
 
         // Exact Match Logic
         const exactMatch = sizeData.find((size) => {
             return (
-                size['Unit'] === unit && // Match user-selected unit
-                ((size['Height(H)'] === height && size['Width(W)'] === width) ||
-                    (size['Height(H)'] === width && size['Width(W)'] === height)) && // Interchangeable dimensions
-                size['Color'].toUpperCase() === color // Match color
+                size['Unit'] === normalizedUnit &&
+                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
+                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+                size['Color'].toUpperCase() === color
             );
         });
 
         if (exactMatch) {
-            messageArea.innerHTML += 
+            messageArea.innerHTML += `
                 <div class="message success">
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
@@ -125,17 +153,17 @@ function calculateSizes() {
                         </a>
                     </p>
                 </div>
-            ;
-            console.log(Exact match found for Window ${i}:, exactMatch);
+            `;
+            console.log(`Exact match found for Window ${i}:`, exactMatch);
             continue;
         }
 
-        // Closest Match Logic (Always in 'Cm')
+        // Closest Match Logic
         let closestMatch = null;
         let smallestDifference = Infinity;
 
         sizeData.forEach((size) => {
-            if (size['Unit'] !== 'Cm' || size['Color'].toUpperCase() !== color) return; // Match color and unit
+            if (size['Unit'] !== 'Cm' || size['Color'].toUpperCase() !== color) return;
 
             const diff1 =
                 Math.abs(size['Height(H)'] - normalizedHeight) +
@@ -153,16 +181,13 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
-            messageArea.innerHTML += 
+            messageArea.innerHTML += `
                 <div class="message info">
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CLOSEST MATCH FOUND</h4>
-                    <p style="margin-bottom: 10px; font-weight: bold; color: green; font-size: 16px;">
-                        <span style="font-size: 18px;">Customize it for FREE</span> to match your size: Follow below Steps:
-                    </p>
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
                     <p>Custom Size Needed in Cm (HxW): 
-                        <strong>${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} Cm</strong>
+                        <strong>${normalizedHeight.toFixed(1)} x ${normalizedWidth.toFixed(1)} Cm</strong>
                     </p>
                     <p>
                         <strong>Size To Order on Amazon (HxW):</strong> 
@@ -171,21 +196,15 @@ function calculateSizes() {
                         </a>
                     </p>
                     <p>Color: <strong>${getColorName(color)}</strong></p>
-                    <p style="margin-top: 10px;"><strong>NEXT STEPS:</strong> After placing the order 
-                        <a href="https://wa.link/8h5hho" target="_blank" style="color: green; font-weight: bold;">
-                            <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
-                            CLICK HERE
-                        </a> to send customization request to +91-73046 92553.
-                    </p>
                 </div>
-            ;
-            console.log(Closest match found for Window ${i}:, closestMatch);
+            `;
+            console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
-            messageArea.innerHTML += 
+            messageArea.innerHTML += `
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                 <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
-            ;
-            console.warn(No suitable match found for Window ${i}.);
+            `;
+            console.warn(`No suitable match found for Window ${i}.`);
         }
     }
 }
@@ -204,9 +223,4 @@ function getColorName(colorCode) {
         default:
             return 'Unknown';
     }
-}
-
-// Helper function to round to nearest 0.5 (For Display Only)
-function roundToNearestHalf(value) {
-    return Math.round(value * 2) / 2; // Rounds to the nearest 0.5
 }
