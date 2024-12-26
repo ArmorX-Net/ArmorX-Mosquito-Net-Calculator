@@ -42,9 +42,12 @@ document.getElementById('numWindows').addEventListener('input', function () {
 function calculateSizes() {
     const unit = document.getElementById('unit').value; // User-selected unit
     const numWindows = parseInt(document.getElementById('numWindows').value);
+    const messageArea = document.getElementById('messageArea'); // Static message area
+
+    messageArea.innerHTML = ''; // Clear previous messages
 
     if (!sizeData) {
-        alert('Size data is not available. Please try again later.');
+        messageArea.innerHTML = '<p class="error">Size data is not available. Please try again later.</p>';
         console.error('Size data is not loaded. Check JSON file.');
         return;
     }
@@ -55,7 +58,7 @@ function calculateSizes() {
         const color = document.getElementById(`color${i}`).value.toUpperCase();
 
         if (!height || !width || height <= 0 || width <= 0) {
-            alert(`Please enter valid dimensions for Window ${i}.`);
+            messageArea.innerHTML += `<p class="error">Please enter valid dimensions for Window ${i}.</p>`;
             console.warn(`Invalid dimensions for Window ${i}.`);
             continue;
         }
@@ -86,11 +89,12 @@ function calculateSizes() {
         });
 
         if (exactMatch) {
-            showPopup(
-                'READY SIZE AVAILABLE ✅',
-                `Order Now on Amazon: <a href="${exactMatch['Amazon Link']}" target="_blank">${exactMatch['Size(HxW)']}</a> (${exactMatch['Unit']})`,
-                'success'
-            );
+            messageArea.innerHTML += `
+                <div class="message success">
+                    <h3>READY SIZE AVAILABLE ✅</h3>
+                    <p>Order Now on Amazon: <a href="${exactMatch['Amazon Link']}" target="_blank">${exactMatch['Size(HxW)']}</a> (${exactMatch['Unit']})</p>
+                </div>
+            `;
             console.log(`Exact match found for Window ${i}:`, exactMatch);
             continue;
         }
@@ -114,30 +118,18 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
-            showPopup(
-                'CLOSEST MATCH FOUND',
-                `Order on Amazon: <a href="${closestMatch['Amazon Link']}" target="_blank">${closestMatch['Size(HxW)']}</a> (${closestMatch['Unit']})<br>
-                 <strong>IMP:</strong> <a href="https://wa.link/8h5hho" target="_blank">Click HERE</a> after placing the order to send customization request to +91 73046 92553.`,
-                'info'
-            );
+            messageArea.innerHTML += `
+                <div class="message info">
+                    <h3>CLOSEST MATCH FOUND</h3>
+                    <p>Order on Amazon: <a href="${closestMatch['Amazon Link']}" target="_blank">${closestMatch['Size(HxW)']}</a> (${closestMatch['Unit']})</p>
+                    <p><strong>IMP:</strong> <a href="https://wa.link/8h5hho" target="_blank">Click HERE</a> after placing the order to send customization request to +91 73046 92553.</p>
+                </div>
+            `;
             console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
-            alert(`No suitable match found for Window ${i}. Please check your inputs.`);
+            messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>`;
             console.warn(`No suitable match found for Window ${i}.`);
         }
     }
-}
-
-// Popup Functionality
-function showPopup(title, message, type) {
-    const popup = document.createElement('div');
-    popup.className = `popup ${type}`;
-    popup.innerHTML = `
-        <h3>${title}</h3>
-        <p>${message}</p>
-        <button onclick="this.parentElement.remove()">Close</button>
-    `;
-    document.body.appendChild(popup);
-    setTimeout(() => popup.remove(), 10000); // Auto-close after 10 seconds
 }
 
