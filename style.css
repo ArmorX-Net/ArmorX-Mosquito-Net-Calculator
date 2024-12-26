@@ -11,14 +11,14 @@ body {
 }
 
 .container {
-    width: 95%;
-    max-width: 400px;
+    width: 90%; /* Ensure some space on the sides */
+    max-width: 350px; /* Limit the width for better appearance on large screens */
     background-color: #ffffff;
     padding: 20px;
     margin-top: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-top: 5px solid #a4e053;
+    border: 1px solid #ddd; /* Add a border for clear definition */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
 }
 
 .logo {
@@ -29,13 +29,13 @@ body {
 }
 
 .logo img {
-    max-width: 120px;
+    max-width: 100px;
     height: auto;
 }
 
 h2 {
     text-align: center;
-    font-size: 22px;
+    font-size: 20px;
     margin-bottom: 20px;
     color: #333333;
 }
@@ -49,7 +49,7 @@ label {
 
 input, select, button {
     width: 100%;
-    padding: 12px; /* Slightly larger padding for touch-friendly inputs */
+    padding: 10px; /* Adjusted for mobile touch-friendliness */
     margin-top: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -61,9 +61,9 @@ button {
     color: #ffffff;
     border: none;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
     margin-top: 15px;
-    padding: 12px; /* Slightly larger padding for mobile usability */
+    padding: 10px;
 }
 
 button:hover {
@@ -140,7 +140,7 @@ button:hover {
 
 .message h3 {
     margin: 0 0 10px;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .message p {
@@ -149,21 +149,23 @@ button:hover {
     word-wrap: break-word;
 }
 
-/* Responsive styles */
+/* Responsive styles for small screens */
 @media (max-width: 600px) {
     body {
-        padding: 10px; /* Add padding around the content */
+        padding: 10px;
     }
 
     .container {
-        width: 100%;
+        width: 95%; /* Maintain some margin on smaller devices */
+        max-width: 350px;
         padding: 15px;
-        margin-top: 10px;
-        box-shadow: none; /* Remove shadow for a cleaner mobile look */
+        margin-top: 15px;
+        border: 1px solid #ddd; /* Ensure borders stay visible */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow for mobile */
     }
 
     h2 {
-        font-size: 20px;
+        font-size: 18px;
     }
 
     label {
@@ -172,11 +174,11 @@ button:hover {
 
     input, select, button {
         font-size: 14px;
-        padding: 10px;
+        padding: 8px;
     }
 
     button {
-        font-size: 16px;
+        font-size: 15px;
         padding: 10px;
     }
 
@@ -186,7 +188,7 @@ button:hover {
     }
 
     .message h3 {
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .message p {
