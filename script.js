@@ -58,7 +58,12 @@ function updatePlaceholders() {
     }
 }
 
-// Function to generate a WhatsApp link with customization details
+// Helper function to round to nearest 0.5 (For Display Only)
+function roundToNearestHalf(value) {
+    return Math.round(value * 2) / 2; // Rounds to the nearest 0.5
+}
+
+// Generate a WhatsApp link with customization details
 function generateWhatsAppLink(customizationDetails) {
     if (customizationDetails.length === 0) return; // No details, no link
 
@@ -112,13 +117,66 @@ function calculateSizes() {
             normalizedUnit = unit;
 
         if (unit === 'Inch') {
+            const heightInFeet = height / 12; // Convert to feet for exact match
+            const widthInFeet = width / 12;
+
+            const exactMatchFeet = sizeData.find((size) => {
+                return (
+                    size['Unit'] === 'Feet' &&
+                    ((size['Height(H)'] === heightInFeet && size['Width(W)'] === widthInFeet) ||
+                        (size['Height(H)'] === widthInFeet && size['Width(W)'] === heightInFeet)) &&
+                    size['Color'].toUpperCase() === color
+                );
+            });
+
+            if (exactMatchFeet) {
+                messageArea.innerHTML += `
+                    <div class="message success">
+                        <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                        <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
+                        <p>Size (HxW): <strong>${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet</strong></p>
+                        <p>Color: <strong>${getColorName(color)}</strong></p>
+                        <p>
+                            <a href="${exactMatchFeet['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+                                CLICK HERE: To Order Directly on Amazon
+                            </a>
+                        </p>
+                    </div>
+                `;
+                console.log(`Exact match found for Window ${i} in Feet:`, exactMatchFeet);
+                continue;
+            }
+
             normalizedHeight = height * 2.54;
             normalizedWidth = width * 2.54;
             normalizedUnit = 'Cm';
-        } else if (unit === 'Feet') {
-            normalizedHeight = height * 30.48;
-            normalizedWidth = width * 30.48;
-            normalizedUnit = 'Cm';
+        }
+
+        const exactMatch = sizeData.find((size) => {
+            return (
+                size['Unit'] === normalizedUnit &&
+                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
+                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+                size['Color'].toUpperCase() === color
+            );
+        });
+
+        if (exactMatch) {
+            messageArea.innerHTML += `
+                <div class="message success">
+                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                    <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
+                    <p>Size (HxW): <strong>${height} x ${width} ${unit}</strong></p>
+                    <p>Color: <strong>${getColorName(color)}</strong></p>
+                    <p>
+                        <a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+                            CLICK HERE: To Order Directly on Amazon
+                        </a>
+                    </p>
+                </div>
+            `;
+            console.log(`Exact match found for Window ${i}:`, exactMatch);
+            continue;
         }
 
         let closestMatch = null;
@@ -145,10 +203,11 @@ function calculateSizes() {
         if (closestMatch) {
             let convertedSize = "";
             if (unit === 'Inch' || unit === 'Feet') {
-                convertedSize = `- Converted Size: ${normalizedHeight.toFixed(1)} x ${normalizedWidth.toFixed(1)} cm`;
+                convertedSize = `- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(
+                    normalizedWidth
+                )} cm`;
             }
 
-            // Add details for WhatsApp message
             customizationDetails.push(
                 `Window ${i}:\n- Custom Size: ${height} x ${width} ${unit}\n${convertedSize}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Link: ${closestMatch['Amazon Link']}\n- Color: ${getColorName(color)}`
             );
@@ -157,16 +216,13 @@ function calculateSizes() {
                 <div class="message info">
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CLOSEST MATCH FOUND</h4>
-                    <p style="margin-bottom: 10px; font-weight: bold; color: green; font-size: 16px;">
-                        <span style="font-size: 18px;">Customize it for FREE</span> to match your size: Follow below Steps:
-                    </p>
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
                     ${
                         convertedSize
-                            ? `<p>Custom Size Needed in Cm (HxW): <strong>${normalizedHeight.toFixed(
-                                  1
-                              )} x ${normalizedWidth.toFixed(1)} Cm</strong></p>`
-                            : ""
+                        ? `<p>Custom Size Needed in Cm (HxW): <strong>${roundToNearestHalf(
+                              normalizedHeight
+                          )} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
+                        : ""
                     }
                     <p>
                         <strong>Size To Order on Amazon (HxW):</strong> 
@@ -217,4 +273,3 @@ function getColorName(colorCode) {
 function roundToNearestHalf(value) {
     return Math.round(value * 2) / 2; // Rounds to the nearest 0.5
 }
-
