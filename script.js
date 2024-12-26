@@ -59,7 +59,7 @@ function updatePlaceholders() {
 }
 
 // Calculate sizes and find matches
-function calculateSizes() {
+ffunction calculateSizes() {
     const unit = document.getElementById('unit').value; // User-selected unit
     const numWindows = parseInt(document.getElementById('numWindows').value);
     const messageArea = document.getElementById('messageArea'); // Static message area
@@ -98,8 +98,12 @@ function calculateSizes() {
             normalizedUnit = 'Cm'; // Convert feet to cm for closest match logic
         }
 
+        // Round to nearest 0.5
+        const roundedHeight = roundToNearestHalf(normalizedHeight);
+        const roundedWidth = roundToNearestHalf(normalizedWidth);
+
         console.log(
-            `Window ${i}: Normalized Input - Height: ${normalizedHeight} Cm, Width: ${normalizedWidth} Cm, Color: ${color}`
+            `Window ${i}: Normalized Input - Height: ${roundedHeight} Cm, Width: ${roundedWidth} Cm, Color: ${color}`
         );
 
         // Exact Match Logic
@@ -138,11 +142,11 @@ function calculateSizes() {
             if (size['Unit'] !== 'Cm' || size['Color'].toUpperCase() !== color) return; // Match color and unit
 
             const diff1 =
-                Math.abs(size['Height(H)'] - normalizedHeight) +
-                Math.abs(size['Width(W)'] - normalizedWidth);
+                Math.abs(size['Height(H)'] - roundedHeight) +
+                Math.abs(size['Width(W)'] - roundedWidth);
             const diff2 =
-                Math.abs(size['Height(H)'] - normalizedWidth) +
-                Math.abs(size['Width(W)'] - normalizedHeight);
+                Math.abs(size['Height(H)'] - roundedWidth) +
+                Math.abs(size['Width(W)'] - roundedHeight);
 
             const difference = Math.min(diff1, diff2);
 
@@ -161,7 +165,7 @@ function calculateSizes() {
                         <span style="font-size: 18px;">Customize it for FREE</span> to match your size: Follow below Steps:
                     </p>
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
-                    <p>Custom Size Needed in Cm (HxW): <strong>${normalizedHeight.toFixed(2)} x ${normalizedWidth.toFixed(2)} Cm</strong></p>
+                    <p>Custom Size Needed in Cm (HxW): <strong>${roundedHeight.toFixed(1)} x ${roundedWidth.toFixed(1)} Cm</strong></p>
                     <p>
                         <strong>Size To Order on Amazon (HxW):</strong> 
                         <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
@@ -202,4 +206,9 @@ function getColorName(colorCode) {
         default:
             return 'Unknown';
     }
+}
+
+// Helper function to round to nearest 0.5
+function roundToNearestHalf(value) {
+    return Math.round(value * 2) / 2; // Rounds to the nearest 0.5
 }
