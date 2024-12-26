@@ -11,7 +11,7 @@ body {
 }
 
 .container {
-    width: 90%;
+    width: 95%;
     max-width: 400px;
     background-color: #ffffff;
     padding: 20px;
@@ -49,7 +49,7 @@ label {
 
 input, select, button {
     width: 100%;
-    padding: 10px;
+    padding: 12px; /* Slightly larger padding for touch-friendly inputs */
     margin-top: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -63,6 +63,7 @@ button {
     cursor: pointer;
     font-size: 18px;
     margin-top: 15px;
+    padding: 12px; /* Slightly larger padding for mobile usability */
 }
 
 button:hover {
@@ -150,10 +151,15 @@ button:hover {
 
 /* Responsive styles */
 @media (max-width: 600px) {
+    body {
+        padding: 10px; /* Add padding around the content */
+    }
+
     .container {
-        width: 95%;
+        width: 100%;
         padding: 15px;
         margin-top: 10px;
+        box-shadow: none; /* Remove shadow for a cleaner mobile look */
     }
 
     h2 {
@@ -166,15 +172,17 @@ button:hover {
 
     input, select, button {
         font-size: 14px;
-        padding: 8px;
+        padding: 10px;
     }
 
     button {
         font-size: 16px;
+        padding: 10px;
     }
 
     #results, .message-area {
         padding: 10px;
+        border-radius: 8px;
     }
 
     .message h3 {
