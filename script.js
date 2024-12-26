@@ -185,6 +185,9 @@ function calculateSizes() {
                 <div class="message info">
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CLOSEST MATCH FOUND</h4>
+                    <p style="margin-bottom: 10px; font-weight: bold; color: green; font-size: 16px;">
+                        <span style="font-size: 18px;">Customize it for FREE</span> to match your size: Follow below Steps:
+                    </p>
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
                     <p>Custom Size Needed in Cm (HxW): 
                         <strong>${normalizedHeight.toFixed(1)} x ${normalizedWidth.toFixed(1)} Cm</strong>
@@ -196,31 +199,16 @@ function calculateSizes() {
                         </a>
                     </p>
                     <p>Color: <strong>${getColorName(color)}</strong></p>
+                    <p style="margin-top: 10px;"><strong>NEXT STEPS:</strong> After placing the order 
+                        <a href="https://wa.link/8h5hho" target="_blank" style="color: green; font-weight: bold;">
+                            <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
+                            CLICK HERE
+                        </a> to send customization request to +91-73046 92553.
+                    </p>
                 </div>
             `;
             console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
             messageArea.innerHTML += `
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
-            `;
-            console.warn(`No suitable match found for Window ${i}.`);
-        }
-    }
-}
-
-// Helper function to get color name
-function getColorName(colorCode) {
-    switch (colorCode) {
-        case 'BK':
-            return 'Black';
-        case 'GR':
-            return 'Grey';
-        case 'CR':
-            return 'Cream';
-        case 'WH':
-            return 'White';
-        default:
-            return 'Unknown';
-    }
-}
+                <p
