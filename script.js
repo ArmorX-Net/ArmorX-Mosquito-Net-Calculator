@@ -63,10 +63,9 @@ function generateWhatsAppLink(customizationDetails) {
     if (customizationDetails.length === 0) return; // No details, no link
 
     const message = encodeURIComponent(
-        `Hello Team ARMORX,\n\nPlease make note of my customization:\n${customizationDetails.join('\n')}\n\nThank you.`
+        `Hello Team ARMORX,\n\nPlease make note of my customization:\n\n${customizationDetails.join('\n\n')}\n\nThank you.`
     );
 
-    // Pre-select the contact number
     const whatsappLink = `https://wa.me/917304692553?text=${message}`;
 
     const messageArea = document.getElementById('messageArea');
@@ -113,38 +112,12 @@ function calculateSizes() {
             normalizedUnit = unit;
 
         if (unit === 'Inch') {
-            const heightInFeet = height / 12; // Convert to feet for exact match
-            const widthInFeet = width / 12;
-
-            const exactMatchFeet = sizeData.find((size) => {
-                return (
-                    size['Unit'] === 'Feet' &&
-                    ((size['Height(H)'] === heightInFeet && size['Width(W)'] === widthInFeet) ||
-                        (size['Height(H)'] === widthInFeet && size['Width(W)'] === heightInFeet)) &&
-                    size['Color'].toUpperCase() === color
-                );
-            });
-
-            if (exactMatchFeet) {
-                messageArea.innerHTML += `
-                    <div class="message success">
-                        <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                        <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-                        <p>Size (HxW): <strong>${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet</strong></p>
-                        <p>Color: <strong>${getColorName(color)}</strong></p>
-                        <p>
-                            <a href="${exactMatchFeet['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
-                                CLICK HERE: To Order Directly on Amazon
-                            </a>
-                        </p>
-                    </div>
-                `;
-                console.log(`Exact match found for Window ${i} in Feet:`, exactMatchFeet);
-                continue;
-            }
-
             normalizedHeight = height * 2.54;
             normalizedWidth = width * 2.54;
+            normalizedUnit = 'Cm';
+        } else if (unit === 'Feet') {
+            normalizedHeight = height * 30.48;
+            normalizedWidth = width * 30.48;
             normalizedUnit = 'Cm';
         }
 
@@ -170,10 +143,14 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
+            let convertedSize = "";
+            if (unit === 'Inch' || unit === 'Feet') {
+                convertedSize = `- Converted Size: ${normalizedHeight.toFixed(1)} x ${normalizedWidth.toFixed(1)} cm`;
+            }
+
+            // Add details for WhatsApp message
             customizationDetails.push(
-                `Window ${i}: Custom Size: ${height} x ${width} ${unit}, Converted Size: ${normalizedHeight.toFixed(
-                    1
-                )} x ${normalizedWidth.toFixed(1)} cm, Color: ${getColorName(color)}`
+                `Window ${i}:\n- Custom Size: ${height} x ${width} ${unit}\n${convertedSize}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Link: ${closestMatch['Amazon Link']}\n- Color: ${getColorName(color)}`
             );
 
             messageArea.innerHTML += `
@@ -184,9 +161,13 @@ function calculateSizes() {
                         <span style="font-size: 18px;">Customize it for FREE</span> to match your size: Follow below Steps:
                     </p>
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
-                    <p>Custom Size Needed in Cm (HxW): 
-                        <strong>${normalizedHeight.toFixed(1)} x ${normalizedWidth.toFixed(1)} Cm</strong>
-                    </p>
+                    ${
+                        convertedSize
+                            ? `<p>Custom Size Needed in Cm (HxW): <strong>${normalizedHeight.toFixed(
+                                  1
+                              )} x ${normalizedWidth.toFixed(1)} Cm</strong></p>`
+                            : ""
+                    }
                     <p>
                         <strong>Size To Order on Amazon (HxW):</strong> 
                         <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
@@ -195,7 +176,7 @@ function calculateSizes() {
                     </p>
                     <p>Color: <strong>${getColorName(color)}</strong></p>
                     <p style="margin-top: 10px;"><strong>NEXT STEPS:</strong> After placing the order 
-                        <a href="https://wa.link/8h5hho" target="_blank" style="color: green; font-weight: bold;">
+                        <a href="https://wa.me/917304692553?text=Hello%20Team%20ARMORX,%20I%20have%20placed%20my%20order,%20please%20process%20customization%20request." target="_blank" style="color: green; font-weight: bold;">
                             <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
                             CLICK HERE
                         </a> to send customization request to +91-73046 92553.
