@@ -11,13 +11,13 @@ body {
 }
 
 .container {
-    width: 90%; /* Keep some space on the sides */
+    width: 90%; /* Ensure space on the sides */
     max-width: 350px; /* Limit width for large devices */
     background-color: #ffffff;
     padding: 20px;
     margin-top: 20px;
     border-radius: 10px;
-    border: 1px solid #ddd; /* Add a defined border */
+    border: 1px solid #ddd; /* Add a border for definition */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
@@ -47,15 +47,16 @@ label {
     color: #555555;
 }
 
-/* Ensure inputs, selects, and buttons fit within the container */
+/* Standardize width for input, select, and button fields */
 input, select, button {
-    width: 100%; /* Ensure they don't exceed the container width */
+    width: calc(100% - 20px); /* Ensure consistent width with padding */
+    max-width: 330px; /* Keep consistent with container padding */
     padding: 10px;
     margin-top: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
-    box-sizing: border-box; /* Include padding and borders in the total width */
+    box-sizing: border-box; /* Ensure padding and borders are included in width */
 }
 
 button {
@@ -106,13 +107,14 @@ button:hover {
 }
 
 .window-input input {
-    width: 100%;
+    width: calc(100% - 20px); /* Consistent width with other fields */
+    max-width: 330px; /* Match the container */
     padding: 10px;
     margin-top: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
-    box-sizing: border-box; /* Ensure inputs fit within boundaries */
+    box-sizing: border-box; /* Ensure input fits container */
 }
 
 /* Message Styles */
@@ -159,7 +161,7 @@ button:hover {
     }
 
     .container {
-        width: 95%; /* Maintain some margin on smaller devices */
+        width: 95%;
         max-width: 350px;
         padding: 15px;
         margin-top: 15px;
