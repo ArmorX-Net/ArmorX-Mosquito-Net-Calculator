@@ -83,7 +83,9 @@ function calculateSizes() {
             continue;
         }
 
-        let normalizedHeight = height, normalizedWidth = width, normalizedUnit = unit;
+        let normalizedHeight = height,
+            normalizedWidth = width,
+            normalizedUnit = unit;
 
         // Normalize dimensions based on user-selected unit
         if (unit === 'Inch') {
@@ -96,14 +98,16 @@ function calculateSizes() {
             normalizedUnit = 'Cm'; // Convert feet to cm for closest match logic
         }
 
-        console.log(`Window ${i}: Normalized Input - Height: ${normalizedHeight} Cm, Width: ${normalizedWidth} Cm, Color: ${color}`);
+        console.log(
+            `Window ${i}: Normalized Input - Height: ${normalizedHeight} Cm, Width: ${normalizedWidth} Cm, Color: ${color}`
+        );
 
         // Exact Match Logic
-        const exactMatch = sizeData.find(size => {
+        const exactMatch = sizeData.find((size) => {
             return (
                 size['Unit'] === unit && // Match user-selected unit
-                ((size['Height(H)'] === height && size['Width(W)'] === width) || 
-                 (size['Height(H)'] === width && size['Width(W)'] === height)) && // Interchangeable dimensions
+                ((size['Height(H)'] === height && size['Width(W)'] === width) ||
+                    (size['Height(H)'] === width && size['Width(W)'] === height)) && // Interchangeable dimensions
                 size['Color'].toUpperCase() === color // Match color
             );
         });
@@ -111,8 +115,10 @@ function calculateSizes() {
         if (exactMatch) {
             messageArea.innerHTML += `
                 <div class="message success">
-                    <h3>READY SIZE AVAILABLE ✅</h3>
-                    <p>Order Now on Amazon: <a href="${exactMatch['Amazon Link']}" target="_blank">${exactMatch['Size(HxW)']}</a> (${exactMatch['Unit']})</p>
+                    <h3>CONGRATULATIONS! YOUR EXACT SIZE IS AVAILABLE ✅</h3>
+                    <p>Size (HxW): ${height} x ${width} ${unit}</p>
+                    <p>Color: ${getColorName(color)}</p>
+                    <p><a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">CLICK HERE: To Order Directly on Amazon</a></p>
                 </div>
             `;
             console.log(`Exact match found for Window ${i}:`, exactMatch);
@@ -123,11 +129,15 @@ function calculateSizes() {
         let closestMatch = null;
         let smallestDifference = Infinity;
 
-        sizeData.forEach(size => {
+        sizeData.forEach((size) => {
             if (size['Unit'] !== 'Cm' || size['Color'].toUpperCase() !== color) return; // Match color and unit
 
-            const diff1 = Math.abs(size['Height(H)'] - normalizedHeight) + Math.abs(size['Width(W)'] - normalizedWidth);
-            const diff2 = Math.abs(size['Height(H)'] - normalizedWidth) + Math.abs(size['Width(W)'] - normalizedHeight);
+            const diff1 =
+                Math.abs(size['Height(H)'] - normalizedHeight) +
+                Math.abs(size['Width(W)'] - normalizedWidth);
+            const diff2 =
+                Math.abs(size['Height(H)'] - normalizedWidth) +
+                Math.abs(size['Width(W)'] - normalizedHeight);
 
             const difference = Math.min(diff1, diff2);
 
@@ -141,8 +151,18 @@ function calculateSizes() {
             messageArea.innerHTML += `
                 <div class="message info">
                     <h3>CLOSEST MATCH FOUND</h3>
-                    <p>Order on Amazon: <a href="${closestMatch['Amazon Link']}" target="_blank">${closestMatch['Size(HxW)']}</a> (${closestMatch['Unit']})</p>
-                    <p><strong>IMP:</strong> <a href="https://wa.link/8h5hho" target="_blank">Click HERE</a> after placing the order to send customization request to +91 73046 92553.</p>
+                    <p>Custom Size Needed (HxW): ${height} x ${width} ${unit}</p>
+                    <p>Custom Size Needed in Cm (HxW): ${normalizedHeight.toFixed(2)} x ${normalizedWidth.toFixed(2)} Cm</p>
+                    <p>Size To Order on Amazon (HxW): 
+                        <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">${closestMatch['Size(HxW)']} Cm</a>
+                    </p>
+                    <p>Color: ${getColorName(color)}</p>
+                    <p style="margin-top: 10px;">NEXT STEPS: After placing the order 
+                        <a href="https://wa.link/8h5hho" target="_blank" style="color: green; font-weight: bold;">
+                            <img src="https://i.postimg.cc/Z5qJ54NZ/whatsapp-icon.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
+                            CLICK HERE
+                        </a> to send customization request to +91-73046 92553.
+                    </p>
                 </div>
             `;
             console.log(`Closest match found for Window ${i}:`, closestMatch);
@@ -150,5 +170,21 @@ function calculateSizes() {
             messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>`;
             console.warn(`No suitable match found for Window ${i}.`);
         }
+    }
+}
+
+// Helper function to get color name
+function getColorName(colorCode) {
+    switch (colorCode) {
+        case 'BK':
+            return 'Black';
+        case 'GR':
+            return 'Grey';
+        case 'CR':
+            return 'Cream';
+        case 'WH':
+            return 'White';
+        default:
+            return 'Unknown';
     }
 }
