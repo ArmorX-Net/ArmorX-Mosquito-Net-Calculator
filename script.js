@@ -107,7 +107,7 @@ function calculateSizes() {
                     <div class="message success">
                         <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                         <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-                        <p>Size (HxW): <strong>${heightInFeet} x ${widthInFeet} Feet</strong></p>
+                        <p>Size (HxW): <strong>${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet</strong></p>
                         <p>Color: <strong>${getColorName(color)}</strong></p>
                         <p>
                             <a href="${exactMatchFeet['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
@@ -168,6 +168,12 @@ function calculateSizes() {
                         </a>
                     </p>
                     <p>Color: <strong>${getColorName(color)}</strong></p>
+                    <p style="margin-top: 10px;"><strong>NEXT STEPS:</strong> After placing the order 
+                        <a href="https://wa.link/8h5hho" target="_blank" style="color: green; font-weight: bold;">
+                            <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
+                            CLICK HERE
+                        </a> to send customization request to +91-73046 92553.
+                    </p>
                 </div>
             `;
             console.log(`Closest match found for Window ${i}:`, closestMatch);
