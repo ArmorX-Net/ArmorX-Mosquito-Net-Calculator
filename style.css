@@ -69,26 +69,28 @@ button:hover {
     background-color: #88c440;
 }
 
-#results {
-    margin-top: 20px;
+/* Results and Message Area */
+#results:empty,
+#messageArea:empty {
+    display: none; /* Hide if empty */
+}
+
+#results:not(:empty),
+#messageArea:not(:empty) {
+    margin-top: 20px; /* Add spacing if content exists */
+}
+
+#results,
+#messageArea {
     padding: 15px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
 
-/* Message Area */
-.message-area {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-/* Hide empty inputs */
+/* Dynamic Inputs */
 #windowInputs:empty {
-    display: none;
+    display: none; /* Hide empty input section */
 }
 
 .window-input {
@@ -109,6 +111,7 @@ button:hover {
     font-size: 16px;
 }
 
+/* Message Styles */
 .message {
     margin-bottom: 20px;
     padding: 15px;
