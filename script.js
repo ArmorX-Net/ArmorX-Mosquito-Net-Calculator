@@ -19,22 +19,25 @@ document.getElementById('numWindows').addEventListener('input', function () {
     if (!isNaN(numWindows) && numWindows > 0) {
         for (let i = 1; i <= numWindows; i++) {
             windowInputsDiv.innerHTML += `
-                <h3>Window ${i}</h3>
-                <label for="height${i}">Enter Height:</label>
-                <input type="number" id="height${i}" placeholder="Enter height">
-                <label for="width${i}">Enter Width:</label>
-                <input type="number" id="width${i}" placeholder="Enter width">
-                <label for="color${i}">Select Color:</label>
-                <select id="color${i}">
-                    <option value="BK">Black</option>
-                    <option value="GR">Grey</option>
-                    <option value="CR">Cream</option>
-                    <option value="WH">White</option>
-                </select>
+                <div class="window-input">
+                    <h3>Window ${i}</h3>
+                    <label for="height${i}">Enter Height:</label>
+                    <input type="number" id="height${i}" placeholder="Enter height">
+                    <label for="width${i}">Enter Width:</label>
+                    <input type="number" id="width${i}" placeholder="Enter width">
+                    <label for="color${i}">Select Color:</label>
+                    <select id="color${i}">
+                        <option value="BK">Black</option>
+                        <option value="GR">Grey</option>
+                        <option value="CR">Cream</option>
+                        <option value="WH">White</option>
+                    </select>
+                </div>
             `;
         }
+        windowInputsDiv.style.display = 'block'; // Show the inputs container
     } else {
-        console.warn('Invalid number of windows entered.');
+        windowInputsDiv.style.display = 'none'; // Hide the inputs container
     }
 });
 
@@ -132,4 +135,3 @@ function calculateSizes() {
         }
     }
 }
-
