@@ -63,12 +63,12 @@ function roundToNearestHalf(value) {
     return Math.round(value * 2) / 2; // Rounds to the nearest 0.5
 }
 
-// Generate a WhatsApp link with customization details
-function generateWhatsAppLink(customizationDetails) {
-    if (customizationDetails.length === 0) return; // No details, no link
+// Generate a WhatsApp link with customization details and exact matches
+function generateWhatsAppLink(orderDetails) {
+    if (orderDetails.length === 0) return; // No details, no link
 
     const message = encodeURIComponent(
-        `Hello Team ARMORX,\n\nPlease make note of my customization:\n\n${customizationDetails.join('\n\n')}\n\nThank you.`
+        `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`
     );
 
     const whatsappLink = `https://wa.me/917304692553?text=${message}`;
@@ -78,7 +78,7 @@ function generateWhatsAppLink(customizationDetails) {
         <div class="whatsapp-link">
             <p style="margin-top: 20px;">
                 <a href="${whatsappLink}" target="_blank" style="color: green; font-weight: bold; font-size: 18px;">
-                    SEND CUSTOMIZATION REQUEST VIA WHATSAPP
+                    SEND ORDER DETAILS VIA WHATSAPP
                 </a>
             </p>
         </div>
@@ -91,7 +91,7 @@ function calculateSizes() {
     const numWindows = parseInt(document.getElementById('numWindows').value);
     const messageArea = document.getElementById('messageArea'); // Static message area
 
-    let customizationDetails = []; // Array to hold details for WhatsApp message
+    let orderDetails = []; // Array to hold details for WhatsApp message
 
     messageArea.innerHTML = ''; // Clear previous messages
 
@@ -130,6 +130,12 @@ function calculateSizes() {
             });
 
             if (exactMatchFeet) {
+                orderDetails.push(
+                    `Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet\n- Color: ${getColorName(
+                        color
+                    )}\n- Link: ${exactMatchFeet['Amazon Link']}`
+                );
+
                 messageArea.innerHTML += `
                     <div class="message success">
                         <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
@@ -162,6 +168,12 @@ function calculateSizes() {
         });
 
         if (exactMatch) {
+            orderDetails.push(
+                `Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${height} x ${width} ${unit}\n- Color: ${getColorName(
+                    color
+                )}\n- Link: ${exactMatch['Amazon Link']}`
+            );
+
             messageArea.innerHTML += `
                 <div class="message success">
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
@@ -201,45 +213,44 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
-            let convertedSize = "";
-            if (unit === 'Inch' || unit === 'Feet') {
-                convertedSize = `- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(
-                    normalizedWidth
-                )} cm`;
+    let convertedSize = "";
+    if (unit === 'Inch' || unit === 'Feet') {
+        convertedSize = `- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(
+            normalizedWidth
+        )} cm`;
+    }
+
+    orderDetails.push(
+        `Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n${convertedSize}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${getColorName(color)}\n- Link: ${closestMatch['Amazon Link']}`
+    );
+
+    messageArea.innerHTML += `
+        <div class="message info">
+            <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+            <h4>CLOSEST MATCH FOUND</h4>
+            <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
+            ${
+                convertedSize
+                    ? `<p>Custom Size Needed in Cm (HxW): <strong>${roundToNearestHalf(
+                          normalizedHeight
+                      )} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
+                    : ""
             }
-
-            customizationDetails.push(
-                `Window ${i}:\n- Custom Size: ${height} x ${width} ${unit}\n${convertedSize}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Link: ${closestMatch['Amazon Link']}\n- Color: ${getColorName(color)}`
-            );
-
-            messageArea.innerHTML += `
-                <div class="message info">
-                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                    <h4>CLOSEST MATCH FOUND</h4>
-                    <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
-                    ${
-                        convertedSize
-                        ? `<p>Custom Size Needed in Cm (HxW): <strong>${roundToNearestHalf(
-                              normalizedHeight
-                          )} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
-                        : ""
-                    }
-                    <p>
-                        <strong>Size To Order on Amazon (HxW):</strong> 
-                        <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
-                            CLICK HERE: ${closestMatch['Size(HxW)']}
-                        </a>
-                    </p>
-                    <p>Color: <strong>${getColorName(color)}</strong></p>
-                    <p style="margin-top: 10px;"><strong>NEXT STEPS:</strong> After placing the order 
-                        <a href="https://wa.me/917304692553?text=Hello%20Team%20ARMORX,%20I%20have%20placed%20my%20order,%20please%20process%20customization%20request." target="_blank" style="color: green; font-weight: bold;">
-                            <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
-                            CLICK HERE
-                        </a> to send customization request to +91-73046 92553.
-                    </p>
-                </div>
-            `;
-            console.log(`Closest match found for Window ${i}:`, closestMatch);
+            <p>
+                <strong>Closest Size (HxW):</strong> ${closestMatch['Size(HxW)']}
+            </p>
+            <p>
+                <strong>Color:</strong> ${getColorName(color)}
+            </p>
+            <p>
+                <strong>Link:</strong> 
+                <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
+                    ${closestMatch['Amazon Link']}
+                </a>
+            </p>
+        </div>
+    `;
+    console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
             messageArea.innerHTML += `
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
@@ -250,7 +261,7 @@ function calculateSizes() {
     }
 
     // Call the WhatsApp link generator
-    generateWhatsAppLink(customizationDetails);
+    generateWhatsAppLink(orderDetails);
 }
 
 // Helper function to get color name
