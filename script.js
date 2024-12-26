@@ -89,25 +89,25 @@ function calculateSizes() {
 
         // Normalize dimensions based on user-selected unit
         if (unit === 'Inch') {
-            normalizedHeight = height * 2.54;
-            normalizedWidth = width * 2.54;
-            normalizedUnit = 'Cm'; // Convert inches to cm
+            // Normalize inches to feet for exact match
+            normalizedHeight = height / 12;
+            normalizedWidth = width / 12;
+            normalizedUnit = 'Feet';
         } else if (unit === 'Feet') {
-            normalizedHeight = height * 30.48;
-            normalizedWidth = width * 30.48;
-            normalizedUnit = 'Cm'; // Convert feet to cm for closest match logic
+            normalizedHeight = height;
+            normalizedWidth = width;
         }
 
         console.log(
-            `Window ${i}: Normalized Input - Height: ${normalizedHeight} Cm, Width: ${normalizedWidth} Cm, Color: ${color}`
+            `Window ${i}: Normalized Input - Height: ${normalizedHeight} ${normalizedUnit}, Width: ${normalizedWidth} ${normalizedUnit}, Color: ${color}`
         );
 
         // Exact Match Logic
         const exactMatch = sizeData.find((size) => {
             return (
-                size['Unit'] === unit && // Match user-selected unit
-                ((size['Height(H)'] === height && size['Width(W)'] === width) ||
-                    (size['Height(H)'] === width && size['Width(W)'] === height)) && // Interchangeable dimensions
+                size['Unit'] === normalizedUnit && // Match user-selected unit
+                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
+                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) && // Interchangeable dimensions
                 size['Color'].toUpperCase() === color // Match color
             );
         });
@@ -117,7 +117,7 @@ function calculateSizes() {
                 <div class="message success">
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-                    <p>Size (HxW): <strong>${height} x ${width} ${unit}</strong></p>
+                    <p>Size (HxW): <strong>${normalizedHeight} x ${normalizedWidth} ${normalizedUnit}</strong></p>
                     <p>Color: <strong>${getColorName(color)}</strong></p>
                     <p>
                         <a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
@@ -130,9 +130,18 @@ function calculateSizes() {
             continue;
         }
 
-        // Closest Match Logic (Always in 'Cm')
+        // Closest Match Logic (For Normalized CM dimensions only)
         let closestMatch = null;
         let smallestDifference = Infinity;
+
+        // Normalize to CM for closest match
+        if (unit === 'Inch') {
+            normalizedHeight *= 2.54;
+            normalizedWidth *= 2.54;
+        } else if (unit === 'Feet') {
+            normalizedHeight *= 30.48;
+            normalizedWidth *= 30.48;
+        }
 
         sizeData.forEach((size) => {
             if (size['Unit'] !== 'Cm' || size['Color'].toUpperCase() !== color) return; // Match color and unit
@@ -157,9 +166,6 @@ function calculateSizes() {
                 <div class="message info">
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CLOSEST MATCH FOUND</h4>
-                    <p style="margin-bottom: 10px; font-weight: bold; color: green; font-size: 16px;">
-                        <span style="font-size: 18px;">Customize it for FREE</span> to match your size: Follow below Steps:
-                    </p>
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
                     <p>Custom Size Needed in Cm (HxW): 
                         <strong>${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} Cm</strong>
@@ -171,12 +177,6 @@ function calculateSizes() {
                         </a>
                     </p>
                     <p>Color: <strong>${getColorName(color)}</strong></p>
-                    <p style="margin-top: 10px;"><strong>NEXT STEPS:</strong> After placing the order 
-                        <a href="https://wa.link/8h5hho" target="_blank" style="color: green; font-weight: bold;">
-                            <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
-                            CLICK HERE
-                        </a> to send customization request to +91-73046 92553.
-                    </p>
                 </div>
             `;
             console.log(`Closest match found for Window ${i}:`, closestMatch);
