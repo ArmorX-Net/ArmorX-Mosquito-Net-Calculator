@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArmorX Window Mosquito Net Calculator</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -14,12 +14,12 @@
         </div>
         <!-- Title Section -->
         <h2>ArmorX Window Mosquito Net Calculator</h2>
-        <!-- Step 1: Number of Windows -->
-        <label for="numWindows">How many windows do you need?</label>
-        <input type="number" id="numWindows" min="1" placeholder="Enter number of windows">
+        <!-- Step 1: Number of Window Nets -->
+        <label for="numWindows">How many window nets do you need?</label>
+        <input type="number" id="numWindows" min="1" placeholder="Enter number of window nets">
         <!-- Step 2: Unit of Measurement -->
         <label for="unit">Select Unit of Measurement:</label>
-        <select id="unit">
+        <select id="unit" onchange="updatePlaceholders()">
             <option value="Cm">Cm</option>
             <option value="Inch">Inch</option>
             <option value="Feet">Feet</option>
@@ -33,6 +33,6 @@
         <!-- Step 6: Static Message Area -->
         <div id="messageArea" class="message-area"></div>
     </div>
-    <script src="script.js"></script> <!-- Link to the JavaScript file -->
+    <script src="script.js"></script>
 </body>
 </html>
