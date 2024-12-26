@@ -14,6 +14,7 @@ fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
 document.getElementById('numWindows').addEventListener('input', function () {
     const numWindows = parseInt(this.value);
     const windowInputsDiv = document.getElementById('windowInputs');
+    const selectedUnit = document.getElementById('unit').value; // Get the selected unit
     windowInputsDiv.innerHTML = ''; // Clear previous inputs
 
     if (!isNaN(numWindows) && numWindows > 0) {
@@ -22,9 +23,9 @@ document.getElementById('numWindows').addEventListener('input', function () {
                 <div class="window-input">
                     <h3>Window ${i}</h3>
                     <label for="height${i}">Enter Height:</label>
-                    <input type="number" id="height${i}" placeholder="Enter height">
+                    <input type="number" id="height${i}" placeholder="Enter Height in ${selectedUnit}">
                     <label for="width${i}">Enter Width:</label>
-                    <input type="number" id="width${i}" placeholder="Enter width">
+                    <input type="number" id="width${i}" placeholder="Enter Width in ${selectedUnit}">
                     <label for="color${i}">Select Color:</label>
                     <select id="color${i}">
                         <option value="BK">Black</option>
@@ -40,6 +41,22 @@ document.getElementById('numWindows').addEventListener('input', function () {
         windowInputsDiv.style.display = 'none'; // Hide the inputs container
     }
 });
+
+// Update placeholders when the unit is changed
+function updatePlaceholders() {
+    const selectedUnit = document.getElementById('unit').value; // Get the selected unit
+    const numWindows = parseInt(document.getElementById('numWindows').value);
+    const windowInputsDiv = document.getElementById('windowInputs');
+
+    if (!isNaN(numWindows) && numWindows > 0) {
+        for (let i = 1; i <= numWindows; i++) {
+            const heightInput = document.getElementById(`height${i}`);
+            const widthInput = document.getElementById(`width${i}`);
+            if (heightInput) heightInput.placeholder = `Enter Height in ${selectedUnit}`;
+            if (widthInput) widthInput.placeholder = `Enter Width in ${selectedUnit}`;
+        }
+    }
+}
 
 // Calculate sizes and find matches
 function calculateSizes() {
