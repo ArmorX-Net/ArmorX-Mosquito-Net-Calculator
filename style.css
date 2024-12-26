@@ -11,14 +11,14 @@ body {
 }
 
 .container {
-    width: 90%; /* Ensure some space on the sides */
-    max-width: 350px; /* Limit the width for better appearance on large screens */
+    width: 90%; /* Keep some space on the sides */
+    max-width: 350px; /* Limit width for large devices */
     background-color: #ffffff;
     padding: 20px;
     margin-top: 20px;
     border-radius: 10px;
-    border: 1px solid #ddd; /* Add a border for clear definition */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
+    border: 1px solid #ddd; /* Add a defined border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .logo {
@@ -47,13 +47,15 @@ label {
     color: #555555;
 }
 
+/* Ensure inputs, selects, and buttons fit within the container */
 input, select, button {
-    width: 100%;
-    padding: 10px; /* Adjusted for mobile touch-friendliness */
+    width: 100%; /* Ensure they don't exceed the container width */
+    padding: 10px;
     margin-top: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    box-sizing: border-box; /* Include padding and borders in the total width */
 }
 
 button {
@@ -110,6 +112,7 @@ button:hover {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    box-sizing: border-box; /* Ensure inputs fit within boundaries */
 }
 
 /* Message Styles */
