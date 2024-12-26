@@ -77,83 +77,50 @@ button:hover {
     border-radius: 5px;
 }
 
-p {
-    font-size: 14px;
-    color: #333333;
-    margin: 5px 0;
+/* Message Area */
+.message-area {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
-a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Popup styles */
-.popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    padding: 20px;
+/* Message Styles */
+.message {
+    margin-bottom: 20px;
+    padding: 15px;
     border-radius: 8px;
     font-family: Arial, sans-serif;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 90%;
-    width: 300px;
-    animation: fadeIn 0.3s ease-in-out;
-    text-align: center;
 }
 
-.popup.success {
+.message.success {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
 }
 
-.popup.info {
+.message.info {
     background-color: #cce5ff;
     color: #004085;
     border: 1px solid #b8daff;
 }
 
-.popup h3 {
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.message h3 {
     margin: 0 0 10px;
     font-size: 18px;
 }
 
-.popup p {
+.message p {
     margin: 0;
     font-size: 14px;
     word-wrap: break-word;
-}
-
-.popup button {
-    margin-top: 10px;
-    background-color: transparent;
-    border: none;
-    color: #007bff;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.popup button:hover {
-    text-decoration: underline;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* Responsive styles */
@@ -181,25 +148,15 @@ a:hover {
         font-size: 16px;
     }
 
-    #results {
+    #results, .message-area {
         padding: 10px;
     }
 
-    .popup {
-        max-width: 95%;
-        width: auto;
-        padding: 15px;
-    }
-
-    .popup h3 {
+    .message h3 {
         font-size: 16px;
     }
 
-    .popup p {
+    .message p {
         font-size: 13px;
-    }
-
-    .popup button {
-        font-size: 14px;
     }
 }
