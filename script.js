@@ -58,11 +58,35 @@ function updatePlaceholders() {
     }
 }
 
+// Generate a WhatsApp link with customization details
+function generateWhatsAppLink(customizationDetails) {
+    if (customizationDetails.length === 0) return; // No details, no link
+
+    const message = encodeURIComponent(
+        `Hello Team ARMORX,\n\nPlease make note of my customization:\n${customizationDetails.join('\n')}\n\nThank you.`
+    );
+
+    const whatsappLink = `https://wa.me/?text=${message}`;
+
+    const messageArea = document.getElementById('messageArea');
+    messageArea.innerHTML += `
+        <div class="whatsapp-link">
+            <p style="margin-top: 20px;">
+                <a href="${whatsappLink}" target="_blank" style="color: green; font-weight: bold; font-size: 18px;">
+                    SEND CUSTOMIZATION REQUEST VIA WHATSAPP
+                </a>
+            </p>
+        </div>
+    `;
+}
+
 // Calculate sizes and find matches
 function calculateSizes() {
     const unit = document.getElementById('unit').value; // User-selected unit
     const numWindows = parseInt(document.getElementById('numWindows').value);
     const messageArea = document.getElementById('messageArea'); // Static message area
+
+    let customizationDetails = []; // Array to hold details for WhatsApp message
 
     messageArea.innerHTML = ''; // Clear previous messages
 
@@ -87,12 +111,10 @@ function calculateSizes() {
             normalizedWidth = width,
             normalizedUnit = unit;
 
-        // Normalize dimensions based on user-selected unit
         if (unit === 'Inch') {
             const heightInFeet = height / 12; // Convert to feet for exact match
             const widthInFeet = width / 12;
 
-            // Check for exact match in feet
             const exactMatchFeet = sizeData.find((size) => {
                 return (
                     size['Unit'] === 'Feet' &&
@@ -120,45 +142,11 @@ function calculateSizes() {
                 continue;
             }
 
-            // Convert inches to cm for closest match
             normalizedHeight = height * 2.54;
             normalizedWidth = width * 2.54;
             normalizedUnit = 'Cm';
         }
 
-        console.log(
-            `Window ${i}: Normalized Input - Height: ${normalizedHeight} ${normalizedUnit}, Width: ${normalizedWidth} ${normalizedUnit}, Color: ${color}`
-        );
-
-        // Exact Match Logic
-        const exactMatch = sizeData.find((size) => {
-            return (
-                size['Unit'] === normalizedUnit &&
-                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
-                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
-                size['Color'].toUpperCase() === color
-            );
-        });
-
-        if (exactMatch) {
-            messageArea.innerHTML += `
-                <div class="message success">
-                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                    <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-                    <p>Size (HxW): <strong>${height} x ${width} ${unit}</strong></p>
-                    <p>Color: <strong>${getColorName(color)}</strong></p>
-                    <p>
-                        <a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
-                            CLICK HERE: To Order Directly on Amazon
-                        </a>
-                    </p>
-                </div>
-            `;
-            console.log(`Exact match found for Window ${i}:`, exactMatch);
-            continue;
-        }
-
-        // Closest Match Logic
         let closestMatch = null;
         let smallestDifference = Infinity;
 
@@ -181,6 +169,12 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
+            customizationDetails.push(
+                `Window ${i}: Custom Size: ${height} x ${width} ${unit}, Converted Size: ${normalizedHeight.toFixed(
+                    1
+                )} x ${normalizedWidth.toFixed(1)} cm, Color: ${getColorName(color)}`
+            );
+
             messageArea.innerHTML += `
                 <div class="message info">
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
@@ -211,11 +205,14 @@ function calculateSizes() {
         } else {
             messageArea.innerHTML += `
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                               <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
+                <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
             `;
             console.warn(`No suitable match found for Window ${i}.`);
         }
     }
+
+    // Call the WhatsApp link generator
+    generateWhatsAppLink(customizationDetails);
 }
 
 // Helper function to get color name
