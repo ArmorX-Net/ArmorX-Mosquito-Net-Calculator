@@ -117,8 +117,8 @@ function calculateSizes() {
                 <div class="message success">
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-                    <p><strong>Size (HxW):</strong> ${height} x ${width} ${unit}</p>
-                    <p><strong>Color:</strong> ${getColorName(color)}</p>
+                    <p>Size (HxW): <strong>${height} x ${width} ${unit}</strong></p>
+                    <p>Color: <strong>${getColorName(color)}</strong></p>
                     <p>
                         <a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
                             CLICK HERE: To Order Directly on Amazon
@@ -158,17 +158,17 @@ function calculateSizes() {
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CLOSEST MATCH FOUND</h4>
                     <p style="margin-bottom: 10px; font-weight: bold; color: green; font-size: 16px;">
-                        We will Customize for you for <span style="font-size: 18px;">FREE</span>: Follow below Steps:
+                        <span style="font-size: 18px;">Customize it for FREE</span> to match your size: Follow below Steps:
                     </p>
-                    <p><strong>Custom Size Needed (HxW):</strong> ${height} x ${width} ${unit}</p>
-                    <p><strong>Custom Size Needed in Cm (HxW):</strong> ${normalizedHeight.toFixed(2)} x ${normalizedWidth.toFixed(2)} Cm</p>
+                    <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
+                    <p>Custom Size Needed in Cm (HxW): <strong>${normalizedHeight.toFixed(2)} x ${normalizedWidth.toFixed(2)} Cm</strong></p>
                     <p>
                         <strong>Size To Order on Amazon (HxW):</strong> 
                         <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
-                            CLICK HERE
-                        </a>: ${closestMatch['Size(HxW)']} Cm
+                            CLICK HERE: ${closestMatch['Size(HxW)']}
+                        </a>
                     </p>
-                    <p><strong>Color:</strong> ${getColorName(color)}</p>
+                    <p>Color: <strong>${getColorName(color)}</strong></p>
                     <p style="margin-top: 10px;"><strong>NEXT STEPS:</strong> After placing the order 
                         <a href="https://wa.link/8h5hho" target="_blank" style="color: green; font-weight: bold;">
                             <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
@@ -203,4 +203,3 @@ function getColorName(colorCode) {
             return 'Unknown';
     }
 }
-
