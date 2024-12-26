@@ -89,59 +89,50 @@ function calculateSizes() {
 
         // Normalize dimensions based on user-selected unit
         if (unit === 'Inch') {
-            // Normalize inches to feet for exact match
-            normalizedHeight = height / 12;
-            normalizedWidth = width / 12;
-            normalizedUnit = 'Feet';
+            const heightInFeet = height / 12; // Convert to feet for exact match
+            const widthInFeet = width / 12;
+
+            // Check for exact match in feet
+            const exactMatchFeet = sizeData.find((size) => {
+                return (
+                    size['Unit'] === 'Feet' &&
+                    ((size['Height(H)'] === heightInFeet && size['Width(W)'] === widthInFeet) ||
+                        (size['Height(H)'] === widthInFeet && size['Width(W)'] === heightInFeet)) &&
+                    size['Color'].toUpperCase() === color
+                );
+            });
+
+            if (exactMatchFeet) {
+                messageArea.innerHTML += `
+                    <div class="message success">
+                        <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                        <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
+                        <p>Size (HxW): <strong>${heightInFeet} x ${widthInFeet} Feet</strong></p>
+                        <p>Color: <strong>${getColorName(color)}</strong></p>
+                        <p>
+                            <a href="${exactMatchFeet['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+                                CLICK HERE: To Order Directly on Amazon
+                            </a>
+                        </p>
+                    </div>
+                `;
+                console.log(`Exact match found for Window ${i} in Feet:`, exactMatchFeet);
+                continue;
+            }
+
+            // Convert inches to cm for closest match
+            normalizedHeight = height * 2.54;
+            normalizedWidth = width * 2.54;
+            normalizedUnit = 'Cm';
         } else if (unit === 'Feet') {
-            normalizedHeight = height;
-            normalizedWidth = width;
+            normalizedHeight *= 30.48; // Convert feet to cm for closest match
+            normalizedWidth *= 30.48;
+            normalizedUnit = 'Cm';
         }
 
-        console.log(
-            `Window ${i}: Normalized Input - Height: ${normalizedHeight} ${normalizedUnit}, Width: ${normalizedWidth} ${normalizedUnit}, Color: ${color}`
-        );
-
-        // Exact Match Logic
-        const exactMatch = sizeData.find((size) => {
-            return (
-                size['Unit'] === normalizedUnit && // Match user-selected unit
-                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
-                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) && // Interchangeable dimensions
-                size['Color'].toUpperCase() === color // Match color
-            );
-        });
-
-        if (exactMatch) {
-            messageArea.innerHTML += `
-                <div class="message success">
-                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                    <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-                    <p>Size (HxW): <strong>${normalizedHeight} x ${normalizedWidth} ${normalizedUnit}</strong></p>
-                    <p>Color: <strong>${getColorName(color)}</strong></p>
-                    <p>
-                        <a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
-                            CLICK HERE: To Order Directly on Amazon
-                        </a>
-                    </p>
-                </div>
-            `;
-            console.log(`Exact match found for Window ${i}:`, exactMatch);
-            continue;
-        }
-
-        // Closest Match Logic (For Normalized CM dimensions only)
+        // Closest Match Logic
         let closestMatch = null;
         let smallestDifference = Infinity;
-
-        // Normalize to CM for closest match
-        if (unit === 'Inch') {
-            normalizedHeight *= 2.54;
-            normalizedWidth *= 2.54;
-        } else if (unit === 'Feet') {
-            normalizedHeight *= 30.48;
-            normalizedWidth *= 30.48;
-        }
 
         sizeData.forEach((size) => {
             if (size['Unit'] !== 'Cm' || size['Color'].toUpperCase() !== color) return; // Match color and unit
@@ -168,7 +159,7 @@ function calculateSizes() {
                     <h4>CLOSEST MATCH FOUND</h4>
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
                     <p>Custom Size Needed in Cm (HxW): 
-                        <strong>${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} Cm</strong>
+                        <strong>${normalizedHeight.toFixed(1)} x ${normalizedWidth.toFixed(1)} Cm</strong>
                     </p>
                     <p>
                         <strong>Size To Order on Amazon (HxW):</strong> 
@@ -204,9 +195,4 @@ function getColorName(colorCode) {
         default:
             return 'Unknown';
     }
-}
-
-// Helper function to round to nearest 0.5 (For Display Only)
-function roundToNearestHalf(value) {
-    return Math.round(value * 2) / 2; // Rounds to the nearest 0.5
 }
