@@ -119,25 +119,54 @@ function calculateSizes() {
 
         // Normalize dimensions based on user-selected unit
         if (unit === 'Inch') {
+            const heightInFeet = height / 12; // Convert to feet for exact match
+            const widthInFeet = width / 12;
+
+            // Check for exact match in feet
+            const exactMatchFeet = sizeData.find((size) => {
+                return (
+                    size['Unit'] === 'Feet' &&
+                    ((size['Height(H)'] === heightInFeet && size['Width(W)'] === widthInFeet) ||
+                        (size['Height(H)'] === widthInFeet && size['Width(W)'] === heightInFeet)) &&
+                    size['Color'].toUpperCase() === color
+                );
+            });
+
+            if (exactMatchFeet) {
+                orderDetails.push(
+                    `Window ${i}: Exact Match Found: No Customization Needed.\n- Original Size: ${height} x ${width} Inches (12inch = 1Feet)\n- Converted Size: ${heightInFeet.toFixed(
+                        1
+                    )} x ${widthInFeet.toFixed(1)} Feet\n- Color: ${getColorName(color)}\n- Link: ${exactMatchFeet['Amazon Link']}`
+                );
+
+                messageArea.innerHTML += `
+                    <div class="message success">
+                        <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                        <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
+                        <p>Original Size (HxW): <strong>${height} x ${width} Inches</strong> (12inch = 1Feet)</p>
+                        <p>Converted Size (HxW): <strong>${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet</strong></p>
+                        <p>Color: <strong>${getColorName(color)}</strong></p>
+                        <p>
+                            <a href="${exactMatchFeet['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+                                CLICK HERE: To Order Directly on Amazon
+                            </a>
+                        </p>
+                    </div>
+                `;
+                console.log(`Exact match found for Window ${i} in Feet:`, exactMatchFeet);
+                continue; // Skip closest match logic if exact match is found
+            }
+
             normalizedHeight = height * 2.54;
             normalizedWidth = width * 2.54;
-            normalizedUnit = 'Cm'; // Convert inches to cm for exact match
-        } else if (unit === 'Feet') {
-            normalizedHeight = height * 30.48;
-            normalizedWidth = width * 30.48;
-            normalizedUnit = 'Cm'; // Convert feet to cm for exact match
+            normalizedUnit = 'Cm';
         }
 
-        console.log(
-            `Window ${i}: Normalized Input - Height: ${normalizedHeight} ${normalizedUnit}, Width: ${normalizedWidth} ${normalizedUnit}, Color: ${color}`
-        );
-
-        // Exact Match Logic
         const exactMatch = sizeData.find((size) => {
             return (
-                size['Unit'] === unit &&
-                ((size['Height(H)'] === height && size['Width(W)'] === width) ||
-                    (size['Height(H)'] === width && size['Width(W)'] === height)) &&
+                size['Unit'] === normalizedUnit &&
+                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
+                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
                 size['Color'].toUpperCase() === color
             );
         });
@@ -166,7 +195,7 @@ function calculateSizes() {
             continue; // Skip closest match logic if exact match is found
         }
 
-        // Closest Match Logic
+        // Closest Match Logic (no changes here)
         let closestMatch = null;
         let smallestDifference = Infinity;
 
@@ -239,6 +268,7 @@ function calculateSizes() {
     // Call the WhatsApp link generator
     generateWhatsAppLink(orderDetails);
 }
+
 // Helper function to get color name
 function getColorName(colorCode) 
 {
