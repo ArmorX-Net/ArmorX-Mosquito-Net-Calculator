@@ -17,7 +17,7 @@ fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
         console.error('Error loading size data:', error);
     });
 
-// Helper: Normalize sizes to cm
+// Helper: Normalize sizes based on input unit
 function normalizeSizes(height, width, unit) {
     if (unit === 'Inch') return [height * 2.54, width * 2.54]; // Inches to cm
     if (unit === 'Feet') return [height * 30.48, width * 30.48]; // Feet to cm
@@ -25,25 +25,50 @@ function normalizeSizes(height, width, unit) {
 }
 
 // Helper: Find exact match
-function findExactMatch(normalizedHeight, normalizedWidth, color, unit) {
-    return sizeData.find(size =>
-        size['Unit'] === unit &&
-        ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
-            (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+function findExactMatch(height, width, color, unit) {
+    if (unit === 'Inch') {
+        const heightFeet = height / 12;
+        const widthFeet = width / 12;
+
+        // Check for exact match in feet
+        const exactMatchFeet = sizeData.find(size =>
+            size['Unit'] === 'Feet' &&
+            ((size['Height(H)'] === heightFeet && size['Width(W)'] === widthFeet) ||
+                (size['Height(H)'] === widthFeet && size['Width(W)'] === heightFeet)) &&
+            size['Color'].toUpperCase() === color
+        );
+
+        if (exactMatchFeet) {
+            return {
+                match: exactMatchFeet,
+                note: `(Original: ${height} x ${width} Inches, 12 Inches = 1 Foot)`
+            };
+        }
+    }
+
+    // Convert to cm and check for exact match
+    const [heightCm, widthCm] = normalizeSizes(height, width, unit);
+    const exactMatchCm = sizeData.find(size =>
+        size['Unit'] === 'Cm' &&
+        ((size['Height(H)'] === heightCm && size['Width(W)'] === widthCm) ||
+            (size['Height(H)'] === widthCm && size['Width(W)'] === heightCm)) &&
         size['Color'].toUpperCase() === color
     );
+
+    return exactMatchCm ? { match: exactMatchCm, note: null } : null;
 }
 
-// Helper: Find closest match
-function findClosestMatch(normalizedHeight, normalizedWidth, color) {
+// Helper: Find closest match in cm
+function findClosestMatch(height, width, color, unit) {
+    const [heightCm, widthCm] = normalizeSizes(height, width, unit);
     let closestMatch = null;
     let smallestDifference = Infinity;
 
     const filteredData = sizeData.filter(size => size['Unit'] === 'Cm' && size['Color'].toUpperCase() === color);
 
     filteredData.forEach(size => {
-        const diff1 = Math.abs(size['Height(H)'] - normalizedHeight) + Math.abs(size['Width(W)'] - normalizedWidth);
-        const diff2 = Math.abs(size['Height(H)'] - normalizedWidth) + Math.abs(size['Width(W)'] - normalizedHeight);
+        const diff1 = Math.abs(size['Height(H)'] - heightCm) + Math.abs(size['Width(W)'] - widthCm);
+        const diff2 = Math.abs(size['Height(H)'] - widthCm) + Math.abs(size['Width(W)'] - heightCm);
 
         const difference = Math.min(diff1, diff2);
         if (difference < smallestDifference) {
@@ -52,7 +77,12 @@ function findClosestMatch(normalizedHeight, normalizedWidth, color) {
         }
     });
 
-    return closestMatch;
+    return closestMatch
+        ? {
+              match: closestMatch,
+              convertedSize: `${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} cm`
+          }
+        : null;
 }
 
 // Helper: Round to nearest 0.5
@@ -83,15 +113,15 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
 }
 
 // Helper: Format results for closest match
-function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, normalizedHeight, normalizedWidth, unit, color) {
+function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, convertedSize, unit, color) {
     return `
         <div class="message info">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4>CLOSEST MATCH FOUND: FREE Customization Available</h4>
             <p>Custom Size Needed (HxW): <strong>${originalHeight} x ${originalWidth} ${unit}</strong></p>
             ${
-                unit === 'Inch' || unit === 'Feet'
-                    ? `<p>Converted Size Needed in Cm (HxW): <strong>${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
+                convertedSize
+                    ? `<p>Converted Size Needed in Cm (HxW): <strong>${convertedSize}</strong></p>`
                     : ''
             }
             <p>Closest Size (HxW): <strong>${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</strong></p>
@@ -138,26 +168,28 @@ function calculateSizes() {
         const width = parseFloat(document.getElementById(`width${i}`).value);
         const color = document.getElementById(`color${i}`).value.toUpperCase();
 
-        if (!validateInput(height, width)) {
-            messageArea.innerHTML += `<p class="error">Invalid dimensions for Window ${i}. Please enter realistic values.</p>`;
+        if (!height || !width || height <= 0 || width <= 0) {
+            messageArea.innerHTML += `<p class="error">Invalid dimensions for Window ${i}. Please enter valid values.</p>`;
             continue;
         }
 
-        const [normalizedHeight, normalizedWidth] = normalizeSizes(height, width, unit);
-
         // Check for exact match
-        const exactMatch = findExactMatch(normalizedHeight, normalizedWidth, color, unit === 'Inch' ? 'Feet' : unit);
+        const exactMatch = findExactMatch(height, width, color, unit);
         if (exactMatch) {
-            orderDetails.push(`Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${height} x ${width} ${unit}\n- Color: ${color}\n- Link: ${exactMatch['Amazon Link']}`);
-            messageArea.innerHTML += formatExactMatch(i, exactMatch, height, width, unit, color);
+            const match = exactMatch.match;
+            const note = exactMatch.note || '';
+            orderDetails.push(`Window ${i}: Exact Match Found.\n- Size: ${match['Size(HxW)']} ${match['Unit']}\n- Color: ${color}\n- Link: ${match['Amazon Link']}\n${note}`);
+            messageArea.innerHTML += formatExactMatch(i, match, height, width, unit, color);
             continue;
         }
 
         // Find closest match
-        const closestMatch = findClosestMatch(normalizedHeight, normalizedWidth, color);
+        const closestMatch = findClosestMatch(height, width, color, unit);
         if (closestMatch) {
-            orderDetails.push(`Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} cm\n- Closest Size: ${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm\n- Color: ${color}\n- Link: ${closestMatch['Amazon Link']}`);
-            messageArea.innerHTML += formatClosestMatch(i, closestMatch, height, width, normalizedHeight, normalizedWidth, unit, color);
+            const match = closestMatch.match;
+            const convertedSize = closestMatch.convertedSize;
+            orderDetails.push(`Window ${i}: Closest Match Found.\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${convertedSize}\n- Closest Size: ${match['Height(H)']} x ${match['Width(W)']} Cm\n- Color: ${color}\n- Link: ${match['Amazon Link']}`);
+            messageArea.innerHTML += formatClosestMatch(i, match, height, width, convertedSize, unit, color);
         } else {
             messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}.</p>`;
         }
