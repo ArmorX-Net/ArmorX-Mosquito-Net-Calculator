@@ -138,7 +138,7 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
         <div class="message success">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4>CONGRATULATIONS! YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-            <p>Original Size (HxW): <strong>${originalSize}</strong></p>
+            <p>Size Needed (HxW): <strong>${originalSize}</strong></p>
             <p>Size To Order (HxW): <strong>${match['Height(H)']} x ${match['Width(W)']} ${match['Unit']}</strong></p>
             <p>Color: <strong>${getColorName(color)}</strong></p>
             <p>
