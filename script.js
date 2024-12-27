@@ -54,13 +54,22 @@ function findClosestMatch(normalizedHeight, normalizedWidth, color) {
     return closestMatch;
 }
 
+// Helper: Round to nearest 0.5
+function roundToNearestHalf(value) {
+    return Math.round(value * 2) / 2;
+}
+
 // Helper: Format results for exact match
 function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) {
+    const originalSize =
+        unit === 'Inch'
+            ? `${originalHeight} x ${originalWidth} Inches (12 Inches = 1 Foot)`
+            : `${originalHeight} x ${originalWidth} ${unit}`;
     return `
         <div class="message success">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4>CONGRATULATIONS! YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-            <p>Original Size (HxW): <strong>${originalHeight} x ${originalWidth} ${unit}</strong></p>
+            <p>Original Size (HxW): <strong>${originalSize}</strong></p>
             <p>Size (HxW): <strong>${match['Height(H)']} x ${match['Width(W)']} ${match['Unit']}</strong></p>
             <p>Color: <strong>${color}</strong></p>
             <p>
@@ -100,11 +109,13 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, norm
     `;
 }
 
-// Helper: Generate WhatsApp link
+// Generate a WhatsApp link with customization details
 function generateWhatsAppLink(orderDetails) {
     if (orderDetails.length === 0) return;
 
-    const message = encodeURIComponent(`Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`);
+    const message = encodeURIComponent(
+        `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`
+    );
     const whatsappLink = `https://wa.me/917304692553?text=${message}`;
 
     const messageArea = document.getElementById('messageArea');
@@ -115,40 +126,6 @@ function generateWhatsAppLink(orderDetails) {
             </a>
         </div>
     `;
-}
-
-// Dynamic inputs generation
-document.getElementById('numWindows').addEventListener('input', function () {
-    const numWindows = parseInt(this.value);
-    const windowInputsDiv = document.getElementById('windowInputs');
-    const selectedUnit = document.getElementById('unit').value;
-    windowInputsDiv.innerHTML = '';
-
-    if (!isNaN(numWindows) && numWindows > 0) {
-        for (let i = 1; i <= numWindows; i++) {
-            windowInputsDiv.innerHTML += `
-                <div class="window-input">
-                    <h3>Window ${i}</h3>
-                    <label for="height${i}">Enter Height:</label>
-                    <input type="number" id="height${i}" placeholder="Enter Height in ${selectedUnit}">
-                    <label for="width${i}">Enter Width:</label>
-                    <input type="number" id="width${i}" placeholder="Enter Width in ${selectedUnit}">
-                    <label for="color${i}">Select Color:</label>
-                    <select id="color${i}">
-                        <option value="BK">Black</option>
-                        <option value="GR">Grey</option>
-                        <option value="CR">Cream</option>
-                        <option value="WH">White</option>
-                    </select>
-                </div>
-            `;
-        }
-    }
-});
-
-// Helper: Round to nearest 0.5
-function roundToNearestHalf(value) {
-    return Math.round(value * 2) / 2;
 }
 
 // Main calculation logic
@@ -172,6 +149,7 @@ function calculateSizes() {
 
         const [normalizedHeight, normalizedWidth] = normalizeSizes(height, width, unit);
 
+        // Check for exact match
         const exactMatch = findExactMatch(normalizedHeight, normalizedWidth, color, unit === 'Inch' ? 'Feet' : unit);
         if (exactMatch) {
             orderDetails.push(`Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${height} x ${width} ${unit}\n- Color: ${color}\n- Link: ${exactMatch['Amazon Link']}`);
@@ -179,6 +157,7 @@ function calculateSizes() {
             continue;
         }
 
+        // Find closest match
         const closestMatch = findClosestMatch(normalizedHeight, normalizedWidth, color);
         if (closestMatch) {
             orderDetails.push(`Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} cm\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${color}\n- Link: ${closestMatch['Amazon Link']}`);
@@ -190,3 +169,35 @@ function calculateSizes() {
 
     generateWhatsAppLink(orderDetails);
 }
+
+// Dynamic input field generation for windows
+document.getElementById('numWindows').addEventListener('input', function () {
+    const numWindows = parseInt(this.value);
+    const windowInputsDiv = document.getElementById('windowInputs');
+    const selectedUnit = document.getElementById('unit').value;
+
+    windowInputsDiv.innerHTML = ''; // Clear previous inputs
+    if (!isNaN(numWindows) && numWindows > 0) {
+        for (let i = 1; i <= numWindows; i++) {
+            windowInputsDiv.innerHTML += `
+                <div class="window-input">
+                    <h3>Window ${i}</h3>
+                    <label for="height${i}">Enter Height:</label>
+                    <input type="number" id="height${i}" placeholder="Enter Height in ${selectedUnit}">
+                    <label for="width${i}">Enter Width:</label>
+                    <input type="number" id="width${i}" placeholder="Enter Width in ${selectedUnit}">
+                    <label for="color${i}">Select Color:</label>
+                    <select id="color${i}">
+                        <option value="BK">Black</option>
+                        <option value="GR">Grey</option>
+                        <option value="CR">Cream</option>
+                        <option value="WH">White</option>
+                    </select>
+                </div>
+            `;
+        }
+        windowInputsDiv.style.display = 'block'; // Show the inputs container
+    } else {
+        windowInputsDiv.style.display = 'none'; // Hide the inputs container
+    }
+});
