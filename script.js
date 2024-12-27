@@ -63,7 +63,7 @@ function roundToNearestHalf(value) {
     return Math.round(value * 2) / 2; // Rounds to the nearest 0.5
 }
 
-// Generate a WhatsApp link with order details
+// Generate a WhatsApp link with customization details and exact matches
 function generateWhatsAppLink(orderDetails) {
     if (orderDetails.length === 0) return; // No details, no link
 
@@ -76,12 +76,11 @@ function generateWhatsAppLink(orderDetails) {
     const messageArea = document.getElementById('messageArea');
     messageArea.innerHTML += `
         <div class="whatsapp-link">
-            <p style="margin-top: 20px; text-align: center;">
-                <a href="${whatsappLink}" target="_blank" style="background-color: green; color: white; font-weight: bold; font-size: 16px; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-                    <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">
-                    WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX
+            <button style="background-color: #25D366; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                <a href="${whatsappLink}" target="_blank" style="color: white; text-decoration: none;">
+                    WhatsApp Your Order & Customization Details to Team ARMORX
                 </a>
-            </p>
+            </button>
         </div>
     `;
 }
@@ -114,24 +113,23 @@ function calculateSizes() {
         }
 
         let normalizedHeight = height,
-            normalizedWidth = width,
-            normalizedUnit = unit;
+            normalizedWidth = width;
 
-        if (unit === 'Feet') {
-            normalizedHeight = roundToNearestHalf(height * 30.48); // Convert feet to cm
-            normalizedWidth = roundToNearestHalf(width * 30.48);
-            normalizedUnit = 'Cm';
-        } else if (unit === 'Inch') {
-            normalizedHeight = height * 2.54; // Convert inches to cm
-            normalizedWidth = width * 2.54;
-            normalizedUnit = 'Cm';
+        // Perform unit-specific normalization
+        if (unit === 'Inch') {
+            normalizedHeight = height / 12; // Convert inches to feet
+            normalizedWidth = width / 12;
+        } else if (unit === 'Feet') {
+            normalizedHeight = height * 30.48; // Convert feet to cm
+            normalizedWidth = width * 30.48;
         }
 
+        // Check for exact match first
         const exactMatch = sizeData.find((size) => {
             return (
-                size['Unit'] === normalizedUnit &&
-                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
-                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+                size['Unit'] === unit &&
+                ((size['Height(H)'] === height && size['Width(W)'] === width) ||
+                    (size['Height(H)'] === width && size['Width(W)'] === height)) &&
                 size['Color'].toUpperCase() === color
             );
         });
@@ -156,11 +154,10 @@ function calculateSizes() {
                     </p>
                 </div>
             `;
-            console.log(`Exact match found for Window ${i}:`, exactMatch);
             continue;
         }
 
-        // Closest Match Logic
+        // Perform closest match logic
         let closestMatch = null;
         let smallestDifference = Infinity;
 
@@ -183,15 +180,10 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
-            let convertedSize = "";
-            if (unit === 'Feet' || unit === 'Inch') {
-                convertedSize = `Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(
-                    normalizedWidth
-                )} cm`;
-            }
-
             orderDetails.push(
-                `Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n${convertedSize}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${getColorName(color)}\n- Link: ${closestMatch['Amazon Link']}`
+                `Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${getColorName(
+                    color
+                )}\n- Link: ${closestMatch['Amazon Link']}`
             );
 
             messageArea.innerHTML += `
@@ -199,11 +191,6 @@ function calculateSizes() {
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CLOSEST MATCH FOUND: FREE Customization Available</h4>
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
-                    ${
-                        convertedSize
-                            ? `<p>Custom Size Needed in Cm (HxW): <strong>${convertedSize}</strong></p>`
-                            : ""
-                    }
                     <p>
                         <strong>Closest Size (HxW):</strong> ${closestMatch['Size(HxW)']}
                     </p>
@@ -211,23 +198,23 @@ function calculateSizes() {
                         <strong>Color:</strong> ${getColorName(color)}
                     </p>
                     <p>
+                        <strong>Link:</strong> 
                         <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
                             CLICK HERE: To Order Closest Size on Amazon
                         </a>
                     </p>
-                    <p style="margin-top: 10px;"><strong>NEXT STEPS:</strong> Please use the below 
-                        <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
+                    <p style="margin-top: 10px;">
+                        <strong>*NEXT STEPS:*</strong> Please use the below 
+                        <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
                         WhatsApp button to send your order & customization request to the Team ARMORX. We will customize the net to your exact size for FREE.
                     </p>
                 </div>
             `;
-            console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
             messageArea.innerHTML += `
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                 <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
             `;
-            console.warn(`No suitable match found for Window ${i}.`);
         }
     }
 
@@ -236,8 +223,7 @@ function calculateSizes() {
 }
 
 // Helper function to get color name
-function getColorName
-(colorCode) {
+function getColorName(colorCode) {
     switch (colorCode) {
         case 'BK':
             return 'Black';
