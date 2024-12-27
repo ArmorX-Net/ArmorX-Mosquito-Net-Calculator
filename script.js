@@ -135,6 +135,39 @@ function calculateSizes() {
             `Window ${i}: Normalized Input - Height: ${normalizedHeight} ${normalizedUnit}, Width: ${normalizedWidth} ${normalizedUnit}, Color: ${color}`
         );
 
+        const exactMatch = sizeData.find((size) => {
+            return (
+                size['Unit'] === normalizedUnit &&
+                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
+                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+                size['Color'].toUpperCase() === color
+            );
+        });
+
+        if (exactMatch) {
+            orderDetails.push(
+                `Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${height} x ${width} ${unit}\n- Color: ${getColorName(
+                    color
+                )}\n- Link: ${exactMatch['Amazon Link']}`
+            );
+
+            messageArea.innerHTML += `
+                <div class="message success">
+                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                    <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
+                    <p>Size (HxW): <strong>${height} x ${width} ${unit}</strong></p>
+                    <p>Color: <strong>${getColorName(color)}</strong></p>
+                    <p>
+                        <a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+                            CLICK HERE: To Order Directly on Amazon
+                        </a>
+                    </p>
+                </div>
+            `;
+            console.log(`Exact match found for Window ${i}:`, exactMatch);
+            continue;
+        }
+
         let closestMatch = null;
         let smallestDifference = Infinity;
 
