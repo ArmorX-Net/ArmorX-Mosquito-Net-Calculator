@@ -169,6 +169,12 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
                     CLICK HERE: To Order Closest Size on Amazon
                 </a>
             </p>
+            <p style="margin-top: 20px; font-weight: bold;">
+                NEXT STEPS:
+                <span style="font-weight: normal;">
+                    Tap the <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 16px; height: 16px; vertical-align: middle;"> WhatsApp button below to send your order and customization details to Team ArmorX for <strong>FREE customization</strong>. Customization is only possible if we receive your details—don’t miss out!
+                </span>
+            </p>
         </div>
     `;
 }
