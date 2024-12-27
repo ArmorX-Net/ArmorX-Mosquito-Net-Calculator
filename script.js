@@ -115,21 +115,52 @@ function calculateSizes() {
         let normalizedHeight = height,
             normalizedWidth = width;
 
-        // Perform unit-specific normalization
         if (unit === 'Inch') {
-            normalizedHeight = height / 12; // Convert inches to feet
-            normalizedWidth = width / 12;
-        } else if (unit === 'Feet') {
-            normalizedHeight = height * 30.48; // Convert feet to cm
-            normalizedWidth = width * 30.48;
+            const heightInFeet = height / 12; // Convert inches to feet
+            const widthInFeet = width / 12;
+
+            const exactMatchFeet = sizeData.find((size) => {
+                return (
+                    size['Unit'] === 'Feet' &&
+                    ((size['Height(H)'] === heightInFeet && size['Width(W)'] === widthInFeet) ||
+                        (size['Height(H)'] === widthInFeet && size['Width(W)'] === heightInFeet)) &&
+                    size['Color'].toUpperCase() === color
+                );
+            });
+
+            if (exactMatchFeet) {
+                orderDetails.push(
+                    `Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet\n- Original Size: ${height} x ${width} Inches (12 Inches = 1 Foot)\n- Color: ${getColorName(
+                        color
+                    )}\n- Link: ${exactMatchFeet['Amazon Link']}`
+                );
+
+                messageArea.innerHTML += `
+                    <div class="message success">
+                        <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                        <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
+                        <p>Size (HxW): <strong>${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet</strong></p>
+                        <p>Original Size: ${height} x ${width} Inches (12 Inches = 1 Foot)</p>
+                        <p>Color: <strong>${getColorName(color)}</strong></p>
+                        <p>
+                            <a href="${exactMatchFeet['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+                                CLICK HERE: To Order Directly on Amazon
+                            </a>
+                        </p>
+                    </div>
+                `;
+                continue;
+            }
+
+            normalizedHeight = height * 2.54;
+            normalizedWidth = width * 2.54;
         }
 
-        // Check for exact match first
         const exactMatch = sizeData.find((size) => {
             return (
-                size['Unit'] === unit &&
-                ((size['Height(H)'] === height && size['Width(W)'] === width) ||
-                    (size['Height(H)'] === width && size['Width(W)'] === height)) &&
+                size['Unit'] === 'Cm' &&
+                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
+                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
                 size['Color'].toUpperCase() === color
             );
         });
@@ -157,7 +188,6 @@ function calculateSizes() {
             continue;
         }
 
-        // Perform closest match logic
         let closestMatch = null;
         let smallestDifference = Infinity;
 
@@ -180,10 +210,18 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
+            const convertedSize =
+                unit === 'Inch' || unit === 'Feet'
+                    ? `Converted Size (HxW): ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(
+                          normalizedWidth
+                      )} cm`
+                    : '';
+
             orderDetails.push(
-                `Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${getColorName(
-                    color
-                )}\n- Link: ${closestMatch['Amazon Link']}`
+                `Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n${
+                    convertedSize ? `- ${convertedSize}\n` : ''
+                }- Closest Size: ${
+closestMatch['Size(HxW)']} cm\n- Color: ${getColorName(color)}\n- Link: ${closestMatch['Amazon Link']}`
             );
 
             messageArea.innerHTML += `
@@ -191,29 +229,34 @@ function calculateSizes() {
                     <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                     <h4>CLOSEST MATCH FOUND: FREE Customization Available</h4>
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
+                    ${
+                        convertedSize
+                            ? `<p>Converted Size Needed in Cm (HxW): <strong>${roundToNearestHalf(
+                                  normalizedHeight
+                              )} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
+                            : ''
+                    }
+                    <p>Closest Size (HxW): <strong>${closestMatch['Size(HxW)']}</strong></p>
+                    <p>Color: <strong>${getColorName(color)}</strong></p>
                     <p>
-                        <strong>Closest Size (HxW):</strong> ${closestMatch['Size(HxW)']}
-                    </p>
-                    <p>
-                        <strong>Color:</strong> ${getColorName(color)}
-                    </p>
-                    <p>
-                        <strong>Link:</strong> 
+                        Link: 
                         <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
                             CLICK HERE: To Order Closest Size on Amazon
                         </a>
                     </p>
-                    <p style="margin-top: 10px;">
-                        <strong>*NEXT STEPS:*</strong> Please use the below 
-                        <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
+                    <p style="margin-top: 10px; font-weight: bold;">
+                        *NEXT STEPS:* Please use the below 
+                        <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;"> 
                         WhatsApp button to send your order & customization request to the Team ARMORX. We will customize the net to your exact size for FREE.
                     </p>
                 </div>
             `;
         } else {
             messageArea.innerHTML += `
-                <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
+                <div class="message error">
+                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                    <p>No suitable match found for Window ${i}. Please check your inputs or contact support.</p>
+                </div>
             `;
         }
     }
