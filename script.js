@@ -26,11 +26,33 @@ function normalizeSizes(height, width, unit) {
 
 // Helper: Find exact match
 function findExactMatch(height, width, color, unit) {
+    let normalizedHeight, normalizedWidth;
+
+    if (unit === 'Feet') {
+        normalizedHeight = height; // Already in feet
+        normalizedWidth = width;
+
+        // Check for exact match in Feet
+        const exactMatchFeet = sizeData.find(size =>
+            size['Unit'] === 'Feet' &&
+            ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
+                (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+            size['Color'].toUpperCase() === color
+        );
+
+        if (exactMatchFeet) {
+            return {
+                match: exactMatchFeet,
+                note: null,
+            };
+        }
+    }
+
     if (unit === 'Inch') {
         const heightFeet = height / 12;
         const widthFeet = width / 12;
 
-        // Check for exact match in feet
+        // Check for exact match in Feet for Inches input
         const exactMatchFeet = sizeData.find(size =>
             size['Unit'] === 'Feet' &&
             ((size['Height(H)'] === heightFeet && size['Width(W)'] === widthFeet) ||
@@ -41,7 +63,7 @@ function findExactMatch(height, width, color, unit) {
         if (exactMatchFeet) {
             return {
                 match: exactMatchFeet,
-                note: `(Original: ${height} x ${width} Inches, 12 Inches = 1 Foot)`
+                note: `(Original: ${height} x ${width} Inches, 12 Inches = 1 Foot)`,
             };
         }
     }
@@ -80,7 +102,7 @@ function findClosestMatch(height, width, color, unit) {
     return closestMatch
         ? {
               match: closestMatch,
-              convertedSize: `${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} cm`
+              convertedSize: `${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} cm`,
           }
         : null;
 }
