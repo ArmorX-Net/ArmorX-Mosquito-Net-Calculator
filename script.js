@@ -152,6 +152,8 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
 
 // Helper: Format results for closest match
 function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, convertedSize, unit, color) {
+    const whatsappLink = `https://wa.me/917304692553?text=Hello%20Team%20ARMORX,%20I%20have%20placed%20my%20order,%20please%20process%20customization%20request.`;
+
     return `
         <div class="message info">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
@@ -169,11 +171,11 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
                     CLICK HERE: To Order Closest Size on Amazon
                 </a>
             </p>
-            <p style="margin-top: 20px; font-weight: bold;">
+            <p style="font-weight: bold; margin-top: 10px;">
                 NEXT STEPS:
-                <span style="font-weight: normal;">
-                    Tap the <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 16px; height: 16px; vertical-align: middle;"> WhatsApp button below to send your order and customization details to Team ArmorX for <strong>FREE customization</strong>. Customization is only possible if we receive your details—don’t miss out!
-                </span>
+            </p>
+            <p>
+                Tap the <a href="${whatsappLink}" target="_blank" style="color: green; font-weight: bold; text-decoration: underline;">WhatsApp button</a> below to send your order and customization details to Team ArmorX for <strong>FREE customization</strong>. Customization is only possible if we receive your details—don’t miss out!
             </p>
         </div>
     `;
