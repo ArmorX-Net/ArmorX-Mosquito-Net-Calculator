@@ -117,80 +117,23 @@ function calculateSizes() {
             normalizedWidth = width,
             normalizedUnit = unit;
 
-        if (unit === 'Inch') {
-            const heightInFeet = height / 12; // Convert to feet for exact match
-            const widthInFeet = width / 12;
-
-            const exactMatchFeet = sizeData.find((size) => {
-                return (
-                    size['Unit'] === 'Feet' &&
-                    ((size['Height(H)'] === heightInFeet && size['Width(W)'] === widthInFeet) ||
-                        (size['Height(H)'] === widthInFeet && size['Width(W)'] === heightInFeet)) &&
-                    size['Color'].toUpperCase() === color
-                );
-            });
-
-            if (exactMatchFeet) {
-                orderDetails.push(
-                    `Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet\n- Color: ${getColorName(
-                        color
-                    )}\n- Link: ${exactMatchFeet['Amazon Link']}`
-                );
-
-                messageArea.innerHTML += `
-                    <div class="message success">
-                        <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                        <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-                        <p>Size (HxW): <strong>${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet</strong></p>
-                        <p>Color: <strong>${getColorName(color)}</strong></p>
-                        <p>
-                            <a href="${exactMatchFeet['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
-                                CLICK HERE: To Order Directly on Amazon
-                            </a>
-                        </p>
-                    </div>
-                `;
-                console.log(`Exact match found for Window ${i} in Feet:`, exactMatchFeet);
-                continue;
-            }
-
-            normalizedHeight = height * 2.54;
-            normalizedWidth = width * 2.54;
+        // Normalize feet to cm
+        if (unit === 'Feet') {
+            normalizedHeight = roundToNearestHalf(height * 30.48);
+            normalizedWidth = roundToNearestHalf(width * 30.48);
             normalizedUnit = 'Cm';
         }
 
-        const exactMatch = sizeData.find((size) => {
-            return (
-                size['Unit'] === normalizedUnit &&
-                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
-                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
-                size['Color'].toUpperCase() === color
-            );
-        });
-
-        if (exactMatch) {
-            orderDetails.push(
-                `Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${height} x ${width} ${unit}\n- Color: ${getColorName(
-                    color
-                )}\n- Link: ${exactMatch['Amazon Link']}`
-            );
-
-            messageArea.innerHTML += `
-                <div class="message success">
-                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                    <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-                    <p>Size (HxW): <strong>${height} x ${width} ${unit}</strong></p>
-                    <p>Color: <strong>${getColorName(color)}</strong></p>
-                    <p>
-                        <a href="${exactMatch['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
-                            CLICK HERE: To Order Directly on Amazon
-                        </a>
-                    </p>
-                </div>
-            `;
-            console.log(`Exact match found for Window ${i}:`, exactMatch);
-            continue;
+        // Normalize inches to cm
+        if (unit === 'Inch') {
+            normalizedHeight = roundToNearestHalf(height * 2.54);
+            normalizedWidth = roundToNearestHalf(width * 2.54);
+            normalizedUnit = 'Cm';
         }
+
+        console.log(
+            `Window ${i}: Normalized Input - Height: ${normalizedHeight} ${normalizedUnit}, Width: ${normalizedWidth} ${normalizedUnit}, Color: ${color}`
+        );
 
         let closestMatch = null;
         let smallestDifference = Infinity;
@@ -215,10 +158,8 @@ function calculateSizes() {
 
         if (closestMatch) {
             let convertedSize = '';
-            if (unit === 'Inch' || unit === 'Feet') {
-                convertedSize = `- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(
-                    normalizedWidth
-                )} cm`;
+            if (unit !== 'Cm') {
+                convertedSize = `- Converted Size: ${normalizedHeight} x ${normalizedWidth} Cm`;
             }
 
             orderDetails.push(
@@ -234,9 +175,7 @@ function calculateSizes() {
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
                     ${
                         convertedSize
-                            ? `<p>Custom Size Needed in Cm (HxW): <strong>${roundToNearestHalf(
-                                  normalizedHeight
-                              )} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
+                            ? `<p>Custom Size Needed in Cm (HxW): <strong>${normalizedHeight} x ${normalizedWidth} Cm</strong></p>`
                             : ''
                     }
                     <p>
@@ -258,13 +197,11 @@ function calculateSizes() {
                     </p>
                 </div>
             `;
-            console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
             messageArea.innerHTML += `
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                 <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
             `;
-            console.warn(`No suitable match found for Window ${i}.`);
         }
     }
 
