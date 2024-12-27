@@ -131,7 +131,7 @@ function calculateSizes() {
 
             if (exactMatchFeet) {
                 orderDetails.push(
-                    `Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet\n- Color: ${getColorName(
+                    `Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet (${height} x ${width} Inches, 12in = 1ft)\n- Color: ${getColorName(
                         color
                     )}\n- Link: ${exactMatchFeet['Amazon Link']}`
                 );
@@ -140,7 +140,9 @@ function calculateSizes() {
                     <div class="message success">
                         <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                         <h4>CONGRATULATIONS! <br>YOUR EXACT SIZE IS AVAILABLE ✅</h4>
-                        <p>Size (HxW): <strong>${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(1)} Feet</strong></p>
+                        <p>Size (HxW): <strong>${heightInFeet.toFixed(1)} x ${widthInFeet.toFixed(
+                            1
+                        )} Feet</strong> (${height} x ${width} Inches, 12in = 1ft)</p>
                         <p>Color: <strong>${getColorName(color)}</strong></p>
                         <p>
                             <a href="${exactMatchFeet['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
@@ -213,44 +215,50 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
-    let convertedSize = "";
-    if (unit === 'Inch' || unit === 'Feet') {
-        convertedSize = `- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(
-            normalizedWidth
-        )} cm`;
-    }
-
-    orderDetails.push(
-        `Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n${convertedSize}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${getColorName(color)}\n- Link: ${closestMatch['Amazon Link']}`
-    );
-
-    messageArea.innerHTML += `
-        <div class="message info">
-            <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-            <h4>CLOSEST MATCH FOUND</h4>
-            <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
-            ${
-                convertedSize
-                    ? `<p>Custom Size Needed in Cm (HxW): <strong>${roundToNearestHalf(
-                          normalizedHeight
-                      )} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
-                    : ""
+            let convertedSize = "";
+            if (unit === 'Inch' || unit === 'Feet') {
+                convertedSize = `- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(
+                    normalizedWidth
+                )} cm`;
             }
-            <p>
-                <strong>Closest Size (HxW):</strong> ${closestMatch['Size(HxW)']}
-            </p>
-            <p>
-                <strong>Color:</strong> ${getColorName(color)}
-            </p>
-            <p>
-                <strong>Link:</strong> 
-                <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
-                    ${closestMatch['Amazon Link']}
-                </a>
-            </p>
-        </div>
-    `;
-    console.log(`Closest match found for Window ${i}:`, closestMatch);
+
+            orderDetails.push(
+                `Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n${convertedSize}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${getColorName(color)}\n- Link: ${closestMatch['Amazon Link']}`
+            );
+
+            messageArea.innerHTML += `
+                <div class="message info">
+                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                    <h4>CLOSEST MATCH FOUND : FREE Customization Available</h4>
+                    <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
+                    ${
+                        convertedSize
+                            ? `<p>Custom Size Needed in Cm (HxW): <strong>${roundToNearestHalf(
+                                  normalizedHeight
+                              )} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
+                            : ""
+                    }
+                    <p>
+                        <strong>Closest Size (HxW):</strong> ${closestMatch['Size(HxW)']}
+                    </p>
+                    <p>
+                        <strong>Color:</strong> ${getColorName(color)}
+                    </p>
+                    <p>
+                        <strong>Link:</strong> 
+                        <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
+                            CLICK HERE: To Order Closest Size on Amazon
+                        </a>
+                    </p>
+                    <p style="margin-top: 10px; font-weight: bold;">
+                        NEXT STEPS: 
+                        <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
+                        Please use the WhatsApp button below to send your order & customization request to Team ArmorX. 
+                        We will customize the net to your exact size for FREE.
+                    </p>
+                </div>
+            `;
+            console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
             messageArea.innerHTML += `
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
@@ -262,6 +270,24 @@ function calculateSizes() {
 
     // Call the WhatsApp link generator
     generateWhatsAppLink(orderDetails);
+}
+
+// WhatsApp Button
+generateWhatsAppLink(orderDetails) {
+    if (orderDetails.length === 0) return;
+    const message = encodeURIComponent(orderDetails.join("\n\n"));
+    const whatsappLink = `https://wa.me/917304692553?text=${message}`;
+
+    const messageArea = document.getElementById("messageArea");
+    messageArea.innerHTML += `
+        <div class="whatsapp-button">
+            <a href="${whatsappLink}" target="_blank" style="text-decoration: none;">
+                <div style="display: flex; align-items: center; justify-content: center; background-color: #25D366; color: white; padding: 10px; border-radius: 5px; font-size: 18px; font-weight: bold;">
+                    WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX
+                </div>
+            </a>
+        </div>
+    `;
 }
 
 // Helper function to get color name
