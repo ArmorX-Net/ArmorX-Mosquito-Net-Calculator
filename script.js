@@ -152,7 +152,7 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
 
 // Helper: Format results for closest match
 function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, convertedSize, unit, color) {
-    const whatsappLink = `https://wa.me/917304692553?text=Hello%20Team%20ARMORX,%20I%20have%20placed%20my%20order,%20please%20process%20customization%20request.`;
+    const whatsappLink = generateWhatsAppLink([]);
 
     return `
         <div class="message info">
@@ -185,33 +185,27 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
 function generateWhatsAppLink(orderDetails) {
     if (orderDetails.length === 0) return;
 
+    // Dynamically encode the order details into the WhatsApp message
     const message = encodeURIComponent(
         `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`
     );
+
+    // Create the WhatsApp link dynamically
     const whatsappLink = `https://wa.me/917304692553?text=${message}`;
 
+    // Add the WhatsApp button with icon and functionality
     const messageArea = document.getElementById('messageArea');
     messageArea.innerHTML += `
         <div style="text-align: center; margin-top: 20px;">
-            <a href="${whatsappLink}" target="_blank" style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 10px 20px;
-                background-color: green;
-                color: white;
-                font-size: 16px;
-                font-weight: bold;
-                text-decoration: none;
-                border-radius: 5px;
-                max-width: 400px;
-                margin: auto;
-            ">
+            <a href="${whatsappLink}" target="_blank" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background-color: green; color: white; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 5px;">
                 <span style="flex-grow: 1; text-align: left;">WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX</span>
-                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 52px; height: 52px; margin-left: 10px;">
+                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 24px; height: 24px;">
             </a>
         </div>
     `;
+
+    // Return the link for use in "NEXT STEPS" dynamically
+    return whatsappLink;
 }
 
 // Main calculation logic
