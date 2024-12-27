@@ -17,7 +17,7 @@ fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
         console.error('Error loading size data:', error);
     });
 
-// Helper: Normalize sizes to Feet or Cm based on input unit
+// Helper: Normalize sizes based on input unit
 function normalizeSizes(height, width, unit) {
     if (unit === 'Inch') return [height * 2.54, width * 2.54]; // Inches to cm
     if (unit === 'Feet') return [height * 30.48, width * 30.48]; // Feet to cm
@@ -82,6 +82,70 @@ function findClosestMatch(height, width, color, unit) {
 // Helper: Round to nearest 0.5
 function roundToNearestHalf(value) {
     return Math.round(value * 2) / 2;
+}
+
+// Helper: Format results for exact match
+function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) {
+    const originalSize =
+        unit === 'Inch'
+            ? `${originalHeight} x ${originalWidth} Inches (12 Inches = 1 Foot)`
+            : `${originalHeight} x ${originalWidth} ${unit}`;
+    return `
+        <div class="message success">
+            <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+            <h4>CONGRATULATIONS! YOUR EXACT SIZE IS AVAILABLE ✅</h4>
+            <p>Original Size (HxW): <strong>${originalSize}</strong></p>
+            <p>Size (HxW): <strong>${match['Height(H)']} x ${match['Width(W)']} ${match['Unit']}</strong></p>
+            <p>Color: <strong>${color}</strong></p>
+            <p>
+                <a href="${match['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+                    CLICK HERE: To Order Directly on Amazon
+                </a>
+            </p>
+        </div>
+    `;
+}
+
+// Helper: Format results for closest match
+function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, convertedSize, unit, color) {
+    return `
+        <div class="message info">
+            <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+            <h4>CLOSEST MATCH FOUND: FREE Customization Available</h4>
+            <p>Custom Size Needed (HxW): <strong>${originalHeight} x ${originalWidth} ${unit}</strong></p>
+            ${
+                convertedSize
+                    ? `<p>Converted Size Needed in Cm (HxW): <strong>${convertedSize}</strong></p>`
+                    : ''
+            }
+            <p>Closest Size (HxW): <strong>${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</strong></p>
+            <p>Color: <strong>${color}</strong></p>
+            <p>
+                <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
+                    CLICK HERE: To Order Closest Size on Amazon
+                </a>
+            </p>
+        </div>
+    `;
+}
+
+// Generate a WhatsApp link with customization details
+function generateWhatsAppLink(orderDetails) {
+    if (orderDetails.length === 0) return;
+
+    const message = encodeURIComponent(
+        `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`
+    );
+    const whatsappLink = `https://wa.me/917304692553?text=${message}`;
+
+    const messageArea = document.getElementById('messageArea');
+    messageArea.innerHTML += `
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="${whatsappLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: green; color: white; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 5px;">
+                WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX
+            </a>
+        </div>
+    `;
 }
 
 // Main calculation logic
