@@ -206,7 +206,7 @@ function generateWhatsAppLink(orderDetails) {
                 margin: auto;
             ">
                 <span style="flex-grow: 1; text-align: left;">WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX</span>
-                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 32px; height: 32px; margin-left: 10px;">
+                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 52px; height: 52px; margin-left: 10px;">
             </a>
         </div>
     `;
