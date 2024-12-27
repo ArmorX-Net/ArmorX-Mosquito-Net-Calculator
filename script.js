@@ -139,7 +139,7 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4>CONGRATULATIONS! YOUR EXACT SIZE IS AVAILABLE ✅</h4>
             <p>Original Size (HxW): <strong>${originalSize}</strong></p>
-            <p>Size (HxW): <strong>${match['Height(H)']} x ${match['Width(W)']} ${match['Unit']}</strong></p>
+            <p>Size To Order (HxW): <strong>${match['Height(H)']} x ${match['Width(W)']} ${match['Unit']}</strong></p>
             <p>Color: <strong>${getColorName(color)}</strong></p>
             <p>
                 <a href="${match['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
@@ -159,10 +159,10 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
             <p>Custom Size Needed (HxW): <strong>${originalHeight} x ${originalWidth} ${unit}</strong></p>
             ${
                 convertedSize
-                    ? `<p>Converted Size Needed in Cm (HxW): <strong>${convertedSize}</strong></p>`
+                    ? `<p>Custom Size Needed in Cm: <strong>${convertedSize}</strong></p>`
                     : ''
             }
-            <p>Closest Size (HxW): <strong>${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</strong></p>
+            <p>Closest Size To Order (HxW): <strong>${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</strong></p>
             <p>Color: <strong>${getColorName(color)}</strong></p>
             <p>
                 <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
@@ -226,7 +226,7 @@ function calculateSizes() {
         if (closestMatch) {
             const match = closestMatch.match;
             const convertedSize = closestMatch.convertedSize;
-            orderDetails.push(`Window ${i}: Closest Match Found: Customization Needed\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${convertedSize}\n- Closest Size: ${match['Height(H)']} x ${match['Width(W)']} Cm\n- Color: ${getColorName(color)}\n- Link: ${match['Amazon Link']}`);
+            orderDetails.push(`Window ${i}: Closest Match Found: Customization Needed\n- Custom Size Needed: ${height} x ${width} ${unit}\n- Custom Size in Cm: ${convertedSize}\n- Closest Size Ordered: ${match['Height(H)']} x ${match['Width(W)']} Cm\n- Color: ${getColorName(color)}\n- Link: ${match['Amazon Link']}`);
             messageArea.innerHTML += formatClosestMatch(i, match, height, width, convertedSize, unit, color);
         } else {
             messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}.</p>`;
