@@ -26,9 +26,6 @@ function normalizeSizes(height, width, unit) {
 
 // Helper: Check for exact match
 function findExactMatch(height, width, color, unit) {
-    let normalizedHeight, normalizedWidth;
-
-    // Normalize to all units
     const inputs = {
         Cm: [height, width],
         Feet: [height / 30.48, width / 30.48],
@@ -36,10 +33,8 @@ function findExactMatch(height, width, color, unit) {
     };
 
     for (const targetUnit of ['Feet', 'Cm']) {
-        if (unit === 'Feet') [normalizedHeight, normalizedWidth] = inputs[targetUnit];
-        else [normalizedHeight, normalizedWidth] = normalizeSizes(height, width, unit);
+        const [normalizedHeight, normalizedWidth] = normalizeSizes(height, width, unit);
 
-        // Exact match check
         const match = sizeData.find(size =>
             size['Unit'] === targetUnit &&
             ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
