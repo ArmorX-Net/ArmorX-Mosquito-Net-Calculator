@@ -142,9 +142,10 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
             <p>Size To Order (HxW): <strong>${match['Height(H)']} x ${match['Width(W)']} ${match['Unit']}</strong></p>
             <p>Color: <strong>${getColorName(color)}</strong></p>
             <p>
-                <a href="${match['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
-                    CLICK HERE: To Order Directly on Amazon
-                </a>
+                <br>
+          <a href="${match['Amazon Link']}" target="_blank" style="color: green; font-weight: bold;">
+        CLICK HERE: To Order Directly on Amazon
+         </a>
             </p>
         </div>
     `;
@@ -165,6 +166,7 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
             <p>Closest Size To Order (HxW): <strong>${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</strong></p>
             <p>Color: <strong>${getColorName(color)}</strong></p>
             <p>
+                <br>
                 <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
                     CLICK HERE: To Order Closest Size on Amazon
                 </a>
