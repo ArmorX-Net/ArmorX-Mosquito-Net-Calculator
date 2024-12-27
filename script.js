@@ -3,33 +3,35 @@ let sizeData;
 
 // Fetch the JSON data and prevent caching issues
 fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+    })
     .then(data => {
         sizeData = data;
         console.log('Size data loaded successfully:', sizeData);
     })
-    .catch(error => console.error('Error loading size data:', error));
+    .catch(error => {
+        document.getElementById('messageArea').innerHTML =
+            '<p class="error">Failed to load size data. Please try again later.</p>';
+        console.error('Error loading size data:', error);
+    });
 
 // Helper: Normalize sizes to cm
 function normalizeSizes(height, width, unit) {
-    if (unit === 'Inch') {
-        return [height * 2.54, width * 2.54]; // Inches to cm
-    } else if (unit === 'Feet') {
-        return [height * 30.48, width * 30.48]; // Feet to cm
-    }
+    if (unit === 'Inch') return [height * 2.54, width * 2.54]; // Inches to cm
+    if (unit === 'Feet') return [height * 30.48, width * 30.48]; // Feet to cm
     return [height, width]; // Already in cm
 }
 
 // Helper: Find exact match
 function findExactMatch(normalizedHeight, normalizedWidth, color, unit) {
-    return sizeData.find(size => {
-        return (
-            size['Unit'] === unit &&
-            ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
-                (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
-            size['Color'].toUpperCase() === color
-        );
-    });
+    return sizeData.find(size =>
+        size['Unit'] === unit &&
+        ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
+            (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+        size['Color'].toUpperCase() === color
+    );
 }
 
 // Helper: Find closest match
@@ -37,14 +39,13 @@ function findClosestMatch(normalizedHeight, normalizedWidth, color) {
     let closestMatch = null;
     let smallestDifference = Infinity;
 
-    sizeData.forEach(size => {
-        if (size['Unit'] !== 'Cm' || size['Color'].toUpperCase() !== color) return;
+    const filteredData = sizeData.filter(size => size['Unit'] === 'Cm' && size['Color'].toUpperCase() === color);
 
+    filteredData.forEach(size => {
         const diff1 = Math.abs(size['Height(H)'] - normalizedHeight) + Math.abs(size['Width(W)'] - normalizedWidth);
         const diff2 = Math.abs(size['Height(H)'] - normalizedWidth) + Math.abs(size['Width(W)'] - normalizedHeight);
 
         const difference = Math.min(diff1, diff2);
-
         if (difference < smallestDifference) {
             smallestDifference = difference;
             closestMatch = size;
@@ -93,17 +94,12 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, norm
                     ? `<p>Converted Size Needed in Cm (HxW): <strong>${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
                     : ''
             }
-            <p>Closest Size (HxW): <strong>${closestMatch['Size(HxW)']} Cm</strong></p>
+            <p>Closest Size (HxW): <strong>${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</strong></p>
             <p>Color: <strong>${color}</strong></p>
             <p>
                 <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
                     CLICK HERE: To Order Closest Size on Amazon
                 </a>
-            </p>
-            <p style="margin-top: 20px;">
-                <strong>*NEXT STEPS:*</strong> Please use the below 
-                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
-                WhatsApp button to send your order & customization request to Team ArmorX. We will customize the net to your exact size for FREE.
             </p>
         </div>
     `;
@@ -142,8 +138,8 @@ function calculateSizes() {
         const width = parseFloat(document.getElementById(`width${i}`).value);
         const color = document.getElementById(`color${i}`).value.toUpperCase();
 
-        if (!height || !width || height <= 0 || width <= 0) {
-            messageArea.innerHTML += `<p class="error">Invalid dimensions for Window ${i}.</p>`;
+        if (!validateInput(height, width)) {
+            messageArea.innerHTML += `<p class="error">Invalid dimensions for Window ${i}. Please enter realistic values.</p>`;
             continue;
         }
 
@@ -160,7 +156,7 @@ function calculateSizes() {
         // Find closest match
         const closestMatch = findClosestMatch(normalizedHeight, normalizedWidth, color);
         if (closestMatch) {
-            orderDetails.push(`Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} cm\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${color}\n- Link: ${closestMatch['Amazon Link']}`);
+            orderDetails.push(`Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} cm\n- Closest Size: ${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm\n- Color: ${color}\n- Link: ${closestMatch['Amazon Link']}`);
             messageArea.innerHTML += formatClosestMatch(i, closestMatch, height, width, normalizedHeight, normalizedWidth, unit, color);
         } else {
             messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}.</p>`;
@@ -176,7 +172,7 @@ document.getElementById('numWindows').addEventListener('input', function () {
     const windowInputsDiv = document.getElementById('windowInputs');
     const selectedUnit = document.getElementById('unit').value;
 
-    windowInputsDiv.innerHTML = ''; // Clear previous inputs
+    windowInputsDiv.innerHTML = '';
     if (!isNaN(numWindows) && numWindows > 0) {
         for (let i = 1; i <= numWindows; i++) {
             windowInputsDiv.innerHTML += `
@@ -196,8 +192,20 @@ document.getElementById('numWindows').addEventListener('input', function () {
                 </div>
             `;
         }
-        windowInputsDiv.style.display = 'block'; // Show the inputs container
+        windowInputsDiv.style.display = 'block';
     } else {
-        windowInputsDiv.style.display = 'none'; // Hide the inputs container
+        windowInputsDiv.style.display = 'none';
+    }
+});
+
+// Dynamic placeholder updates when the unit changes
+document.getElementById('unit').addEventListener('change', function () {
+    const selectedUnit = this.value;
+    const numWindows = parseInt(document.getElementById('numWindows').value);
+    for (let i = 1; i <= numWindows; i++) {
+        const heightInput = document.getElementById(`height${i}`);
+        const widthInput = document.getElementById(`width${i}`);
+        if (heightInput) heightInput.placeholder = `Enter Height in ${selectedUnit}`;
+        if (widthInput) widthInput.placeholder = `Enter Width in ${selectedUnit}`;
     }
 });
