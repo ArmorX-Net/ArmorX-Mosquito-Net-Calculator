@@ -191,8 +191,22 @@ function generateWhatsAppLink(orderDetails) {
     const messageArea = document.getElementById('messageArea');
     messageArea.innerHTML += `
         <div style="text-align: center; margin-top: 20px;">
-            <a href="${whatsappLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: green; color: white; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 5px;">
-                WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX
+            <a href="${whatsappLink}" target="_blank" style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 20px;
+                background-color: green;
+                color: white;
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                border-radius: 5px;
+                max-width: 400px;
+                margin: auto;
+            ">
+                <span style="flex-grow: 1; text-align: left;">WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX</span>
+                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 32px; height: 32px; margin-left: 10px;">
             </a>
         </div>
     `;
