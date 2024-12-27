@@ -216,7 +216,7 @@ function calculateSizes() {
         if (exactMatch) {
             const match = exactMatch.match;
             const note = exactMatch.note || '';
-            orderDetails.push(`Window ${i}: Exact Match Found.\n- Size: ${match['Size(HxW)']} ${match['Unit']}\n- Color: ${color}\n- Link: ${match['Amazon Link']}\n${note}`);
+            orderDetails.push(`Window ${i}: Exact Match Found: No Customization Needed\n- Size: ${match['Size(HxW)']} ${match['Unit']}\n- Color: ${color}\n- Link: ${match['Amazon Link']}\n${note}`);
             messageArea.innerHTML += formatExactMatch(i, match, height, width, unit, color);
             continue;
         }
@@ -226,7 +226,7 @@ function calculateSizes() {
         if (closestMatch) {
             const match = closestMatch.match;
             const convertedSize = closestMatch.convertedSize;
-            orderDetails.push(`Window ${i}: Closest Match Found.\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${convertedSize}\n- Closest Size: ${match['Height(H)']} x ${match['Width(W)']} Cm\n- Color: ${color}\n- Link: ${match['Amazon Link']}`);
+            orderDetails.push(`Window ${i}: Closest Match Found: Customization Needed\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${convertedSize}\n- Closest Size: ${match['Height(H)']} x ${match['Width(W)']} Cm\n- Color: ${color}\n- Link: ${match['Amazon Link']}`);
             messageArea.innerHTML += formatClosestMatch(i, match, height, width, convertedSize, unit, color);
         } else {
             messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}.</p>`;
