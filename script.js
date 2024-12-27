@@ -6,7 +6,7 @@ fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
     .then(response => response.json())
     .then(data => {
         sizeData = data;
-        console.log('Size data loaded successfully:', sizeData); // Debug: Verify JSON is loaded
+        console.log('Size data loaded successfully:', sizeData);
     })
     .catch(error => console.error('Error loading size data:', error));
 
@@ -79,7 +79,11 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, norm
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4>CLOSEST MATCH FOUND: FREE Customization Available</h4>
             <p>Custom Size Needed (HxW): <strong>${originalHeight} x ${originalWidth} ${unit}</strong></p>
-            <p>Converted Size Needed in Cm (HxW): <strong>${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>
+            ${
+                unit === 'Inch' || unit === 'Feet'
+                    ? `<p>Converted Size Needed in Cm (HxW): <strong>${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
+                    : ''
+            }
             <p>Closest Size (HxW): <strong>${closestMatch['Size(HxW)']} Cm</strong></p>
             <p>Color: <strong>${color}</strong></p>
             <p>
@@ -87,11 +91,67 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, norm
                     CLICK HERE: To Order Closest Size on Amazon
                 </a>
             </p>
+            <p style="margin-top: 20px;">
+                <strong>*NEXT STEPS:*</strong> Please use the below 
+                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
+                WhatsApp button to send your order & customization request to Team ArmorX. We will customize the net to your exact size for FREE.
+            </p>
         </div>
     `;
 }
 
-// Calculate sizes and find matches
+// Helper: Generate WhatsApp link
+function generateWhatsAppLink(orderDetails) {
+    if (orderDetails.length === 0) return;
+
+    const message = encodeURIComponent(`Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`);
+    const whatsappLink = `https://wa.me/917304692553?text=${message}`;
+
+    const messageArea = document.getElementById('messageArea');
+    messageArea.innerHTML += `
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="${whatsappLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: green; color: white; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 5px;">
+                WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX
+            </a>
+        </div>
+    `;
+}
+
+// Dynamic inputs generation
+document.getElementById('numWindows').addEventListener('input', function () {
+    const numWindows = parseInt(this.value);
+    const windowInputsDiv = document.getElementById('windowInputs');
+    const selectedUnit = document.getElementById('unit').value;
+    windowInputsDiv.innerHTML = '';
+
+    if (!isNaN(numWindows) && numWindows > 0) {
+        for (let i = 1; i <= numWindows; i++) {
+            windowInputsDiv.innerHTML += `
+                <div class="window-input">
+                    <h3>Window ${i}</h3>
+                    <label for="height${i}">Enter Height:</label>
+                    <input type="number" id="height${i}" placeholder="Enter Height in ${selectedUnit}">
+                    <label for="width${i}">Enter Width:</label>
+                    <input type="number" id="width${i}" placeholder="Enter Width in ${selectedUnit}">
+                    <label for="color${i}">Select Color:</label>
+                    <select id="color${i}">
+                        <option value="BK">Black</option>
+                        <option value="GR">Grey</option>
+                        <option value="CR">Cream</option>
+                        <option value="WH">White</option>
+                    </select>
+                </div>
+            `;
+        }
+    }
+});
+
+// Helper: Round to nearest 0.5
+function roundToNearestHalf(value) {
+    return Math.round(value * 2) / 2;
+}
+
+// Main calculation logic
 function calculateSizes() {
     const unit = document.getElementById('unit').value;
     const numWindows = parseInt(document.getElementById('numWindows').value);
@@ -112,20 +172,21 @@ function calculateSizes() {
 
         const [normalizedHeight, normalizedWidth] = normalizeSizes(height, width, unit);
 
-        // Check for exact match
         const exactMatch = findExactMatch(normalizedHeight, normalizedWidth, color, unit === 'Inch' ? 'Feet' : unit);
-
         if (exactMatch) {
+            orderDetails.push(`Window ${i}: Exact Match Found: No Customization Needed.\n- Size: ${height} x ${width} ${unit}\n- Color: ${color}\n- Link: ${exactMatch['Amazon Link']}`);
             messageArea.innerHTML += formatExactMatch(i, exactMatch, height, width, unit, color);
             continue;
         }
 
-        // Find closest match
         const closestMatch = findClosestMatch(normalizedHeight, normalizedWidth, color);
         if (closestMatch) {
+            orderDetails.push(`Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(normalizedWidth)} cm\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${color}\n- Link: ${closestMatch['Amazon Link']}`);
             messageArea.innerHTML += formatClosestMatch(i, closestMatch, height, width, normalizedHeight, normalizedWidth, unit, color);
         } else {
             messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}.</p>`;
         }
     }
+
+    generateWhatsAppLink(orderDetails);
 }
