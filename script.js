@@ -117,18 +117,15 @@ function calculateSizes() {
             normalizedWidth = width,
             normalizedUnit = unit;
 
-        // Normalize feet to cm
-        if (unit === 'Feet') {
-            normalizedHeight = roundToNearestHalf(height * 30.48);
-            normalizedWidth = roundToNearestHalf(width * 30.48);
-            normalizedUnit = 'Cm';
-        }
-
-        // Normalize inches to cm
+        // Normalize dimensions based on user-selected unit
         if (unit === 'Inch') {
-            normalizedHeight = roundToNearestHalf(height * 2.54);
-            normalizedWidth = roundToNearestHalf(width * 2.54);
-            normalizedUnit = 'Cm';
+            normalizedHeight = height * 2.54;
+            normalizedWidth = width * 2.54;
+            normalizedUnit = 'Cm'; // Convert inches to cm for exact match
+        } else if (unit === 'Feet') {
+            normalizedHeight = height * 30.48;
+            normalizedWidth = width * 30.48;
+            normalizedUnit = 'Cm'; // Convert feet to cm for exact match
         }
 
         console.log(
@@ -138,9 +135,9 @@ function calculateSizes() {
         // Exact Match Logic
         const exactMatch = sizeData.find((size) => {
             return (
-                size['Unit'] === normalizedUnit &&
-                ((size['Height(H)'] === normalizedHeight && size['Width(W)'] === normalizedWidth) ||
-                    (size['Height(H)'] === normalizedWidth && size['Width(W)'] === normalizedHeight)) &&
+                size['Unit'] === unit &&
+                ((size['Height(H)'] === height && size['Width(W)'] === width) ||
+                    (size['Height(H)'] === width && size['Width(W)'] === height)) &&
                 size['Color'].toUpperCase() === color
             );
         });
@@ -166,9 +163,10 @@ function calculateSizes() {
                 </div>
             `;
             console.log(`Exact match found for Window ${i}:`, exactMatch);
-            continue;
+            continue; // Skip closest match logic if exact match is found
         }
 
+        // Closest Match Logic
         let closestMatch = null;
         let smallestDifference = Infinity;
 
@@ -191,15 +189,15 @@ function calculateSizes() {
         });
 
         if (closestMatch) {
-            let convertedSize = '';
-            if (unit !== 'Cm') {
-                convertedSize = `- Converted Size: ${normalizedHeight} x ${normalizedWidth} Cm`;
+            let convertedSize = "";
+            if (unit === 'Inch' || unit === 'Feet') {
+                convertedSize = `- Converted Size: ${roundToNearestHalf(normalizedHeight)} x ${roundToNearestHalf(
+                    normalizedWidth
+                )} cm`;
             }
 
             orderDetails.push(
-                `Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n${convertedSize}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${getColorName(
-                    color
-                )}\n- Link: ${closestMatch['Amazon Link']}`
+                `Window ${i}: Closest Match Found: Customization Needed.\n- Custom Size: ${height} x ${width} ${unit}\n${convertedSize}\n- Closest Size: ${closestMatch['Size(HxW)']} cm\n- Color: ${getColorName(color)}\n- Link: ${closestMatch['Amazon Link']}`
             );
 
             messageArea.innerHTML += `
@@ -209,11 +207,13 @@ function calculateSizes() {
                     <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
                     ${
                         convertedSize
-                            ? `<p>Custom Size Needed in Cm (HxW): <strong>${normalizedHeight} x ${normalizedWidth} Cm</strong></p>`
-                            : ''
+                            ? `<p>Custom Size Needed in Cm (HxW): <strong>${roundToNearestHalf(
+                                  normalizedHeight
+                              )} x ${roundToNearestHalf(normalizedWidth)} Cm</strong></p>`
+                            : ""
                     }
                     <p>
-                        <strong>Closest Size (HxW):</strong> <strong>${closestMatch['Size(HxW)']}</strong>
+                        <strong>Closest Size (HxW):</strong> ${closestMatch['Size(HxW)']}
                     </p>
                     <p>
                         <strong>Color:</strong> ${getColorName(color)}
@@ -224,25 +224,21 @@ function calculateSizes() {
                             CLICK HERE: To Order Closest Size on Amazon
                         </a>
                     </p>
-                    <p style="margin-top: 10px;">
-                        <strong>*NEXT STEPS:*</strong> Please use the below 
-                        <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; vertical-align: middle;">
-                        WhatsApp button to send your order & customization request to the Team ARMORX. We will customize the net to your exact size for FREE.
-                    </p>
                 </div>
             `;
+            console.log(`Closest match found for Window ${i}:`, closestMatch);
         } else {
             messageArea.innerHTML += `
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
                 <p class="error">No suitable match found for Window ${i}. Please check your inputs.</p>
             `;
+            console.warn(`No suitable match found for Window ${i}.`);
         }
     }
 
     // Call the WhatsApp link generator
     generateWhatsAppLink(orderDetails);
 }
-
 // Helper function to get color name
 function getColorName(colorCode) 
 {
