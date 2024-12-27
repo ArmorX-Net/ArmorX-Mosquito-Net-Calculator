@@ -4,7 +4,7 @@ let sizeData;
 // Fetch the JSON data and prevent caching issues
 fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
     .then(response => {
-        if (!response.ok) throw new Error(HTTP error! status: ${response.status});
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.json();
     })
     .then(data => {
@@ -41,7 +41,7 @@ function findExactMatch(height, width, color, unit) {
         if (exactMatchFeet) {
             return {
                 match: exactMatchFeet,
-                note: (Original: ${height} x ${width} Inches, 12 Inches = 1 Foot)
+                note: `(Original: ${height} x ${width} Inches, 12 Inches = 1 Foot)`
             };
         }
     }
@@ -80,7 +80,7 @@ function findClosestMatch(height, width, color, unit) {
     return closestMatch
         ? {
               match: closestMatch,
-              convertedSize: ${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} cm
+              convertedSize: `${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} cm`
           }
         : null;
 }
@@ -94,9 +94,9 @@ function roundToNearestHalf(value) {
 function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) {
     const originalSize =
         unit === 'Inch'
-            ? ${originalHeight} x ${originalWidth} Inches (12 Inches = 1 Foot)
-            : ${originalHeight} x ${originalWidth} ${unit};
-    return 
+            ? `${originalHeight} x ${originalWidth} Inches (12 Inches = 1 Foot)`
+            : `${originalHeight} x ${originalWidth} ${unit}`;
+    return `
         <div class="message success">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4>CONGRATULATIONS! YOUR EXACT SIZE IS AVAILABLE ✅</h4>
@@ -109,19 +109,19 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
                 </a>
             </p>
         </div>
-    ;
+    `;
 }
 
 // Helper: Format results for closest match
 function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, convertedSize, unit, color) {
-    return 
+    return `
         <div class="message info">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4>CLOSEST MATCH FOUND: FREE Customization Available</h4>
             <p>Custom Size Needed (HxW): <strong>${originalHeight} x ${originalWidth} ${unit}</strong></p>
             ${
                 convertedSize
-                    ? <p>Converted Size Needed in Cm (HxW): <strong>${convertedSize}</strong></p>
+                    ? `<p>Converted Size Needed in Cm (HxW): <strong>${convertedSize}</strong></p>`
                     : ''
             }
             <p>Closest Size (HxW): <strong>${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</strong></p>
@@ -132,7 +132,7 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
                 </a>
             </p>
         </div>
-    ;
+    `;
 }
 
 // Generate a WhatsApp link with customization details
@@ -140,18 +140,18 @@ function generateWhatsAppLink(orderDetails) {
     if (orderDetails.length === 0) return;
 
     const message = encodeURIComponent(
-        Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.
+        `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`
     );
-    const whatsappLink = https://wa.me/917304692553?text=${message};
+    const whatsappLink = `https://wa.me/917304692553?text=${message}`;
 
     const messageArea = document.getElementById('messageArea');
-    messageArea.innerHTML += 
+    messageArea.innerHTML += `
         <div style="text-align: center; margin-top: 20px;">
             <a href="${whatsappLink}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: green; color: white; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 5px;">
                 WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX
             </a>
         </div>
-    ;
+    `;
 }
 
 // Main calculation logic
@@ -164,12 +164,12 @@ function calculateSizes() {
     messageArea.innerHTML = ''; // Clear previous messages
 
     for (let i = 1; i <= numWindows; i++) {
-        const height = parseFloat(document.getElementById(height${i}).value);
-        const width = parseFloat(document.getElementById(width${i}).value);
-        const color = document.getElementById(color${i}).value.toUpperCase();
+        const height = parseFloat(document.getElementById(`height${i}`).value);
+        const width = parseFloat(document.getElementById(`width${i}`).value);
+        const color = document.getElementById(`color${i}`).value.toUpperCase();
 
         if (!height || !width || height <= 0 || width <= 0) {
-            messageArea.innerHTML += <p class="error">Invalid dimensions for Window ${i}. Please enter valid values.</p>;
+            messageArea.innerHTML += `<p class="error">Invalid dimensions for Window ${i}. Please enter valid values.</p>`;
             continue;
         }
 
@@ -178,7 +178,7 @@ function calculateSizes() {
         if (exactMatch) {
             const match = exactMatch.match;
             const note = exactMatch.note || '';
-            orderDetails.push(Window ${i}: Exact Match Found.\n- Size: ${match['Size(HxW)']} ${match['Unit']}\n- Color: ${color}\n- Link: ${match['Amazon Link']}\n${note});
+            orderDetails.push(`Window ${i}: Exact Match Found.\n- Size: ${match['Size(HxW)']} ${match['Unit']}\n- Color: ${color}\n- Link: ${match['Amazon Link']}\n${note}`);
             messageArea.innerHTML += formatExactMatch(i, match, height, width, unit, color);
             continue;
         }
@@ -188,10 +188,10 @@ function calculateSizes() {
         if (closestMatch) {
             const match = closestMatch.match;
             const convertedSize = closestMatch.convertedSize;
-            orderDetails.push(Window ${i}: Closest Match Found.\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${convertedSize}\n- Closest Size: ${match['Height(H)']} x ${match['Width(W)']} Cm\n- Color: ${color}\n- Link: ${match['Amazon Link']});
+            orderDetails.push(`Window ${i}: Closest Match Found.\n- Custom Size: ${height} x ${width} ${unit}\n- Converted Size: ${convertedSize}\n- Closest Size: ${match['Height(H)']} x ${match['Width(W)']} Cm\n- Color: ${color}\n- Link: ${match['Amazon Link']}`);
             messageArea.innerHTML += formatClosestMatch(i, match, height, width, convertedSize, unit, color);
         } else {
-            messageArea.innerHTML += <p class="error">No suitable match found for Window ${i}.</p>;
+            messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}.</p>`;
         }
     }
 
@@ -207,7 +207,7 @@ document.getElementById('numWindows').addEventListener('input', function () {
     windowInputsDiv.innerHTML = '';
     if (!isNaN(numWindows) && numWindows > 0) {
         for (let i = 1; i <= numWindows; i++) {
-            windowInputsDiv.innerHTML += 
+            windowInputsDiv.innerHTML += `
                 <div class="window-input">
                     <h3>Window ${i}</h3>
                     <label for="height${i}">Enter Height:</label>
@@ -222,7 +222,7 @@ document.getElementById('numWindows').addEventListener('input', function () {
                         <option value="WH">White</option>
                     </select>
                 </div>
-            ;
+            `;
         }
         windowInputsDiv.style.display = 'block';
     } else {
@@ -235,9 +235,9 @@ document.getElementById('unit').addEventListener('change', function () {
     const selectedUnit = this.value;
     const numWindows = parseInt(document.getElementById('numWindows').value);
     for (let i = 1; i <= numWindows; i++) {
-        const heightInput = document.getElementById(height${i});
-        const widthInput = document.getElementById(width${i});
-        if (heightInput) heightInput.placeholder = Enter Height in ${selectedUnit};
-        if (widthInput) widthInput.placeholder = Enter Width in ${selectedUnit};
+        const heightInput = document.getElementById(`height${i}`);
+        const widthInput = document.getElementById(`width${i}`);
+        if (heightInput) heightInput.placeholder = `Enter Height in ${selectedUnit}`;
+        if (widthInput) widthInput.placeholder = `Enter Width in ${selectedUnit}`;
     }
 });
