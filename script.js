@@ -152,8 +152,6 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
 
 // Helper: Format results for closest match
 function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, convertedSize, unit, color) {
-    const whatsappLink = generateWhatsAppLink([]);
-
     return `
         <div class="message info">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
@@ -171,11 +169,11 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
                     CLICK HERE: To Order Closest Size on Amazon
                 </a>
             </p>
-            <p style="font-weight: bold; margin-top: 10px;">
+            <p style="margin-top: 20px; font-weight: bold;">
                 NEXT STEPS:
-            </p>
-            <p>
-                Tap the <a href="${whatsappLink}" target="_blank" style="color: green; font-weight: bold; text-decoration: underline;">WhatsApp button</a> below to send your order and customization details to Team ArmorX for <strong>FREE customization</strong>. Customization is only possible if we receive your details—don’t miss out!
+                <span style="font-weight: normal;">
+                    Tap the <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 16px; height: 16px; vertical-align: middle;"> WhatsApp button below to send your order and customization details to Team ArmorX for <strong>FREE customization</strong>. Customization is only possible if we receive your details—don’t miss out!
+                </span>
             </p>
         </div>
     `;
@@ -185,27 +183,33 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
 function generateWhatsAppLink(orderDetails) {
     if (orderDetails.length === 0) return;
 
-    // Dynamically encode the order details into the WhatsApp message
     const message = encodeURIComponent(
         `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`
     );
-
-    // Create the WhatsApp link dynamically
     const whatsappLink = `https://wa.me/917304692553?text=${message}`;
 
-    // Add the WhatsApp button with icon and functionality
     const messageArea = document.getElementById('messageArea');
     messageArea.innerHTML += `
         <div style="text-align: center; margin-top: 20px;">
-            <a href="${whatsappLink}" target="_blank" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background-color: green; color: white; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 5px;">
+            <a href="${whatsappLink}" target="_blank" style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 20px;
+                background-color: green;
+                color: white;
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                border-radius: 5px;
+                max-width: 400px;
+                margin: auto;
+            ">
                 <span style="flex-grow: 1; text-align: left;">WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX</span>
-                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 24px; height: 24px;">
+                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 62px; height: 62px; margin-left: 10px;">
             </a>
         </div>
     `;
-
-    // Return the link for use in "NEXT STEPS" dynamically
-    return whatsappLink;
 }
 
 // Main calculation logic
