@@ -247,12 +247,13 @@ button:hover {
         font-size: 13px;
     }
 }
+
 /* Hamburger Menu */
 .hamburger-menu {
     position: absolute;
-    top: 15px; /* Slightly below the top of the container */
-    right: 15px; /* Align it within the container boundary */
-    z-index: 10; /* Ensure it stays on top */
+    top: 10px; /* Slightly below the top of the container */
+    right: 10px; /* Inside the right edge of the container */
+    z-index: 10; /* Ensure it stays above other elements */
 }
 
 .hamburger-icon {
@@ -275,7 +276,7 @@ button:hover {
     display: none; /* Hidden by default */
     position: absolute;
     top: 50px; /* Below the hamburger icon */
-    right: 0; /* Align to the right edge */
+    right: 0; /* Align to the right edge of the hamburger icon */
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -309,4 +310,3 @@ button:hover {
 .menu-content li a:hover {
     color: #007bff; /* Highlight link on hover */
 }
-
