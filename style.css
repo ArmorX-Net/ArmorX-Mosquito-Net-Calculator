@@ -73,6 +73,53 @@ button:hover {
     background-color: #88c440;
 }
 
+/* WhatsApp Button Styles */
+.whatsapp-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #25D366; /* WhatsApp green */
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 5px;
+    max-width: 400px;
+    margin: auto;
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.whatsapp-button:hover {
+    background-color: #1caa57; /* Slightly darker green */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
+    transform: scale(1.05); /* Scale up the button slightly */
+}
+
+.whatsapp-button img {
+    width: 62px;
+    height: 62px;
+    margin-left: 10px;
+    transition: transform 0.3s ease; /* Smooth rotation on hover */
+}
+
+.whatsapp-button img:hover {
+    animation: pulse 1s infinite; /* Infinite pulsing effect */
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 /* Results and Message Area */
 #results:empty,
 #messageArea:empty {
