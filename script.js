@@ -188,30 +188,18 @@ function generateWhatsAppLink(orderDetails) {
     const message = encodeURIComponent(
         `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`
     );
+    
     const whatsappLink = `https://wa.me/917304692553?text=${message}`;
-
     const messageArea = document.getElementById('messageArea');
-    messageArea.innerHTML += `
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="${whatsappLink}" target="_blank" style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 10px 20px;
-                background-color: green;
-                color: white;
-                font-size: 16px;
-                font-weight: bold;
-                text-decoration: none;
-                border-radius: 5px;
-                max-width: 400px;
-                margin: auto;
-            ">
-                <span style="flex-grow: 1; text-align: left;">WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX</span>
-                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 62px; height: 62px; margin-left: 10px;">
-            </a>
-        </div>
-    `;
+messageArea.innerHTML += `
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
+            <span style="flex-grow: 1; text-align: left;">WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX</span>
+            <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon">
+        </a>
+    </div>
+`;
+
 }
 
 // Main calculation logic
