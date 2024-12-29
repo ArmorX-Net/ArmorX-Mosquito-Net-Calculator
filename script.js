@@ -153,6 +153,31 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
 
 // Helper: Format results for closest match
 function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, convertedSize, unit, color) {
+        
+    // Check for size area exceeding limit (42550 Sq.Cm)
+    const closestArea = closestMatch['Height(H)'] * closestMatch['Width(W)'];
+    if (closestArea > 42550) {
+        return `
+            <div class="message info">
+                <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                <h4>CLOSEST MATCH NOT FOUND: FREE Customization Available</h4>
+                <p>Custom Size Needed (HxW): <strong>${originalHeight} x ${originalWidth} ${unit}</strong></p>
+                ${
+                    convertedSize
+                        ? `<p>Custom Size Needed in Cm: <strong>${convertedSize}</strong></p>`
+                        : ''
+                }
+                <p>Closest Size To Order (HxW): <strong>${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</strong></p>
+                <p>Color: <strong>${getColorName(color)}</strong></p>
+                <p style="font-weight: bold; color: red; margin-top: 20px;">
+                    This is X-Large size. Tap the WhatsApp icon below to share your customization request with Team ArmorX. Thanks!
+                </p>
+            </div>
+        `;
+    }
+
+    // Regular closest match recommendation
+    
     return `
         <div class="message info">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
