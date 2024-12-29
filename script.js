@@ -153,30 +153,35 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
 
 // Helper: Format results for closest match
 function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, convertedSize, unit, color) {
-        
-    // Calculate the area of the user-provided size in cm²
-    const [heightCm, widthCm] = normalizeSizes(originalHeight, originalWidth, unit);
-    const userArea = heightCm * widthCm;
+    // Parse the converted size to extract dimensions in cm
+    const [convertedHeight, convertedWidth] = convertedSize.split(' x ').map(parseFloat);
 
-    // Check if the user's area exceeds the limit (40500 Sq.Cm)
-    if (userArea > 40500) {
+    // Check if the size exceeds maximum allowable limits with interchangeability
+    const exceedsLimit =
+        !(
+            (convertedWidth <= 185 && convertedHeight <= 230) || // Width ≤ 185, Height ≤ 230
+            (convertedWidth <= 230 && convertedHeight <= 185)    // Width ≤ 230, Height ≤ 185
+        );
+
+    if (exceedsLimit) {
+        // If the size exceeds the limit, show a message without an Amazon link
         return `
             <div class="message info">
                 <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-                <h4>SIZE LIMIT EXCEEDED: FREE Customization Available</h4>
+                <h4>CLOSEST MATCH NOT FOUND: FREE Customization Available</h4>
                 <p>Custom Size Needed (HxW): <strong>${originalHeight} x ${originalWidth} ${unit}</strong></p>
                 ${
                     convertedSize
-                        ? `<p>Custom Size Needed in Cm: <strong>${convertedSize}</strong></p>`
+                        ? `<p>Custom Size Needed in Cm: <strong>${convertedHeight} x ${convertedWidth} Cm</strong></p>`
                         : ''
                 }
+                <p>Color: <strong>${getColorName(color)}</strong></p>
                 <p style="font-weight: bold; color: red; margin-top: 20px;">
                     This is X-Large size. Tap the WhatsApp icon below to share your customization request with Team ArmorX. Thanks!
                 </p>
             </div>
         `;
     }
-
 
     // Regular closest match recommendation
     
@@ -215,7 +220,7 @@ function generateWhatsAppLink(orderDetails, isExceeded = false) {
     // Check if the size exceeds the limit and customize the message
     let message;
     if (isExceeded) {
-        message = `Hello Team ARMORX,\n\nMy window size exceeds the standard size limit (40500 Sq.Cm). I need help with customization. Please assist me with the following details:\n\n${orderDetails.join('\n\n')}\n\nThank you.`;
+        message = `Hello Team ARMORX,\n\nMy window size exceeds the standard size limit. I need help with customization. Please assist me with the following details:\n\n${orderDetails.join('\n\n')}\n\nThank you.`;
     } else {
         message = `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`;
     }
@@ -253,12 +258,17 @@ function calculateSizes() {
             continue;
         }
 
-        // Normalize the size to cm and calculate the area
+       // Normalize the size to cm
         const [heightCm, widthCm] = normalizeSizes(height, width, unit);
-        const userArea = heightCm * widthCm;
 
-        // Check if the user's area exceeds the limit (40500 Sq.Cm)
-        if (userArea > 40500) {
+        // Check if dimensions exceed the maximum allowable limits with interchangeability
+        const exceedsLimit =
+            !(
+                (widthCm <= 185 && heightCm <= 230) || 
+                (widthCm <= 230 && heightCm <= 185)
+            );
+
+        if (exceedsLimit) {
             isExceeded = true; // Set the flag to true
             orderDetails.push(`Window ${i}: Size exceeds limit.\n- Custom Size: ${height} x ${width} ${unit}\n- Custom Size in Cm: ${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} Cm\n- Color: ${getColorName(color)}`);
             messageArea.innerHTML += `
@@ -269,13 +279,12 @@ function calculateSizes() {
                     <p>Custom Size Needed in Cm: <strong>${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} Cm</strong></p>
                     <p>Color: <strong>${getColorName(color)}</strong></p>
                     <p style="font-weight: bold; color: red; margin-top: 20px;">
-                        This is X-Large size. Tap the WhatsApp icon below to share your customization request with Team ArmorX. Thanks!
+                        This size exceeds the maximum allowable dimensions. Tap the WhatsApp icon below to share your customization request with Team ArmorX. Thanks!
                     </p>
                 </div>
             `;
             continue;
         }
-
         // Check for exact match
         const exactMatch = findExactMatch(height, width, color, unit);
         if (exactMatch) {
