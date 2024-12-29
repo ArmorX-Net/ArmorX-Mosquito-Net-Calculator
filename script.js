@@ -209,24 +209,27 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
 }
 
 // Generate a WhatsApp link with customization details
-function generateWhatsAppLink(orderDetails) {
+function generateWhatsAppLink(orderDetails, isExceeded = false) {
     if (orderDetails.length === 0) return;
 
-    const message = encodeURIComponent(
-        `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`
-    );
-    
-    const whatsappLink = `https://wa.me/917304692553?text=${message}`;
-    const messageArea = document.getElementById('messageArea');
-messageArea.innerHTML += `
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
-            <span style="flex-grow: 1; text-align: left;">WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX</span>
-            <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon">
-        </a>
-    </div>
-`;
+    // Check if the size exceeds the limit and customize the message
+    let message;
+    if (isExceeded) {
+        message = `Hello Team ARMORX,\n\nMy window size exceeds the standard size limit (40500 Sq.Cm). I need help with customization. Please assist me with the following details:\n\n${orderDetails.join('\n\n')}\n\nThank you.`;
+    } else {
+        message = `Hello Team ARMORX,\n\nPlease make note of my order:\n\n${orderDetails.join('\n\n')}\n\nThank you.`;
+    }
 
+    const whatsappLink = `https://wa.me/917304692553?text=${encodeURIComponent(message)}`;
+    const messageArea = document.getElementById('messageArea');
+    messageArea.innerHTML += `
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="${whatsappLink}" target="_blank" class="whatsapp-button">
+                <span style="flex-grow: 1; text-align: left;">WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS TO TEAM ARMORX</span>
+                <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon">
+            </a>
+        </div>
+    `;
 }
 
 // Main calculation logic
@@ -235,6 +238,8 @@ function calculateSizes() {
     const numWindows = parseInt(document.getElementById('numWindows').value);
     const messageArea = document.getElementById('messageArea');
     let orderDetails = [];
+
+    let isExceeded = false; // Flag to check if size exceeds the limit
 
     messageArea.innerHTML = ''; // Clear previous messages
 
@@ -245,6 +250,29 @@ function calculateSizes() {
 
         if (!height || !width || height <= 0 || width <= 0) {
             messageArea.innerHTML += `<p class="error">Invalid dimensions for Window ${i}. Please enter valid values.</p>`;
+            continue;
+        }
+
+        // Normalize the size to cm and calculate the area
+        const [heightCm, widthCm] = normalizeSizes(height, width, unit);
+        const userArea = heightCm * widthCm;
+
+        // Check if the user's area exceeds the limit (40500 Sq.Cm)
+        if (userArea > 40500) {
+            isExceeded = true; // Set the flag to true
+            orderDetails.push(`Window ${i}: Size exceeds limit.\n- Custom Size: ${height} x ${width} ${unit}\n- Custom Size in Cm: ${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} Cm\n- Color: ${getColorName(color)}`);
+            messageArea.innerHTML += `
+                <div class="message info">
+                    <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
+                    <h4>SIZE LIMIT EXCEEDED: FREE Customization Available</h4>
+                    <p>Custom Size Needed (HxW): <strong>${height} x ${width} ${unit}</strong></p>
+                    <p>Custom Size Needed in Cm: <strong>${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} Cm</strong></p>
+                    <p>Color: <strong>${getColorName(color)}</strong></p>
+                    <p style="font-weight: bold; color: red; margin-top: 20px;">
+                        This is X-Large size. Tap the WhatsApp icon below to share your customization request with Team ArmorX. Thanks!
+                    </p>
+                </div>
+            `;
             continue;
         }
 
@@ -270,7 +298,8 @@ function calculateSizes() {
         }
     }
 
-    generateWhatsAppLink(orderDetails);
+  // Pass the `isExceeded` flag to the WhatsApp link generator
+    generateWhatsAppLink(orderDetails, isExceeded);
 }
 
 // Dynamic input field generation for windows
