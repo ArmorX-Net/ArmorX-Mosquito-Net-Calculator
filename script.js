@@ -185,39 +185,42 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
 
     // Regular closest match recommendation
     
-   return `
+   // Determine if converted size is needed (only for feet or inches)
+    const showConvertedSize = unit === 'Feet' || unit === 'Inch';
+
+    return `
         <div class="message info">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4 style="font-weight: bold;">CLOSEST MATCH FOUND: FREE Customization Available</h4>
             
             <!-- Custom Size Needed Section -->
-            <p style="margin: 0;">Custom Size Needed (HxW):</p>
-            <p style="margin: 0; padding-left: 10px;">= ${originalHeight} x ${originalWidth} ${unit}</p>
+            <p style="margin: 0; font-size: 14px;">Custom Size Needed (HxW):</p>
+            <p style="margin: 0; padding-left: 10px; font-size: 14px;">= ${originalHeight} x ${originalWidth} ${unit}</p>
             ${
-                convertedSize
-                    ? `<p style="margin: 0; padding-left: 10px;">= ${convertedSize}</p>`
+                showConvertedSize
+                    ? `<p style="margin: 0; padding-left: 10px; font-size: 14px;">= ${convertedSize}</p>`
                     : ''
             }
             <br> <!-- Add a line break for spacing -->
 
             <!-- Closest Size To Order Section -->
-            <p style="margin: 0;">Closest Size To Order (HxW):</p>
-            <p style="margin: 0; padding-left: 10px;">= ${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</p>
+            <p style="margin: 0; font-size: 16px; font-weight: bold;">Closest Size To Order (HxW):</p>
+            <p style="margin: 0; padding-left: 10px; font-size: 16px; font-weight: bold;">= ${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</p>
             <br> <!-- Add a line break for spacing -->
 
             <!-- Color Section -->
-            <p style="margin: 0;">Color: <strong>${getColorName(color)}</strong></p>
+            <p style="margin: 0; font-size: 14px;">Color: <strong>${getColorName(color)}</strong></p>
             
             <!-- Amazon Link -->
             <p>
                 <br>
-                <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
+                <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold; font-size: 14px;">
                     CLICK HERE: To Order Closest Size on Amazon
                 </a>
             </p>
             
             <!-- Next Steps Section -->
-            <p style="margin-top: 20px; font-weight: bold;">
+            <p style="margin-top: 20px; font-weight: bold; font-size: 14px;">
                 NEXT STEPS:
                 <span style="font-weight: normal;">
                     Tap the <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 16px; height: 16px; vertical-align: middle;"> WhatsApp button below to send your order and customization details to Team ArmorX for <strong>FREE customization</strong>. Customization is only possible if we receive your details—don’t miss out!
