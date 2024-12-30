@@ -248,69 +248,6 @@ button:hover {
     }
 }
 
-/* Hamburger Menu */
-.hamburger-menu {
-    position: absolute;
-    top: 10px; /* Slightly below the top of the container */
-    right: 10px; /* Inside the right edge of the container */
-    z-index: 10; /* Ensure it stays above other elements */
-}
-
-.hamburger-icon {
-    background-color: #333;
-    color: #fff;
-    font-size: 20px;
-    padding: 10px;
-    border-radius: 50%;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
-}
-
-.hamburger-icon:hover {
-    background-color: #555; /* Slightly lighter hover effect */
-}
-
-.menu-content {
-    display: none; /* Hidden by default */
-    position: absolute;
-    top: 50px; /* Below the hamburger icon */
-    right: 0; /* Align to the right edge of the hamburger icon */
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-    width: 250px;
-    padding: 10px;
-}
-
-.menu-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.menu-content li {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.menu-content li:last-child {
-    border-bottom: none;
-}
-
-.menu-content li a {
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-}
-
-.menu-content li a:hover {
-    color: #007bff; /* Highlight link on hover */
-}
-
 /* FAQ Section Styles */
 .faq-section {
     margin-top: 30px;
