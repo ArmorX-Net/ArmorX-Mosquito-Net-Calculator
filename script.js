@@ -185,24 +185,38 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
 
     // Regular closest match recommendation
     
-    return `
+   return `
         <div class="message info">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
-            <h4>CLOSEST MATCH FOUND: FREE Customization Available</h4>
-            <p>Custom Size Needed (HxW): <strong>${originalHeight} x ${originalWidth} ${unit}</strong></p>
+            <h4 style="font-weight: bold;">CLOSEST MATCH FOUND: FREE Customization Available</h4>
+            
+            <!-- Custom Size Needed Section -->
+            <p style="margin: 0;">Custom Size Needed (HxW):</p>
+            <p style="margin: 0; padding-left: 10px;">= ${originalHeight} x ${originalWidth} ${unit}</p>
             ${
                 convertedSize
-                    ? `<p>Custom Size Needed in Cm: <strong>${convertedSize}</strong></p>`
+                    ? `<p style="margin: 0; padding-left: 10px;">= ${convertedSize}</p>`
                     : ''
             }
-            <p>Closest Size To Order (HxW): <strong>${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</strong></p>
-            <p>Color: <strong>${getColorName(color)}</strong></p>
+            <br> <!-- Add a line break for spacing -->
+
+            <!-- Closest Size To Order Section -->
+            <p style="margin: 0;">Closest Size To Order (HxW):</p>
+            <p style="margin: 0; padding-left: 10px;">= ${closestMatch['Height(H)']} x ${closestMatch['Width(W)']} Cm</p>
+            <br> <!-- Add a line break for spacing -->
+
+            <!-- Color Section -->
+            <p style="margin: 0;">Color: <strong>${getColorName(color)}</strong></p>
+            
+            <!-- Amazon Link -->
             <p>
                 <br>
                 <a href="${closestMatch['Amazon Link']}" target="_blank" style="color: blue; font-weight: bold;">
                     CLICK HERE: To Order Closest Size on Amazon
                 </a>
             </p>
+            
+            <!-- Next Steps Section -->
             <p style="margin-top: 20px; font-weight: bold;">
                 NEXT STEPS:
                 <span style="font-weight: normal;">
