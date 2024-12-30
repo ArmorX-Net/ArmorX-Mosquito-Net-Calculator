@@ -11,15 +11,16 @@ body {
 }
 
 .container {
-    width: 90%; /* Ensure space on the sides */
-    max-width: 350px; /* Limit width for large devices */
+    width: 90%; /* Default width for desktop */
+    max-width: 350px; /* Limit max width for larger devices */
     background-color: #ffffff;
     padding: 20px;
     margin-top: 20px;
     border-radius: 10px;
-    border: 1px solid #ddd; /* Add a border for definition */
+    border: 1px solid #ddd; /* Border around the container */
+    border-top: 5px solid #a4e053; /* Add the green border on top */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    border-top: 5px solid #a4e053;
+    box-sizing: border-box; /* Ensure border and padding are included in width/height */
 }
 
 .logo {
@@ -218,13 +219,15 @@ button:hover {
     }
 
     .container {
-        width: 95%;
-        max-width: 350px;
-        padding: 15px;
-        margin-top: 15px;
-        border: 1px solid #ddd; /* Ensure borders stay visible */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow for mobile */
-        border-top: 5px solid #a4e053;
+        width: 95%; /* Adjust width for small screens */
+        max-width: 100%; /* Ensure it doesn't exceed viewport width */
+        padding: 15px; /* Reduce padding for smaller screens */
+        margin: 0 auto; /* Center the container */
+        margin-top: 15px; /* Adjust the top margin */
+        border-radius: 10px;
+        border-top: 5px solid #a4e053; /* Ensure border-top is applied on mobile */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for mobile */
+        box-sizing: border-box; /* Include padding and border in dimensions */
     }
 
     h2 {
