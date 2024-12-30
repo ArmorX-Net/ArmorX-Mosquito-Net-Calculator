@@ -220,12 +220,17 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
             </p>
             
             <!-- Next Steps Section -->
-            <p style="margin-top: 20px; font-weight: bold; font-size: 14px;">
-                NEXT STEPS:
-                <span style="font-weight: normal;">
-                    Tap the <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 16px; height: 16px; vertical-align: middle;"> WhatsApp button below to send your order and customization details to Team ArmorX for <strong>FREE customization</strong>. Customization is only possible if we receive your details—don’t miss out!
-                </span>
-            </p>
+            <p style="margin-top: 20px; font-weight: bold; font-size: 16px;">
+    NEXT STEP:
+</p>
+<p style="margin: 0; font-size: 14px; font-weight: normal;">
+    Tap the <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 18px; height: 18px; vertical-align: middle;"> WhatsApp button below to send your customization request to Team ArmorX to <strong>GET FREE customization</strong> to match your exact size.
+</p>
+<br>
+<p style="font-size: 14px; font-weight: bold; color: #004085;">
+    *CUSTOMIZATION IS ONLY POSSIBLE IF WE RECEIVE YOUR ORDER DETAILS ON
+    <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon" style="width: 22px; height: 22px; vertical-align: middle;">*
+</p>
         </div>
     `;
 }
