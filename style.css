@@ -220,7 +220,7 @@ button:hover {
 
     .container {
         width: 95%; /* Adjust width for small screens */
-        max-width: 100%; /* Ensure it doesn't exceed viewport width */
+        max-width: 350px; /* Limit to 350px maximum width even on small screens */
         padding: 15px; /* Reduce padding for smaller screens */
         margin: 0 auto; /* Center the container */
         margin-top: 15px; /* Adjust the top margin */
