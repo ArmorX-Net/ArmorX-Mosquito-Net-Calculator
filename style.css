@@ -65,14 +65,23 @@ button {
     color: #ffffff;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px; /* Increase font size */
+    font-weight: bold; /* Make text bold */
     margin-top: 15px;
-    padding: 10px;
+    padding: 15px 20px; /* Adjust padding to balance button's size */
+    text-transform: uppercase; /* Optional: Make text uppercase for emphasis */
+    border-radius: 5px; /* Keep the rounded corners */
+    width: calc(100% - 20px); /* Keep the button width consistent */
+    max-width: 330px; /* Match the container size */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: Add subtle shadow for a better appearance */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effect */
 }
 
 button:hover {
-    background-color: #88c440;
+    background-color: #88c440; /* Change color on hover */
+    transform: scale(1.05); /* Slightly enlarge button on hover */
 }
+
 
 /* WhatsApp Button Styles */
 .whatsapp-button {
