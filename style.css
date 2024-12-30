@@ -224,6 +224,7 @@ button:hover {
         margin-top: 15px;
         border: 1px solid #ddd; /* Ensure borders stay visible */
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow for mobile */
+        border-top: 5px solid #a4e053;
     }
 
     h2 {
