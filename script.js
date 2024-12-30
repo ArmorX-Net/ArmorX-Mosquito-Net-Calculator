@@ -354,25 +354,6 @@ document.getElementById('unit').addEventListener('change', function () {
         if (widthInput) widthInput.placeholder = `Enter Width in ${selectedUnit}`;
     }
 });
-// Toggle the display of the hamburger menu
-function toggleMenu() {
-    const menuContent = document.getElementById('menuContent');
-    if (menuContent.style.display === 'block') {
-        menuContent.style.display = 'none';
-    } else {
-        menuContent.style.display = 'block';
-    }
-}
-
-// Close the menu when clicking outside of it
-document.addEventListener('click', function (event) {
-    const menuContent = document.getElementById('menuContent');
-    const hamburgerIcon = document.querySelector('.hamburger-icon');
-
-    if (!menuContent.contains(event.target) && !hamburgerIcon.contains(event.target)) {
-        menuContent.style.display = 'none';
-    }
-});
 
 // FAQ Toggle Logic
 function toggleFaq(faqElement) {
