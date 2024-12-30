@@ -280,10 +280,20 @@ function calculateSizes() {
             continue;
         }
 
-       // Normalize the size to cm
+        // Normalize the size to cm
         const [heightCm, widthCm] = normalizeSizes(height, width, unit);
 
-        // Check if dimensions exceed the maximum allowable limits with interchangeability
+        // Check for exact match first
+        const exactMatch = findExactMatch(height, width, color, unit);
+        if (exactMatch) {
+            const match = exactMatch.match;
+            const note = exactMatch.note || '';
+            orderDetails.push(`Window ${i}: Exact Match Found: No Customization Needed\n- Size: ${match['Size(HxW)']} ${match['Unit']}\n- Color: ${getColorName(color)}\n- Link: ${match['Amazon Link']}\n${note}`);
+            messageArea.innerHTML += formatExactMatch(i, match, height, width, unit, color);
+            continue; // Skip the rest of the logic for this window
+        }
+
+        // Only check for dimensions exceeding limits during closest match
         const exceedsLimit =
             !(
                 (widthCm <= 183 && heightCm <= 230) || 
@@ -305,16 +315,7 @@ function calculateSizes() {
                     </p>
                 </div>
             `;
-            continue;
-        }
-        // Check for exact match
-        const exactMatch = findExactMatch(height, width, color, unit);
-        if (exactMatch) {
-            const match = exactMatch.match;
-            const note = exactMatch.note || '';
-            orderDetails.push(`Window ${i}: Exact Match Found: No Customization Needed\n- Size: ${match['Size(HxW)']} ${match['Unit']}\n- Color: ${getColorName(color)}\n- Link: ${match['Amazon Link']}\n${note}`);
-            messageArea.innerHTML += formatExactMatch(i, match, height, width, unit, color);
-            continue;
+            continue; // Skip finding closest match
         }
 
         // Find closest match
@@ -329,7 +330,7 @@ function calculateSizes() {
         }
     }
 
-  // Pass the `isExceeded` flag to the WhatsApp link generator
+    // Pass the `isExceeded` flag to the WhatsApp link generator
     generateWhatsAppLink(orderDetails, isExceeded);
 }
 
