@@ -19,6 +19,7 @@ body {
     border-radius: 10px;
     border: 1px solid #ddd; /* Add a border for definition */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-top: 5px solid #a4e053;
 }
 
 .logo {
