@@ -373,3 +373,31 @@ document.addEventListener('click', function (event) {
         menuContent.style.display = 'none';
     }
 });
+
+// FAQ Toggle Logic
+function toggleFaq(faqElement) {
+    const answer = faqElement.nextElementSibling;
+    const isExpanded = answer.style.display === "block";
+
+    // Collapse all other FAQs
+    document.querySelectorAll(".faq-answer").forEach((faq) => {
+        faq.style.display = "none";
+    });
+    document.querySelectorAll(".arrow").forEach((arrow) => {
+        arrow.textContent = "▼";
+    });
+
+    // Expand the selected FAQ if it wasn't already expanded
+    if (!isExpanded) {
+        answer.style.display = "block";
+        faqElement.querySelector(".arrow").textContent = "▲";
+
+        // Lazy load the video if it's not already loaded
+        const iframe = answer.querySelector("iframe");
+        if (iframe && !iframe.src) {
+            iframe.src = iframe.getAttribute("data-src");
+        }
+    }
+}
+
+
