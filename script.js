@@ -17,6 +17,17 @@ fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
         console.error('Error loading size data:', error);
     });
 
+// Admin State
+let isAdminVisible = false;
+
+// Admin Key Combination Listener
+window.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.shiftKey && event.code === 'KeyU') {
+        toggleAdminInterface();
+    }
+});
+
+
 // Helper: Normalize sizes based on input unit
 function normalizeSizes(height, width, unit) {
     if (unit === 'Inch') return [height * 2.54, width * 2.54]; // Inches to cm
@@ -402,4 +413,66 @@ function toggleFaq(faqElement) {
             iframe.src = iframe.getAttribute("data-src");
         }
     }
+}
+
+// Toggle Admin Interface
+function toggleAdminInterface() {
+    isAdminVisible = !isAdminVisible;
+
+    let adminContainer = document.getElementById('adminContainer');
+    if (!adminContainer) {
+        // Create Admin Container if not exists
+        adminContainer = document.createElement('div');
+        adminContainer.id = 'adminContainer';
+        adminContainer.style.display = 'none';
+        adminContainer.style.border = '1px solid black';
+        adminContainer.style.padding = '10px';
+        adminContainer.style.margin = '20px';
+        adminContainer.style.backgroundColor = '#f9f9f9';
+
+        // Add a title
+        const adminTitle = document.createElement('h3');
+        adminTitle.innerText = 'Admin Panel';
+        adminTitle.style.textAlign = 'center';
+        adminTitle.style.color = '#333';
+        adminContainer.appendChild(adminTitle);
+
+        // Add Format Message for WhatsApp Button
+        const formatButton = document.createElement('button');
+        formatButton.innerText = 'Format Message for WhatsApp';
+        formatButton.style.marginBottom = '10px';
+        formatButton.addEventListener('click', formatMessageForWhatsApp);
+        adminContainer.appendChild(formatButton);
+
+        // Add Message Display Area
+        const adminMessageArea = document.createElement('div');
+        adminMessageArea.id = 'adminMessageArea';
+        adminMessageArea.style.marginTop = '10px';
+        adminMessageArea.style.padding = '10px';
+        adminMessageArea.style.border = '1px solid #ccc';
+        adminMessageArea.style.backgroundColor = '#fff';
+        adminMessageArea.style.minHeight = '50px';
+        adminMessageArea.style.overflowY = 'auto';
+        adminContainer.appendChild(adminMessageArea);
+
+        document.body.appendChild(adminContainer);
+    }
+
+    adminContainer.style.display = isAdminVisible ? 'block' : 'none';
+}
+// Function to Format Message for WhatsApp
+function formatMessageForWhatsApp() {
+    const adminMessageArea = document.getElementById('adminMessageArea');
+
+    // Placeholder: Example orderDetails array from calculateSizes()
+    const orderDetails = [
+        'Window 1: Exact Match Found: No Customization Needed\n- Size: 100 x 200 Cm\n- Color: Black\n- Link: https://example.com',
+        'Window 2: Closest Match Found: Customization Needed\n- Custom Size Needed: 150 x 250 Cm\n- Custom Size in Cm: 152.5 x 252.5 Cm\n- Closest Size Ordered: 153 x 253 Cm\n- Color: Grey\n- Link: https://example.com'
+    ];
+
+    // Combine all orderDetails into a single formatted message
+    const formattedMessage = orderDetails.join('\n\n');
+
+    // Display the message in the admin area
+    adminMessageArea.innerText = formattedMessage;
 }
