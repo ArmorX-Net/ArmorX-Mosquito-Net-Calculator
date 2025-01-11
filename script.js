@@ -417,15 +417,18 @@ function toggleAdminMode() {
     adminFeatures.forEach(feature => {
         feature.style.display = isAdminMode ? 'block' : 'none';
     });
+    console.log("Admin Mode Status:", isAdminMode);
 }
 
 // Add event listener for key combination (Ctrl+Shift+U)
 document.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.shiftKey && event.key === 'u') { // Ctrl+Shift+U
+    const isCtrlShiftU = event.ctrlKey && event.shiftKey && (event.key === 'u' || event.key === 'U');
+    if (isCtrlShiftU) {
         event.preventDefault(); // Prevent default browser action
         toggleAdminMode();
     }
 });
+
 // Function to format message for WhatsApp
 function formatMessageForWhatsApp() {
     if (!isAdminMode) {
@@ -490,5 +493,4 @@ function displayFormattedMessageModal(message) {
 
     document.body.appendChild(modal);
 }
-
 
