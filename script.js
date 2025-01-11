@@ -485,13 +485,17 @@ function formatMessageForWhatsApp() {
 
             // Process the remaining lines for closest or exact matches
             if (lines.some(line => line.includes('Closest Match Found'))) {
-                const sizeDetails = lines.filter(line => line.startsWith('- Custom Size Needed') || line.startsWith('- Closest Size Ordered'));
+                const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
+                const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm')); // New detail for Custom Size in Cm
+                const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
 
                 formattedLines = [
                     windowHeader,
-                    ...sizeDetails,
+                    customSizeDetail,
+                    customSizeInCm, // Include the missing detail
+                    closestSizeDetail,
                     colorDetail,
                     'CLICK HERE: To Order Closest Size on Amazon:',
                     linkDetail
@@ -510,7 +514,7 @@ function formatMessageForWhatsApp() {
                 ];
             }
 
-            return formattedLines.join('\n');
+            return formattedLines.filter(Boolean).join('\n'); // Remove undefined or null values
         }).join('\n\n');
 
         // Display the formatted message in the admin area
