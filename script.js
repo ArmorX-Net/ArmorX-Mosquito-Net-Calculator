@@ -486,7 +486,7 @@ function formatMessageForWhatsApp() {
             // Process the remaining lines for closest or exact matches
             if (lines.some(line => line.includes('Closest Match Found'))) {
                 const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
-                const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm')); // New detail for Custom Size in Cm
+                const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in cm')); // Include the missing detail
                 const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size to Ordered'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
@@ -494,7 +494,7 @@ function formatMessageForWhatsApp() {
                 formattedLines = [
                     windowHeader,
                     customSizeDetail,
-                    customSizeInCm, // Include the missing detail
+                    customSizeInCm,
                     closestSizeDetail,
                     colorDetail,
                     'CLICK HERE: To Order Closest Size on Amazon:',
@@ -504,9 +504,11 @@ function formatMessageForWhatsApp() {
                 const sizeDetail = lines.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
+                const originalUnitNote = lines.find(line => line.includes('(Original:')); // Find the original unit note
 
                 formattedLines = [
                     windowHeader,
+                    originalUnitNote, // Include the original unit note, if available
                     sizeDetail,
                     colorDetail,
                     'CLICK HERE: To Order Directly on Amazon:',
@@ -521,3 +523,4 @@ function formatMessageForWhatsApp() {
         adminMessageArea.innerText = formattedMessage;
     }
 }
+
