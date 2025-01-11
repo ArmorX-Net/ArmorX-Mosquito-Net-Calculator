@@ -128,16 +128,13 @@ function roundToNearestHalf(value) {
     return Math.round(value * 2) / 2;
 }
 
-// Object to store all formatted messages for Admin
-const adminMessages = [];
-
 // Helper: Format results for exact match
 function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) {
     const originalSize =
         unit === 'Inch'
             ? `${originalHeight} x ${originalWidth} Inches (12 Inches = 1 Foot)`
             : `${originalHeight} x ${originalWidth} ${unit}`;
- const formattedMessage = `
+    return `
         <div class="message success">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4>CONGRATULATIONS! YOUR EXACT SIZE IS AVAILABLE ✅</h4>
@@ -152,17 +149,6 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
             </p>
         </div>
     `;
-    
-    // Store message in adminMessages
-    adminMessages.push({
-        windowHeader: `Window ${i}`,
-        customSize: originalSize,
-        closestSize: `${match['Height(H)']} x ${match['Width(W)']} ${match['Unit']}`,
-        color: getColorName(color),
-        amazonLink: match['Amazon Link'],
-    });
-
-    return formattedMessage;
 }
 
 // Helper: Format results for closest match
@@ -196,8 +182,8 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
             </div>
         `;
     }
-    
-// Regular closest match recommendation
+
+    // Regular closest match recommendation
     
    // Determine if converted size is needed (only for feet or inches)
     const showConvertedSize = unit === 'Feet' || unit === 'Inch';
@@ -416,85 +402,4 @@ function toggleFaq(faqElement) {
             iframe.src = iframe.getAttribute("data-src");
         }
     }
-}
-
-// Global variable to track admin mode
-let isAdminMode = false;
-
-// Function to toggle admin mode
-function toggleAdminMode() {
-    isAdminMode = !isAdminMode; // Toggle the flag
-    alert(isAdminMode ? "Admin Mode Activated" : "Admin Mode Deactivated");
-
-    // Show/hide admin features
-    const adminFeatures = document.querySelectorAll('.admin-feature');
-    adminFeatures.forEach(feature => {
-        feature.style.display = isAdminMode ? 'block' : 'none';
-    });
-    console.log("Admin Mode Status:", isAdminMode);
-}
-
-// Add event listener for key combination (Ctrl+Shift+U)
-document.addEventListener('keydown', (event) => {
-    const isCtrlShiftU = event.ctrlKey && event.shiftKey && (event.key === 'u' || event.key === 'U');
-    if (isCtrlShiftU) {
-        event.preventDefault(); // Prevent default browser action
-        toggleAdminMode();
-    }
-});
-function formatMessageForWhatsApp() {
-    if (!isAdminMode) {
-        alert("Access Denied: Admin Mode is required.");
-        return;
-    }
-
-    if (adminMessages.length === 0) {
-        alert("No results found to format!");
-        return;
-    }
-
-    let formattedMessage = '';
-
-    adminMessages.forEach((msg) => {
-        formattedMessage += 
-${msg.windowHeader}
-Custom Size Needed (HxW): ${msg.customSize}
-Closest Size To Order (HxW): ${msg.closestSize}
-Color: ${msg.color}
-CLICK HERE: To Order Closest Size on Amazon:
-${msg.amazonLink}
-
-;
-    });
-
-    // Display the formatted message in a modal for admin to copy
-    displayFormattedMessageModal(formattedMessage.trim());
-}
-
-// Function to display the formatted message in a modal
-function displayFormattedMessageModal(formattedMessage) {
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = '50%';
-    modal.style.left = '50%';
-    modal.style.transform = 'translate(-50%, -50%)';
-    modal.style.backgroundColor = '#fff';
-    modal.style.border = '1px solid #ccc';
-    modal.style.padding = '20px';
-    modal.style.zIndex = '1000';
-    modal.style.width = '90%';
-    modal.style.maxWidth = '600px';
-    modal.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-    modal.style.overflowY = 'auto';
-    modal.style.maxHeight = '80%';
-
-    modal.innerHTML = 
-        <h3 style="margin-top: 0;">Formatted WhatsApp Message</h3>
-        <textarea style="width: 100%; height: 300px; padding: 10px; font-size: 14px;">${message.trim()}</textarea>
-        <div style="text-align: right; margin-top: 10px;">
-            <button onclick="document.body.removeChild(this.parentNode.parentNode)" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px;">Close</button>
-        </div>
-    ;
-
-    document.body.appendChild(modal);
 }
