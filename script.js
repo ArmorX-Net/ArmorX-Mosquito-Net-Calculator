@@ -429,7 +429,6 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// Function to format message for WhatsApp
 function formatMessageForWhatsApp() {
     if (!isAdminMode) {
         alert("Access Denied: Admin Mode is required.");
@@ -446,11 +445,23 @@ function formatMessageForWhatsApp() {
 
     results.forEach((result, index) => {
         const windowHeader = result.querySelector('h3')?.innerText || `Window ${index + 1}`;
-        const customSize = result.querySelector('p:nth-child(3) strong')?.innerText || 'N/A';
-        const closestSize = result.querySelector('p:nth-child(5) strong')?.innerText || 'N/A';
-        const color = result.querySelector('p:nth-child(7) strong')?.innerText || 'N/A';
+
+        // Extract "Custom Size Needed (HxW)"
+        const customSizeHeader = result.querySelector('p:nth-child(3)')?.innerText || '';
+        const customSize = customSizeHeader.split(':')[1]?.trim() || 'N/A';
+
+        // Extract "Closest Size To Order (HxW)"
+        const closestSizeHeader = result.querySelector('p:nth-child(5)')?.innerText || '';
+        const closestSize = closestSizeHeader.split(':')[1]?.trim() || 'N/A';
+
+        // Extract Color
+        const colorHeader = result.querySelector('p:nth-child(7)')?.innerText || '';
+        const color = colorHeader.split(':')[1]?.trim() || 'N/A';
+
+        // Extract Amazon Link
         const amazonLink = result.querySelector('a')?.href || 'No link available';
 
+        // Format message for this window
         formattedMessage += `
 ${windowHeader}
 Custom Size Needed (HxW): ${customSize}
