@@ -487,7 +487,7 @@ function formatMessageForWhatsApp() {
             if (lines.some(line => line.includes('Closest Match Found'))) {
                 const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
                 const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm')); // New detail for Custom Size in Cm
-                const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
+                const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size to Ordered'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
 
