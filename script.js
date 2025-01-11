@@ -134,6 +134,8 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
         unit === 'Inch'
             ? `${originalHeight} x ${originalWidth} Inches (12 Inches = 1 Foot)`
             : `${originalHeight} x ${originalWidth} ${unit}`;
+    
+    const formattedMessage = `
     return `
         <div class="message success">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
@@ -149,6 +151,16 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
             </p>
         </div>
     `;
+// Store message in adminMessages
+    adminMessages.push({
+        windowHeader: `Window ${i}`,
+        customSize: originalSize,
+        closestSize: `${match['Height(H)']} x ${match['Width(W)']} ${match['Unit']}`,
+        color: getColorName(color),
+        amazonLink: match['Amazon Link'],
+    });
+
+    return formattedMessage;
 }
 
 // Helper: Format results for closest match
@@ -435,38 +447,21 @@ function formatMessageForWhatsApp() {
         return;
     }
 
-    const results = document.querySelectorAll('.message.info, .message.success');
-    if (!results.length) {
+    if (!adminMessages.length) {
         alert("No results found to format!");
         return;
     }
 
     let formattedMessage = '';
 
-    results.forEach((result, index) => {
-        // Extract Window Header
-        const windowHeader = result.querySelector('h3')?.innerText || `Window ${index + 1}`;
-
-        // Extract Custom Size Needed
-        const customSizeNeeded = result.querySelector('p:nth-of-type(2)')?.innerText.split(':')[1]?.trim() || 'N/A';
-
-        // Extract Closest Size To Order
-        const closestSizeToOrder = result.querySelector('p:nth-of-type(4)')?.innerText.split(':')[1]?.trim() || 'N/A';
-
-        // Extract Color
-        const color = result.querySelector('p:nth-of-type(6)')?.innerText.split(':')[1]?.trim() || 'N/A';
-
-        // Extract Amazon Link
-        const amazonLink = result.querySelector('a')?.href || 'No link available';
-
-        // Format the message for this window
+    adminMessages.forEach((msg) => {
         formattedMessage += `
-${windowHeader}
-Custom Size Needed (HxW): ${customSizeNeeded}
-Closest Size To Order (HxW): ${closestSizeToOrder}
-Color: ${color}
+${msg.windowHeader}
+Custom Size Needed (HxW): ${msg.customSize}
+Closest Size To Order (HxW): ${msg.closestSize}
+Color: ${msg.color}
 CLICK HERE: To Order Closest Size on Amazon:
-${amazonLink}
+${msg.amazonLink}
 
 `;
     });
