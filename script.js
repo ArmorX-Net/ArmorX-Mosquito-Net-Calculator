@@ -473,49 +473,48 @@ function formatMessageForWhatsApp() {
         return;
     }
 
-    let formattedMessage = '';
-
-    adminMessages.forEach((msg) => {
-        formattedMessage += `
+    const formattedMessage = adminMessages.map(msg => `
 ${msg.windowHeader}
 Custom Size Needed (HxW): ${msg.customSize}
 Closest Size To Order (HxW): ${msg.closestSize}
 Color: ${msg.color}
 CLICK HERE: To Order Closest Size on Amazon:
 ${msg.amazonLink}
+    `).join('\n');
 
-`;
-    });
-
-    // Display the formatted message in a modal for admin to copy
     displayFormattedMessageModal(formattedMessage.trim());
 }
 
-// Function to display the formatted message in a modal
-function displayFormattedMessageModal(formattedMessage) {
+function displayFormattedMessageModal(message) {
     const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = '50%';
-    modal.style.left = '50%';
-    modal.style.transform = 'translate(-50%, -50%)';
-    modal.style.backgroundColor = '#fff';
-    modal.style.border = '1px solid #ccc';
-    modal.style.padding = '20px';
-    modal.style.zIndex = '1000';
-    modal.style.width = '90%';
-    modal.style.maxWidth = '600px';
-    modal.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-    modal.style.overflowY = 'auto';
-    modal.style.maxHeight = '80%';
+    modal.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 20px;
+        z-index: 1000;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        max-height: 80%;
+    `;
 
     modal.innerHTML = `
         <h3 style="margin-top: 0;">Formatted WhatsApp Message</h3>
-        <textarea style="width: 100%; height: 300px; padding: 10px; font-size: 14px;">${message.trim()}</textarea>
+        <textarea style="width: 100%; height: 300px; padding: 10px; font-size: 14px;">${message}</textarea>
         <div style="text-align: right; margin-top: 10px;">
-            <button onclick="document.body.removeChild(this.parentNode.parentNode)" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px;">Close</button>
+            <button onclick="closeModal(this)" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px;">Close</button>
         </div>
     `;
 
     document.body.appendChild(modal);
+}
+
+function closeModal(button) {
+    document.body.removeChild(button.closest('div'));
 }
 
