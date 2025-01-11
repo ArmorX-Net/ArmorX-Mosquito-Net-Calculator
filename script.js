@@ -128,13 +128,16 @@ function roundToNearestHalf(value) {
     return Math.round(value * 2) / 2;
 }
 
+// Object to store all formatted messages for Admin
+const adminMessages = [];
+
 // Helper: Format results for exact match
 function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) {
     const originalSize =
         unit === 'Inch'
             ? `${originalHeight} x ${originalWidth} Inches (12 Inches = 1 Foot)`
             : `${originalHeight} x ${originalWidth} ${unit}`;
-    return `
+ const formattedMessage = `
         <div class="message success">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4>CONGRATULATIONS! YOUR EXACT SIZE IS AVAILABLE ✅</h4>
@@ -149,6 +152,17 @@ function formatExactMatch(i, match, originalHeight, originalWidth, unit, color) 
             </p>
         </div>
     `;
+    
+    // Store message in adminMessages
+    adminMessages.push({
+        windowHeader: `Window ${i}`,
+        customSize: originalSize,
+        closestSize: `${match['Height(H)']} x ${match['Width(W)']} ${match['Unit']}`,
+        color: getColorName(color),
+        amazonLink: match['Amazon Link'],
+    });
+
+    return formattedMessage;
 }
 
 // Helper: Format results for closest match
