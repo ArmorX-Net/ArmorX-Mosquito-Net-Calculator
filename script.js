@@ -404,4 +404,91 @@ function toggleFaq(faqElement) {
     }
 }
 
+// Global variable to track admin mode
+let isAdminMode = false;
+
+// Function to toggle admin mode
+function toggleAdminMode() {
+    isAdminMode = !isAdminMode; // Toggle the flag
+    alert(isAdminMode ? "Admin Mode Activated" : "Admin Mode Deactivated");
+
+    // Show/hide admin features
+    const adminFeatures = document.querySelectorAll('.admin-feature');
+    adminFeatures.forEach(feature => {
+        feature.style.display = isAdminMode ? 'block' : 'none';
+    });
+}
+
+// Add event listener for key combination (Ctrl+Shift+U)
+document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.shiftKey && event.key === 'u') { // Ctrl+Shift+U
+        event.preventDefault(); // Prevent default browser action
+        toggleAdminMode();
+    }
+});
+// Function to format message for WhatsApp
+function formatMessageForWhatsApp() {
+    if (!isAdminMode) {
+        alert("Access Denied: Admin Mode is required.");
+        return;
+    }
+
+    const results = document.querySelectorAll('.message.info, .message.success');
+    if (!results.length) {
+        alert("No results found to format!");
+        return;
+    }
+
+    let formattedMessage = '';
+
+    results.forEach((result, index) => {
+        const windowHeader = result.querySelector('h3')?.innerText || `Window ${index + 1}`;
+        const customSize = result.querySelector('p:nth-child(3) strong')?.innerText || 'N/A';
+        const closestSize = result.querySelector('p:nth-child(5) strong')?.innerText || 'N/A';
+        const color = result.querySelector('p:nth-child(7) strong')?.innerText || 'N/A';
+        const amazonLink = result.querySelector('a')?.href || 'No link available';
+
+        formattedMessage += `
+${windowHeader}
+Custom Size Needed (HxW): ${customSize}
+Closest Size To Order (HxW): ${closestSize}
+Color: ${color}
+CLICK HERE: To Order Closest Size on Amazon:
+${amazonLink}
+
+`;
+    });
+
+    // Display the formatted message in a modal for admin to copy
+    displayFormattedMessageModal(formattedMessage);
+}
+
+// Function to display the formatted message in a modal
+function displayFormattedMessageModal(message) {
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.backgroundColor = '#fff';
+    modal.style.border = '1px solid #ccc';
+    modal.style.padding = '20px';
+    modal.style.zIndex = '1000';
+    modal.style.width = '90%';
+    modal.style.maxWidth = '600px';
+    modal.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+    modal.style.overflowY = 'auto';
+    modal.style.maxHeight = '80%';
+
+    modal.innerHTML = `
+        <h3 style="margin-top: 0;">Formatted WhatsApp Message</h3>
+        <textarea style="width: 100%; height: 300px; padding: 10px; font-size: 14px;">${message.trim()}</textarea>
+        <div style="text-align: right; margin-top: 10px;">
+            <button onclick="document.body.removeChild(this.parentNode.parentNode)" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px;">Close</button>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
 
