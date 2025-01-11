@@ -474,24 +474,43 @@ function formatMessageForWhatsApp() {
     } else {
         // Generate a simplified message format for the admin panel
         const formattedMessage = calculatedOrderDetails.map((detail) => {
-            if (detail.includes('Closest Match Found')) {
-                // Customize the closest match message format
-                const [windowInfo, ...rest] = detail.split('\n');
-                const sizeDetails = rest.filter(line => line.startsWith('- Custom Size Needed') || line.startsWith('- Closest Size Ordered'));
-                const colorDetail = rest.find(line => line.startsWith('- Color'));
-                const linkDetail = rest.find(line => line.startsWith('- Link'));
+            const lines = detail.split('\n');
+            let windowHeader = lines[0]; // Example: "Window 1:"
+            let formattedLines = [];
 
-                return `${windowInfo}:\n${sizeDetails.join('\n')}\n${colorDetail}\nCLICK HERE: To Order Closest Size on Amazon:\n${linkDetail}`;
-            } else if (detail.includes('Exact Match Found')) {
-                // Customize the exact match message format
-                const [windowInfo, ...rest] = detail.split('\n');
-                const sizeDetail = rest.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
-                const colorDetail = rest.find(line => line.startsWith('- Color'));
-                const linkDetail = rest.find(line => line.startsWith('- Link'));
-
-                return `${windowInfo}:\n${sizeDetail}\n${colorDetail}\nCLICK HERE: To Order Closest Size on Amazon:\n${linkDetail}`;
+            // Remove unnecessary match type text after the header
+            if (windowHeader.includes('Closest Match Found') || windowHeader.includes('Exact Match Found')) {
+                windowHeader = windowHeader.split(':')[0] + ':'; // Retain only "Window X:"
             }
-            return detail; // Default if no match type is identified
+
+            // Process the remaining lines for closest or exact matches
+            if (lines.some(line => line.includes('Closest Match Found'))) {
+                const sizeDetails = lines.filter(line => line.startsWith('- Custom Size Needed') || line.startsWith('- Closest Size Ordered'));
+                const colorDetail = lines.find(line => line.startsWith('- Color'));
+                const linkDetail = lines.find(line => line.startsWith('- Link'));
+
+                formattedLines = [
+                    windowHeader,
+                    ...sizeDetails,
+                    colorDetail,
+                    'CLICK HERE: To Order Closest Size on Amazon:',
+                    linkDetail
+                ];
+            } else if (lines.some(line => line.includes('Exact Match Found'))) {
+                const sizeDetail = lines.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
+                const colorDetail = lines.find(line => line.startsWith('- Color'));
+                const linkDetail = lines.find(line => line.startsWith('- Link'));
+
+                formattedLines = [
+                    windowHeader,
+                    sizeDetail,
+                    colorDetail,
+                    'CLICK HERE: To Order Closest Size on Amazon:',
+                    linkDetail
+                ];
+            }
+
+            return formattedLines.join('\n');
         }).join('\n\n');
 
         // Display the formatted message in the admin area
