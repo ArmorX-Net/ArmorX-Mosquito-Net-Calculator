@@ -464,7 +464,7 @@ function toggleAdminInterface() {
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
 }
 
-// Function to Format Message for WhatsApp
+// Function to Format Message for WhatsApp Admin Panel
 function formatMessageForWhatsApp() {
     const adminMessageArea = document.getElementById('adminMessageArea');
 
@@ -472,10 +472,29 @@ function formatMessageForWhatsApp() {
     if (calculatedOrderDetails.length === 0) {
         adminMessageArea.innerText = 'No calculated order details available. Please run the calculator first.';
     } else {
-        // Combine all orderDetails into a single formatted message
-        const formattedMessage = calculatedOrderDetails.join('\n\n');
+        // Generate a simplified message format for the admin panel
+        const formattedMessage = calculatedOrderDetails.map((detail) => {
+            if (detail.includes('Closest Match Found')) {
+                // Customize the closest match message format
+                const [windowInfo, ...rest] = detail.split('\n');
+                const sizeDetails = rest.filter(line => line.startsWith('- Custom Size Needed') || line.startsWith('- Closest Size Ordered'));
+                const colorDetail = rest.find(line => line.startsWith('- Color'));
+                const linkDetail = rest.find(line => line.startsWith('- Link'));
 
-        // Display the message in the admin area
+                return `${windowInfo}:\n${sizeDetails.join('\n')}\n${colorDetail}\nCLICK HERE: To Order Closest Size on Amazon:\n${linkDetail}`;
+            } else if (detail.includes('Exact Match Found')) {
+                // Customize the exact match message format
+                const [windowInfo, ...rest] = detail.split('\n');
+                const sizeDetail = rest.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
+                const colorDetail = rest.find(line => line.startsWith('- Color'));
+                const linkDetail = rest.find(line => line.startsWith('- Link'));
+
+                return `${windowInfo}:\n${sizeDetail}\n${colorDetail}\nCLICK HERE: To Order Closest Size on Amazon:\n${linkDetail}`;
+            }
+            return detail; // Default if no match type is identified
+        }).join('\n\n');
+
+        // Display the formatted message in the admin area
         adminMessageArea.innerText = formattedMessage;
     }
 }
