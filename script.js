@@ -473,7 +473,7 @@ ${msg.amazonLink}
 }
 
 // Function to display the formatted message in a modal
-function displayFormattedMessageModal(message) {
+function displayFormattedMessageModal(formattedMessage) {
     const modal = document.createElement('div');
     modal.style.position = 'fixed';
     modal.style.top = '50%';
