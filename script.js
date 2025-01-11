@@ -275,7 +275,7 @@ function calculateSizes() {
     const unit = document.getElementById('unit').value;
     const numWindows = parseInt(document.getElementById('numWindows').value);
     const messageArea = document.getElementById('messageArea');
-    let orderDetails = [];
+    let orderDetails = []; // Temporary array for current calculation
 
     let isExceeded = false; // Flag to check if size exceeds the limit
 
@@ -340,6 +340,9 @@ function calculateSizes() {
             messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}.</p>`;
         }
     }
+
+    // Store the calculated details for admin access
+    calculatedOrderDetails = orderDetails;
 
     // Pass the `isExceeded` flag to the WhatsApp link generator
     generateWhatsAppLink(orderDetails, isExceeded);
@@ -460,19 +463,19 @@ function toggleAdminInterface() {
 
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
 }
+
 // Function to Format Message for WhatsApp
 function formatMessageForWhatsApp() {
     const adminMessageArea = document.getElementById('adminMessageArea');
 
-    // Placeholder: Example orderDetails array from calculateSizes()
-    const orderDetails = [
-        'Window 1: Exact Match Found: No Customization Needed\n- Size: 100 x 200 Cm\n- Color: Black\n- Link: https://example.com',
-        'Window 2: Closest Match Found: Customization Needed\n- Custom Size Needed: 150 x 250 Cm\n- Custom Size in Cm: 152.5 x 252.5 Cm\n- Closest Size Ordered: 153 x 253 Cm\n- Color: Grey\n- Link: https://example.com'
-    ];
+    // Use the dynamically calculated orderDetails
+    if (calculatedOrderDetails.length === 0) {
+        adminMessageArea.innerText = 'No calculated order details available. Please run the calculator first.';
+    } else {
+        // Combine all orderDetails into a single formatted message
+        const formattedMessage = calculatedOrderDetails.join('\n\n');
 
-    // Combine all orderDetails into a single formatted message
-    const formattedMessage = orderDetails.join('\n\n');
-
-    // Display the message in the admin area
-    adminMessageArea.innerText = formattedMessage;
+        // Display the message in the admin area
+        adminMessageArea.innerText = formattedMessage;
+    }
 }
