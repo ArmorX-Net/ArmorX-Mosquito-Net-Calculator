@@ -444,28 +444,26 @@ function formatMessageForWhatsApp() {
     let formattedMessage = '';
 
     results.forEach((result, index) => {
+        // Extract Window Header
         const windowHeader = result.querySelector('h3')?.innerText || `Window ${index + 1}`;
 
-        // Extract "Custom Size Needed (HxW)"
-        const customSizeHeader = result.querySelector('p:nth-child(3)')?.innerText || '';
-        const customSize = customSizeHeader.split(':')[1]?.trim() || 'N/A';
+        // Extract Custom Size Needed
+        const customSizeNeeded = result.querySelector('p:nth-of-type(2)')?.innerText.split(':')[1]?.trim() || 'N/A';
 
-        // Extract "Closest Size To Order (HxW)"
-        const closestSizeHeader = result.querySelector('p:nth-child(5)')?.innerText || '';
-        const closestSize = closestSizeHeader.split(':')[1]?.trim() || 'N/A';
+        // Extract Closest Size To Order
+        const closestSizeToOrder = result.querySelector('p:nth-of-type(4)')?.innerText.split(':')[1]?.trim() || 'N/A';
 
         // Extract Color
-        const colorHeader = result.querySelector('p:nth-child(7)')?.innerText || '';
-        const color = colorHeader.split(':')[1]?.trim() || 'N/A';
+        const color = result.querySelector('p:nth-of-type(6)')?.innerText.split(':')[1]?.trim() || 'N/A';
 
         // Extract Amazon Link
         const amazonLink = result.querySelector('a')?.href || 'No link available';
 
-        // Format message for this window
+        // Format the message for this window
         formattedMessage += `
 ${windowHeader}
-Custom Size Needed (HxW): ${customSize}
-Closest Size To Order (HxW): ${closestSize}
+Custom Size Needed (HxW): ${customSizeNeeded}
+Closest Size To Order (HxW): ${closestSizeToOrder}
 Color: ${color}
 CLICK HERE: To Order Closest Size on Amazon:
 ${amazonLink}
