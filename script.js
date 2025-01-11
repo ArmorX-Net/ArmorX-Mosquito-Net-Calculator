@@ -509,7 +509,7 @@ function formatMessageForWhatsApp() {
                     windowHeader,
                     sizeDetail,
                     colorDetail,
-                    'CLICK HERE: To Order Closest Size on Amazon:',
+                    'CLICK HERE: To Order Directly on Amazon:',
                     linkDetail
                 ];
             }
