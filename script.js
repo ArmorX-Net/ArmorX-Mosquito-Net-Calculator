@@ -486,7 +486,7 @@ function formatMessageForWhatsApp() {
             // Process the remaining lines for closest or exact matches
             if (lines.some(line => line.includes('Closest Match Found'))) {
                 const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
-                const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in cm')); // Include the missing detail
+                const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm')); // Include the missing detail
                 const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
@@ -523,4 +523,3 @@ function formatMessageForWhatsApp() {
         adminMessageArea.innerText = formattedMessage;
     }
 }
-
