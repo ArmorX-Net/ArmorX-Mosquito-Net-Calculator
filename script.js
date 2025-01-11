@@ -202,7 +202,7 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
    // Determine if converted size is needed (only for feet or inches)
     const showConvertedSize = unit === 'Feet' || unit === 'Inch';
 
-    return `
+   const formattedMessage = ` `
         <div class="message info">
             <h3 style="font-weight: bold; color: black;">Window ${i}</h3>
             <h4 style="font-weight: bold;">CLOSEST MATCH FOUND: FREE Customization Available</h4>
@@ -247,6 +247,25 @@ function formatClosestMatch(i, closestMatch, originalHeight, originalWidth, conv
 </p>
         </div>
     `;
+    // Store message in adminMessages
+    if (closestMatch) {
+    const match = closestMatch.match;
+    const convertedSize = closestMatch.convertedSize;
+    
+    // Push to adminMessages array
+    adminMessages.push({
+        windowHeader: `Window ${i}`,
+        customSize: `${originalHeight} x ${originalWidth} ${unit}` + (unit === 'Feet' || unit === 'Inch' ? ` (${convertedSize})` : ''),
+        closestSize: `${match['Height(H)']} x ${match['Width(W)']} Cm`,
+        color: getColorName(color),
+        amazonLink: match['Amazon Link']
+    });
+
+    // Display customer-facing message
+    messageArea.innerHTML += formatClosestMatch(i, match, originalHeight, originalWidth, convertedSize, unit, color);
+}
+
+    return formattedMessage;
 }
 
 // Generate a WhatsApp link with customization details
@@ -449,7 +468,7 @@ function formatMessageForWhatsApp() {
         return;
     }
 
-    if (!adminMessages.length) {
+    if (adminMessages.length === 0) {
         alert("No results found to format!");
         return;
     }
@@ -469,7 +488,7 @@ ${msg.amazonLink}
     });
 
     // Display the formatted message in a modal for admin to copy
-    displayFormattedMessageModal(formattedMessage);
+    displayFormattedMessageModal(formattedMessage.trim());
 }
 
 // Function to display the formatted message in a modal
