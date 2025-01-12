@@ -344,7 +344,7 @@ iframe {
     font-family: Arial, sans-serif;
     position: absolute; /* Fixed position for alignment */
     top: 20px; /* Distance from the top */
-    right: 10px; /* Bring closer to the calculator */
+    right: 5px; /* Bring closer to the calculator */
     z-index: 1000; /* Ensure it stays on top */
     width: 320px; /* Increased width by 20px */
 }
