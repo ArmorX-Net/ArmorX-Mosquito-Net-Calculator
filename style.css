@@ -334,18 +334,21 @@ iframe {
 
 /* Admin Panel Styles */
 #adminContainer {
-    margin-top: 20px;
-    padding: 20px;
+    position: absolute; /* Positioning for top-left placement */
+    top: 20px; /* Distance from the top of the screen */
+    left: 20px; /* Distance from the left of the screen */
+    width: 300px; /* Set a fixed width for consistent layout */
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 8px;
-    border-top: 5px solid #a4e053;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #a4e053; /* Match green border style */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     font-family: Arial, sans-serif;
-    max-width: 350px;
-    margin: auto;
+    padding: 20px; /* Internal padding for content */
+    z-index: 100; /* Ensure it stays above other elements */
 }
 
+/* Admin Panel Heading */
 #adminContainer h3 {
     text-align: center;
     color: #333;
@@ -353,7 +356,10 @@ iframe {
     margin-bottom: 15px;
 }
 
+/* Admin Panel Buttons */
 #adminContainer button {
+    display: block; /* Ensure buttons are stacked */
+    width: 100%; /* Full-width buttons for consistency */
     padding: 10px 16px;
     background-color: #007bff;
     color: #fff;
@@ -362,7 +368,6 @@ iframe {
     cursor: pointer;
     font-size: 14px;
     margin-bottom: 10px;
-    margin-right: 10px;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -371,6 +376,7 @@ iframe {
     transform: scale(1.05);
 }
 
+/* Admin Message Area */
 #adminMessageArea {
     font-family: Arial, sans-serif;
     font-size: 14px;
@@ -384,4 +390,5 @@ iframe {
     overflow-y: auto;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 
