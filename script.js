@@ -486,20 +486,26 @@ function formatMessageForWhatsApp() {
             // Process the remaining lines for closest or exact matches
             if (lines.some(line => line.includes('Closest Match Found'))) {
                 const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
-                const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm')); // Include the missing detail
+                const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm'));
                 const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
 
-                formattedLines = [
-                    windowHeader,
-                    customSizeDetail,
-                    customSizeInCm,
-                    closestSizeDetail,
-                    colorDetail,
-                    'CLICK HERE: To Order Closest Size on Amazon:',
-                    linkDetail
-                ];
+    // Replace "Closest Size Ordered" with "Closest Size to Order"
+    let updatedClosestSizeDetail = null;
+    if (closestSizeDetail) {
+        updatedClosestSizeDetail = closestSizeDetail.replace('Closest Size Ordered', 'Closest Size to Order');
+    }
+
+    formattedLines = [
+        windowHeader,
+        customSizeDetail,
+        customSizeInCm,
+        updatedClosestSizeDetail, // Use the updated line
+        colorDetail,
+        'CLICK HERE: To Order Closest Size on Amazon:',
+        linkDetail
+    ];
             } else if (lines.some(line => line.includes('Exact Match Found'))) {
                 const sizeDetail = lines.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
