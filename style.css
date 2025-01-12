@@ -346,7 +346,7 @@ iframe {
     top: 20px; /* Distance from the top */
     right: 10px; /* Bring closer to the calculator */
     z-index: 1000; /* Ensure it stays on top */
-    width: 310px; /* Increased width by 10px */
+    width: 320px; /* Increased width by 20px */
 }
 
 /* Admin Panel Heading */
