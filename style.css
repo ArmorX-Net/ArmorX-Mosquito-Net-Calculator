@@ -390,5 +390,7 @@ iframe {
     border-radius: 5px;
     min-height: 50px;
     overflow-y: auto;
+    width: 95%; /* Set to take up most of the container width */
+    margin: 0 auto; /* Center the message area inside the container */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for a clean look */
 }
