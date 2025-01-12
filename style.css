@@ -331,7 +331,33 @@ iframe {
     font-size: 14px;
     color: #999;
 }
-/* Admin Panel Copy Button Styles */
+
+/* Admin Panel Styles */
+#adminContainer {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border-top: 5px solid #a4e053; /* ArmorX Green top border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    font-family: Arial, sans-serif;
+    position: absolute; /* Fixed position for alignment */
+    top: 20px; /* Distance from the top */
+    left: 20px; /* Distance from the left */
+    z-index: 1000; /* Ensure it stays on top */
+    width: 300px; /* Fixed width for a consistent layout */
+}
+
+/* Admin Panel Heading */
+#adminContainer h3 {
+    text-align: center;
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+/* Admin Panel Buttons */
 #adminContainer button {
     padding: 8px 16px;
     background-color: #a4e053; /* ArmorX Green button */
@@ -350,6 +376,7 @@ iframe {
     transform: scale(1.05); /* Slight scale effect */
 }
 
+/* Admin Message Area */
 #adminMessageArea {
     font-family: Arial, sans-serif;
     font-size: 14px;
@@ -361,4 +388,5 @@ iframe {
     border-radius: 5px;
     min-height: 50px;
     overflow-y: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for a clean look */
 }
