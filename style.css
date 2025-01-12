@@ -359,15 +359,17 @@ iframe {
 
 /* Admin Panel Buttons */
 #adminContainer button {
-    padding: 8px 16px;
+    display: block; /* Ensures each button occupies its own line */
+    margin: 0 auto 10px auto; /* Centers the button horizontally */
+    padding: 10px 20px; /* Adjust padding for balanced proportions */
     background-color: #a4e053; /* ArmorX Green button */
     color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    margin-bottom: 10px;
-    margin-right: 10px;
+    width: 80%; /* Button width relative to container */
+    text-align: center; /* Centers the text within the button */
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
