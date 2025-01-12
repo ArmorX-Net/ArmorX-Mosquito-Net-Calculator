@@ -382,15 +382,16 @@ iframe {
 #adminMessageArea {
     font-family: Arial, sans-serif;
     font-size: 14px;
-    line-height: 1.6;
-    white-space: pre-wrap; /* Preserve line breaks */
-    padding: 15px; /* Internal spacing */
+    line-height: 1.6; /* Space between lines for readability */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    overflow-x: auto; /* Enable horizontal scrolling for long lines */
+    overflow-y: auto; /* Retain vertical scrolling for long content */
+    padding: 15px; /* Internal padding for spacing */
     background-color: #ffffff;
     border: 1px solid #ccc;
     border-radius: 5px;
-    min-height: 50px;
-    overflow-y: auto;
-    width: 90%; /* Ensure the message area doesn't take up the full container width */
-    margin: 0 auto; /* Center it within the Admin Panel */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for clean aesthetics */
+    min-height: 50px; /* Minimum height to ensure visibility */
+    width: 90%; /* Occupy 90% of the container's width */
+    margin: 0 auto; /* Center the message area within the Admin Panel */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for aesthetics */
 }
