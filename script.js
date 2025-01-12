@@ -417,7 +417,8 @@ function toggleFaq(faqElement) {
         }
     }
 }
-//  Admin Panel
+
+// Admin Panel
 function toggleAdminInterface() {
     isAdminVisible = !isAdminVisible;
 
@@ -426,11 +427,7 @@ function toggleAdminInterface() {
         // Create Admin Container if not exists
         adminContainer = document.createElement('div');
         adminContainer.id = 'adminContainer';
-        adminContainer.style.display = 'none';
-        adminContainer.style.border = '1px solid black';
-        adminContainer.style.padding = '10px';
-        adminContainer.style.margin = '20px';
-        adminContainer.style.backgroundColor = '#f9f9f9';
+        adminContainer.className = 'admin-panel'; // Use CSS class for styling
 
         // Add a title
         const adminTitle = document.createElement('h3');
@@ -442,27 +439,21 @@ function toggleAdminInterface() {
         // Add Copy Button
         const copyButton = document.createElement('button');
         copyButton.innerText = 'Copy Text';
-        copyButton.style.marginBottom = '10px';
-        copyButton.style.marginRight = '10px';
+        copyButton.className = 'admin-button'; // Use CSS class for buttons
         copyButton.addEventListener('click', copyAdminText);
         adminContainer.appendChild(copyButton);
 
         // Add Format Message for WhatsApp Button
         const formatButton = document.createElement('button');
         formatButton.innerText = 'Format Message for WhatsApp';
-        formatButton.style.marginBottom = '10px';
+        formatButton.className = 'admin-button'; // Use CSS class for buttons
         formatButton.addEventListener('click', formatMessageForWhatsApp);
         adminContainer.appendChild(formatButton);
 
         // Add Message Display Area
         const adminMessageArea = document.createElement('div');
         adminMessageArea.id = 'adminMessageArea';
-        adminMessageArea.style.marginTop = '10px';
-        adminMessageArea.style.padding = '10px';
-        adminMessageArea.style.border = '1px solid #ccc';
-        adminMessageArea.style.backgroundColor = '#fff';
-        adminMessageArea.style.minHeight = '50px';
-        adminMessageArea.style.overflowY = 'auto';
+        adminMessageArea.className = 'admin-message-area'; // Use CSS class for message area
         adminContainer.appendChild(adminMessageArea);
 
         document.body.appendChild(adminContainer);
@@ -470,17 +461,18 @@ function toggleAdminInterface() {
 
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
 }
+
 // Function to Copy text from Admin Panel
 function copyAdminText() {
     const adminMessageArea = document.getElementById('adminMessageArea');
     if (adminMessageArea) {
         const textToCopy = adminMessageArea.innerText;
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert('Text copied to clipboard!');
-        }).catch((err) => {
-            console.error('Error copying text: ', err);
-            alert('Failed to copy text. Please try again.');
-        });
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => alert('Text copied to clipboard!'))
+            .catch((err) => {
+                console.error('Error copying text: ', err);
+                alert('Failed to copy text. Please try again.');
+            });
     }
 }
 
