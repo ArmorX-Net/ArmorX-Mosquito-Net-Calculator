@@ -525,7 +525,7 @@ function formatMessageForWhatsApp() {
         customSizeInCm,
         updatedClosestSizeDetail, // Use the updated line
         colorDetail,
-        'CLICK HERE: To Order Closest Size on Amazon:',
+        'CLICK HERE: To Order *Closest Size* on Amazon:',
         linkDetail
     ];
             } else if (lines.some(line => line.includes('Exact Match Found'))) {
@@ -539,7 +539,7 @@ function formatMessageForWhatsApp() {
                     originalUnitNote, // Include the original unit note, if available
                     sizeDetail,
                     colorDetail,
-                    'CLICK HERE: To Order Directly on Amazon:',
+                    'CLICK HERE: To Order *Exact Size* on Amazon:',
                     linkDetail
                 ];
             }
