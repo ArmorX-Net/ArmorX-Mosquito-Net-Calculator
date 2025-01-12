@@ -419,27 +419,28 @@ function toggleFaq(faqElement) {
 }
 
 // Toggle Admin Interface
-// Function to Toggle Admin Interface
-function toggleAdminInterface() {
-    const adminContainer = document.getElementById('adminContainer');
-    if (adminContainer) {
-        adminContainer.style.display = adminContainer.style.display === 'none' ? 'block' : 'none';
+document.addEventListener('DOMContentLoaded', () => {
+    // Toggle Admin Interface
+    function toggleAdminInterface() {
+        const adminContainer = document.getElementById('adminContainer');
+        if (adminContainer) {
+            adminContainer.style.display = adminContainer.style.display === 'none' ? 'block' : 'none';
+        }
     }
-}
 
-// Function to Copy Admin Panel Text
-function copyAdminText() {
-    const adminMessageArea = document.getElementById('adminMessageArea');
-    if (adminMessageArea) {
-        const textToCopy = adminMessageArea.innerText;
-        navigator.clipboard.writeText(textToCopy)
-            .then(() => alert('Text copied to clipboard!'))
-            .catch((err) => {
-                console.error('Error copying text:', err);
-                alert('Failed to copy text. Please try again.');
-            });
+    // Copy Admin Panel Text
+    function copyAdminText() {
+        const adminMessageArea = document.getElementById('adminMessageArea');
+        if (adminMessageArea) {
+            const textToCopy = adminMessageArea.innerText;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => alert('Text copied to clipboard!'))
+                .catch((err) => {
+                    console.error('Error copying text:', err);
+                    alert('Failed to copy text. Please try again.');
+                });
+        }
     }
-}
 
 // Function to Format Message for WhatsApp Admin Panel
 function formatMessageForWhatsApp() {
