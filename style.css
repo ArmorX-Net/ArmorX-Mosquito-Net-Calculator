@@ -391,7 +391,7 @@ iframe {
     border: 1px solid #ccc;
     border-radius: 5px;
     min-height: 50px; /* Minimum height to ensure visibility */
-    width: 90%; /* Occupy 90% of the container's width */
+    width: 95%; /* Occupy 95% of the container's width */
     margin: 0 auto; /* Center the message area within the Admin Panel */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for aesthetics */
 }
