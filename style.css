@@ -331,6 +331,7 @@ iframe {
     font-size: 14px;
     color: #999;
 }
+
 /* Admin Panel Styles */
 #adminContainer {
     margin-top: 20px;
@@ -338,10 +339,10 @@ iframe {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 8px;
-    border-top: 5px solid #a4e053; /* Match green border style */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-top: 5px solid #a4e053;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
-    max-width: 350px; /* Match the container width */
+    max-width: 350px;
     margin: auto;
 }
 
@@ -354,7 +355,7 @@ iframe {
 
 #adminContainer button {
     padding: 10px 16px;
-    background-color: #007bff; /* Blue button */
+    background-color: #007bff;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -366,14 +367,15 @@ iframe {
 }
 
 #adminContainer button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-    transform: scale(1.05); /* Slight scale effect */
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
 #adminMessageArea {
+    font-family: Arial, sans-serif;
     font-size: 14px;
     line-height: 1.6;
-    white-space: pre-wrap; /* Preserve line breaks */
+    white-space: pre-wrap;
     padding: 15px;
     background-color: #ffffff;
     border: 1px solid #ccc;
@@ -381,37 +383,5 @@ iframe {
     min-height: 50px;
     overflow-y: auto;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Admin Panel Copy Button Styles */
-#adminContainer button {
-    padding: 8px 16px;
-    background-color: #007bff; /* Blue button */
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-bottom: 10px;
-    margin-right: 10px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-#adminContainer button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-    transform: scale(1.05); /* Slight scale effect */
-}
-
-#adminMessageArea {
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    white-space: pre-wrap; /* Preserve line breaks */
-    padding: 15px;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    min-height: 50px;
-    overflow-y: auto;
 }
 
