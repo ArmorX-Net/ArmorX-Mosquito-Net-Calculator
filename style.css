@@ -344,9 +344,9 @@ iframe {
     font-family: Arial, sans-serif;
     position: absolute; /* Fixed position for alignment */
     top: 20px; /* Distance from the top */
-    right: 20px; /* Distance from the right */
+    right: 10px; /* Bring closer to the calculator */
     z-index: 1000; /* Ensure it stays on top */
-    width: 300px; /* Fixed width for a consistent layout */
+    width: 310px; /* Increased width by 10px */
 }
 
 /* Admin Panel Heading */
