@@ -346,7 +346,7 @@ iframe {
 }
 
 #adminContainer button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #a4e053; /* ArmorX Green on hover */
     transform: scale(1.05); /* Slight scale effect */
 }
 
