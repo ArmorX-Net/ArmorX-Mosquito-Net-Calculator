@@ -472,10 +472,54 @@ function formatMessageForWhatsApp() {
     if (calculatedOrderDetails.length === 0) {
         adminMessageArea.innerText = 'No calculated order details available. Please run the calculator first.';
     } else {
-        // Combine all orderDetails into a single formatted message
-        const formattedMessage = calculatedOrderDetails.join('\n\n');
+        // Generate a simplified message format for the admin panel
+        const formattedMessage = calculatedOrderDetails.map((detail) => {
+            const lines = detail.split('\n');
+            let windowHeader = lines[0]; // Example: "Window 1:"
+            let formattedLines = [];
 
-        // Display the message in the admin area
+            // Remove unnecessary match type text after the header
+            if (windowHeader.includes('Closest Match Found') || windowHeader.includes('Exact Match Found')) {
+                windowHeader = windowHeader.split(':')[0] + ':'; // Retain only "Window X:"
+            }
+
+            // Process the remaining lines for closest or exact matches
+            if (lines.some(line => line.includes('Closest Match Found'))) {
+                const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
+                const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm')); // Include the missing detail
+                const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
+                const colorDetail = lines.find(line => line.startsWith('- Color'));
+                const linkDetail = lines.find(line => line.startsWith('- Link'));
+
+                formattedLines = [
+                    windowHeader,
+                    customSizeDetail,
+                    customSizeInCm,
+                    closestSizeDetail,
+                    colorDetail,
+                    'CLICK HERE: To Order Closest Size on Amazon:',
+                    linkDetail
+                ];
+            } else if (lines.some(line => line.includes('Exact Match Found'))) {
+                const sizeDetail = lines.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
+                const colorDetail = lines.find(line => line.startsWith('- Color'));
+                const linkDetail = lines.find(line => line.startsWith('- Link'));
+                const originalUnitNote = lines.find(line => line.includes('(Original:')); // Find the original unit note
+
+                formattedLines = [
+                    windowHeader,
+                    originalUnitNote, // Include the original unit note, if available
+                    sizeDetail,
+                    colorDetail,
+                    'CLICK HERE: To Order Directly on Amazon:',
+                    linkDetail
+                ];
+            }
+
+            return formattedLines.filter(Boolean).join('\n'); // Remove undefined or null values
+        }).join('\n\n');
+
+        // Display the formatted message in the admin area
         adminMessageArea.innerText = formattedMessage;
     }
 }
