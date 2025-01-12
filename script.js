@@ -417,30 +417,72 @@ function toggleFaq(faqElement) {
         }
     }
 }
+//  Admin Panel
+function toggleAdminInterface() {
+    isAdminVisible = !isAdminVisible;
 
-// Toggle Admin Interface
-document.addEventListener('DOMContentLoaded', () => {
-    // Toggle Admin Interface
-    function toggleAdminInterface() {
-        const adminContainer = document.getElementById('adminContainer');
-        if (adminContainer) {
-            adminContainer.style.display = adminContainer.style.display === 'none' ? 'block' : 'none';
-        }
+    let adminContainer = document.getElementById('adminContainer');
+    if (!adminContainer) {
+        // Create Admin Container if not exists
+        adminContainer = document.createElement('div');
+        adminContainer.id = 'adminContainer';
+        adminContainer.style.display = 'none';
+        adminContainer.style.border = '1px solid black';
+        adminContainer.style.padding = '10px';
+        adminContainer.style.margin = '20px';
+        adminContainer.style.backgroundColor = '#f9f9f9';
+
+        // Add a title
+        const adminTitle = document.createElement('h3');
+        adminTitle.innerText = 'Admin Panel';
+        adminTitle.style.textAlign = 'center';
+        adminTitle.style.color = '#333';
+        adminContainer.appendChild(adminTitle);
+
+        // Add Copy Button
+        const copyButton = document.createElement('button');
+        copyButton.innerText = 'Copy Text';
+        copyButton.style.marginBottom = '10px';
+        copyButton.style.marginRight = '10px';
+        copyButton.addEventListener('click', copyAdminText);
+        adminContainer.appendChild(copyButton);
+
+        // Add Format Message for WhatsApp Button
+        const formatButton = document.createElement('button');
+        formatButton.innerText = 'Format Message for WhatsApp';
+        formatButton.style.marginBottom = '10px';
+        formatButton.addEventListener('click', formatMessageForWhatsApp);
+        adminContainer.appendChild(formatButton);
+
+        // Add Message Display Area
+        const adminMessageArea = document.createElement('div');
+        adminMessageArea.id = 'adminMessageArea';
+        adminMessageArea.style.marginTop = '10px';
+        adminMessageArea.style.padding = '10px';
+        adminMessageArea.style.border = '1px solid #ccc';
+        adminMessageArea.style.backgroundColor = '#fff';
+        adminMessageArea.style.minHeight = '50px';
+        adminMessageArea.style.overflowY = 'auto';
+        adminContainer.appendChild(adminMessageArea);
+
+        document.body.appendChild(adminContainer);
     }
 
-    // Copy Admin Panel Text
-    function copyAdminText() {
-        const adminMessageArea = document.getElementById('adminMessageArea');
-        if (adminMessageArea) {
-            const textToCopy = adminMessageArea.innerText;
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => alert('Text copied to clipboard!'))
-                .catch((err) => {
-                    console.error('Error copying text:', err);
-                    alert('Failed to copy text. Please try again.');
-                });
-        }
+    adminContainer.style.display = isAdminVisible ? 'block' : 'none';
+}
+// Function to Copy text from Admin Panel
+function copyAdminText() {
+    const adminMessageArea = document.getElementById('adminMessageArea');
+    if (adminMessageArea) {
+        const textToCopy = adminMessageArea.innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert('Text copied to clipboard!');
+        }).catch((err) => {
+            console.error('Error copying text: ', err);
+            alert('Failed to copy text. Please try again.');
+        });
     }
+}
 
 // Function to Format Message for WhatsApp Admin Panel
 function formatMessageForWhatsApp() {
@@ -507,6 +549,3 @@ function formatMessageForWhatsApp() {
         adminMessageArea.innerText = formattedMessage;
     }
 }
-// Attach event listeners to the Admin Panel buttons
-document.getElementById('copyButton').addEventListener('click', copyAdminText);
-document.getElementById('formatButton').addEventListener('click', formatMessageForWhatsApp);
