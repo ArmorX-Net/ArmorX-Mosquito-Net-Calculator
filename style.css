@@ -331,4 +331,35 @@ iframe {
     font-size: 14px;
     color: #999;
 }
+/* Admin Panel Copy Button Styles */
+#adminContainer button {
+    padding: 8px 16px;
+    background-color: #007bff; /* Blue button */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#adminContainer button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: scale(1.05); /* Slight scale effect */
+}
+
+#adminMessageArea {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap; /* Preserve line breaks */
+    padding: 15px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    min-height: 50px;
+    overflow-y: auto;
+}
 
