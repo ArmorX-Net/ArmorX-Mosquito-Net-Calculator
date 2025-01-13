@@ -332,21 +332,25 @@ iframe {
     color: #999;
 }
 
+/* Flex Container */
+.flex-container {
+    display: flex; /* Enables flexbox layout */
+    justify-content: space-between; /* Ensures even spacing between items */
+    align-items: flex-start; /* Aligns items at the top */
+    gap: 20px; /* Adds consistent spacing between Admin Panel and Calculator */
+    padding: 20px; /* Optional: Adds padding around the flex container */
+    box-sizing: border-box; /* Ensures padding doesn’t affect width */
+    
 /* Admin Panel Styles */
 #adminContainer {
     border: 1px solid #ccc;
     padding: 20px;
-    margin: 20px;
     background-color: #f9f9f9;
     border-radius: 8px;
     border-top: 5px solid #a4e053; /* ArmorX Green top border */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     font-family: Arial, sans-serif;
-    position: absolute; /* Fixed position for alignment */
-    top: 20px; /* Distance from the top */
-    right: 5px; /* Bring closer to the calculator */
-    z-index: 1000; /* Ensure it stays on top */
-    width: 320px; /* Increased width by 20px */
+    width: 320px; /* Fixed width for consistency */
 }
 
 /* Admin Panel Heading */
