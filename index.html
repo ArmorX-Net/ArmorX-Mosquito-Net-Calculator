@@ -7,19 +7,25 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Share Container -->
     <div class="share-container">
-    <button id="shareButton">Share This Calculator</button>
-</div>
+        <button id="shareButton">Share This Calculator</button>
+    </div>
+    
+    <!-- Main Calculator Container -->
     <div class="container">
         <!-- Logo Section -->
         <div class="logo">
             <img src="https://i.postimg.cc/Ls8tJXFk/ARMORX-Logo.png" alt="ArmorX Logo">
         </div>
+
         <!-- Title Section -->
         <h2>ArmorX Window Mosquito Net Calculator</h2>
+
         <!-- Step 1: Number of Window Nets -->
         <label for="numWindows">How many window nets do you need?</label>
         <input type="number" id="numWindows" min="1" placeholder="Enter number of window nets">
+
         <!-- Step 2: Unit of Measurement -->
         <label for="unit">Select Unit of Measurement:</label>
         <select id="unit" onchange="updatePlaceholders()">
@@ -27,12 +33,16 @@
             <option value="Inch">Inch</option>
             <option value="Feet">Feet</option>
         </select>
+
         <!-- Step 3: Dynamic Window Inputs -->
         <div id="windowInputs"></div>
+
         <!-- Step 4: Submit Button -->
         <button onclick="calculateSizes()">Find Closest Matches</button>
+
         <!-- Step 5: Results Section -->
         <div id="results"></div>
+
         <!-- Step 6: Static Message Area -->
         <div id="messageArea" class="message-area"></div>
 
@@ -86,6 +96,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Script -->
     <script src="script.js"></script>
 </body>
 </html>
