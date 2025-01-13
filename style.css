@@ -395,3 +395,28 @@ iframe {
     margin: 0 auto; /* Center the message area within the Admin Panel */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for aesthetics */
 }
+/* Share Container */
+.share-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px; /* Space between share button and calculator */
+}
+
+/* Share Button */
+#shareButton {
+    background-color: #25D366; /* WhatsApp green color */
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#shareButton:hover {
+    background-color: #1caa57; /* Slightly darker green on hover */
+    transform: scale(1.05); /* Scale up effect */
+}
