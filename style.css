@@ -397,10 +397,9 @@ iframe {
 }
 /* Share Button Container */
 .share-container {
-    position: absolute;
-    top: 10px;
-    right: 10px; /* Adjust placement inside the container */
-    z-index: 100; /* Ensure it's on top */
+    display: flex;
+    justify-content: center; /* Center the button horizontally */
+    margin-bottom: 15px; /* Add space below the button */
 }
 
 /* Share Button Styles */
@@ -418,6 +417,8 @@ iframe {
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 90%; /* Adjust width relative to the container */
+    max-width: 250px; /* Limit the maximum width */
 }
 
 #shareButton:hover {
@@ -427,6 +428,6 @@ iframe {
 
 /* Share Icon Styles */
 .share-icon {
-    width: 20px; /* Icon size */
-    height: 20px;
+    width: 35px; /* Icon size */
+    height: 35px;
 }
