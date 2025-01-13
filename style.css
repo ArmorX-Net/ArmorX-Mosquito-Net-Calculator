@@ -397,10 +397,10 @@ iframe {
 }
 /* Share Container */
 .share-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px; /* Space between share button and calculator */
+    position: absolute; /* Place the button relative to the container */
+    top: 10px; /* Top spacing inside the container */
+    right: 10px; /* Right spacing inside the container */
+    z-index: 100; /* Ensure it stays on top */
 }
 
 /* Share Button */
@@ -409,14 +409,14 @@ iframe {
     color: #ffffff;
     border: none;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 14px;
     border-radius: 5px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 #shareButton:hover {
     background-color: #1caa57; /* Slightly darker green on hover */
-    transform: scale(1.05); /* Scale up effect */
+    transform: scale(1.05); /* Slight hover effect */
 }
