@@ -1,6 +1,5 @@
 {
     "en": {
-"title": "ArmorX Window Mosquito Net Calculator",
         "labelNumWindows": "How many window nets do you need?",
         "placeholderNumWindows": "Enter number of window nets",
         "labelUnit": "Select Unit of Measurement:",
@@ -49,7 +48,6 @@
         "orderDetails": "Select the closest size or customize your net size. Then click the WhatsApp button to share your order details with Team ArmorX."
     },
     "hi": {
-"title": "आर्मरएक्स विंडो मच्छरदानी कैलकुलेटर",
         "labelNumWindows": "आपको कितने विंडो नेट्स की जरूरत है?",
         "placeholderNumWindows": "विंडो नेट्स की संख्या दर्ज करें",
         "labelUnit": "माप की इकाई चुनें:",
@@ -98,7 +96,6 @@
         "orderDetails": "निकटतम आकार चुनें या अपना आकार कस्टमाइज़ करें। फिर टीम ArmorX के साथ अपना ऑर्डर विवरण साझा करने के लिए WhatsApp बटन पर क्लिक करें।"
     },
     "ta": {
-"title": "ஆர்மொர்எக்ஸ் ஜன்னல் கொசு வலை கணிகவியல் சாதனம்",
         "labelNumWindows": "உங்களுக்கு எத்தனை ஜன்னல் வலைகள் தேவை?",
         "placeholderNumWindows": "ஜன்னல் வலைகளின் எண்ணிக்கையை உள்ளிடவும்",
         "labelUnit": "அளவீட்டு அலகை தேர்ந்தெடுக்கவும்:",
@@ -149,7 +146,6 @@
 }
 {
     "te": {
-"title": "ఆర్మోర్‌ఎక్స్ విండో దోమల నెట్ కాలిక్యులేటర్",
         "labelNumWindows": "మీకు ఎంతమంది విండో నెట్‌లు అవసరం?",
         "placeholderNumWindows": "విండో నెట్‌ల సంఖ్యను నమోదు చేయండి",
         "labelUnit": "పరిమాణం యూనిట్‌ను ఎంచుకోండి:",
@@ -198,7 +194,6 @@
         "orderDetails": "సమీప పరిమాణాన్ని ఎంచుకోండి లేదా మీ నెట్ పరిమాణాన్ని అనుకూలీకరించండి. తరువాత, మీ ఆర్డర్ వివరాలను ArmorX బృందంతో షేర్ చేయడానికి WhatsApp బటన్‌ను క్లిక్ చేయండి."
     },
     "kn": {
-"title": "ಆರ್ಮೋರ್‌ಎಕ್ಸ್ ವಿಂಡೋ ಮಶಕ ದಾರಿ ಹಂಚಿಕೆಯನ್ನು ಲೆಕ್ಕಹಾಕುವಿಕ",
         "labelNumWindows": "ನಿಮಗೆ ಎಷ್ಟು ವಿಂಡೋ ನೆಟ್‌ಗಳು ಬೇಕು?",
         "placeholderNumWindows": "ವಿಂಡೋ ನೆಟ್‌ಗಳ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
         "labelUnit": "ಮಾಪನ ಘಟಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ:",
@@ -247,7 +242,6 @@
         "orderDetails": "ಹತ್ತಿರದ ಗಾತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ ಅಥವಾ ನಿಮ್ಮ ನೆಟ್ ಗಾತ್ರವನ್ನು ಕಸ್ಟಮೈಸ್ ಮಾಡಿ. ನಂತರ, ನಿಮ್ಮ ಆರ್ಡರ್ ವಿವರಗಳನ್ನು ArmorX ತಂಡದೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಲು WhatsApp ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ."
     },
     "ml": {
-"title": "ആർമോർ‌എക്സ് വിൻഡോ കൊതുക് നെറ്റ് കാൽക്കുലേറ്റർ",
         "labelNumWindows": "നിങ്ങൾക്ക് എത്ര വിൻഡോ നെറ്റുകൾ വേണം?",
         "placeholderNumWindows": "വിൻഡോ നെറ്റുകളുടെ എണ്ണം നൽകുക",
         "labelUnit": "അളവ് യൂണിറ്റ് തിരഞ്ഞെടുക്കുക:",
