@@ -1,5 +1,7 @@
 // Load the size data from the JSON file
 let sizeData;
+// Global variable to store translations
+let translations;
 
 // Fetch the JSON data and prevent caching issues
 fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
@@ -16,6 +18,22 @@ fetch('MQ_Sizes_Unit_Color_and_Links.json?v=' + new Date().getTime())
             '<p class="error">Failed to load size data. Please try again later.</p>';
         console.error('Error loading size data:', error);
     });
+
+// Fetch translations JSON
+fetch('languages.json')
+    .then((response) => response.json())
+    .then((data) => {
+        translations = data;
+        // Set default language to English
+        updateLanguage('en');
+    })
+    .catch((error) => console.error('Error loading translations:', error));
+
+// Update page text based on selected language
+function updateLanguage(languageCode) {
+    if (!translations || !translations[languageCode]) return;
+
+    const lang = translations[languageCode];
 
 // Admin State
 let isAdminVisible = false;
@@ -563,4 +581,47 @@ document.getElementById('shareButton').addEventListener('click', function () {
             .then(() => alert('Link copied to clipboard! Share it manually.'))
             .catch((err) => console.error('Error copying link:', err));
     }
+});
+
+    // Update page text based on selected language
+function updateLanguage(languageCode) {
+    if (!translations || !translations[languageCode]) return;
+
+    const lang = translations[languageCode];
+
+    // Update all elements based on IDs and classes
+    document.title = lang.title || document.title;
+    document.getElementById('labelNumWindows').textContent = lang.labelNumWindows;
+    document.getElementById('numWindows').placeholder = lang.placeholderNumWindows;
+    document.getElementById('labelUnit').textContent = lang.labelUnit;
+    document.getElementById('buttonCalculate').textContent = lang.buttonCalculate;
+    document.getElementById('resultsTitle').textContent = lang.resultsTitle;
+    document.getElementById('shareButton').textContent = lang.share;
+    
+    // Update dynamic inputs if present
+    document.querySelectorAll('.labelHeight').forEach((el) => {
+        el.textContent = lang.labelHeight;
+    });
+    document.querySelectorAll('.labelWidth').forEach((el) => {
+        el.textContent = lang.labelWidth;
+    });
+    document.querySelectorAll('.labelColor').forEach((el) => {
+        el.textContent = lang.labelColor;
+    });
+
+    // Update FAQ section
+    document.getElementById('faqMeasure').textContent = lang.faqMeasure;
+    document.getElementById('faqInstall').textContent = lang.faqInstall;
+    document.getElementById('faqOrder').textContent = lang.faqOrder;
+
+    // Update placeholder text dynamically
+    document.querySelectorAll('.placeholderText').forEach((el) => {
+        el.placeholder = lang.placeholderNumWindows;
+    });
+}
+
+// Add event listener for language change
+document.getElementById('languageSelect').addEventListener('change', (event) => {
+    const selectedLanguage = event.target.value;
+    updateLanguage(selectedLanguage);
 });
