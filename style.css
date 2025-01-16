@@ -431,3 +431,16 @@ iframe {
     width: 35px; /* Icon size */
     height: 35px;
 }
+/* Language */
+.language-select-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+#languageSelect {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
