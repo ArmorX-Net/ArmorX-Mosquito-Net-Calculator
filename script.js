@@ -546,7 +546,7 @@ function formatMessageForWhatsApp() {
 document.getElementById('shareButton').addEventListener('click', function () {
     const shareData = {
         title: 'ArmorX Window Mosquito Net Calculator',
-        text: "Hey look! Try out this ArmorX calculator to get customize Mosquito Net protection for your home. It's super easy to use! Check it out yourself.",
+        text: "Hey look what I found! Try out this amazing ArmorX calculator to get a perfect customize fit *Window Mosquito Net* protection for your home. It's so easy to use! Check it out yourself.",
         url: 'https://armorx-net.github.io/ArmorX-Mosquito-Net-Calculator/'
     };
 
