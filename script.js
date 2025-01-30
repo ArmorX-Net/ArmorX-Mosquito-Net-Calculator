@@ -556,16 +556,9 @@ function generateInvoice() {
         return;
     }
     
-    let invoiceContainer = document.getElementById('invoiceContainer');
-    if (!invoiceContainer) {
-        invoiceContainer = document.createElement('div');
-        invoiceContainer.id = 'invoiceContainer';
-        invoiceContainer.className = 'invoice-panel';
-        document.body.appendChild(invoiceContainer);
-    }
+    let adminMessageArea = document.getElementById('adminMessageArea');
+    if (!adminMessageArea) return;
     
-    invoiceContainer.innerHTML = "";
-
     // Price selection dropdown
     const priceSelection = document.createElement('select');
     priceSelection.innerHTML = `
@@ -574,24 +567,26 @@ function generateInvoice() {
         <option value="Event Price">Event Price</option>
     `;
     priceSelection.id = 'priceSelection';
-    invoiceContainer.appendChild(priceSelection);
 
-    // Discount selection
-    const discountSelection = document.createElement('select');
-    discountSelection.innerHTML = `
-        <option value="0">No Discount</option>
-        <option value="5">5% Discount</option>
-        <option value="10">10% Discount</option>
-    `;
-    discountSelection.id = 'discountSelection';
-    invoiceContainer.appendChild(discountSelection);
+    // Discount input field
+    const discountInput = document.createElement('input');
+    discountInput.type = 'number';
+    discountInput.id = 'discountInput';
+    discountInput.placeholder = 'Enter Discount %';
+    discountInput.min = '0';
+    discountInput.max = '100';
 
     // Generate Invoice Button
     const generateBtn = document.createElement('button');
     generateBtn.innerText = 'Generate Invoice';
     generateBtn.className = 'admin-button';
-    generateBtn.addEventListener('click', () => displayInvoice(priceSelection.value, discountSelection.value));
-    invoiceContainer.appendChild(generateBtn);
+    generateBtn.addEventListener('click', () => displayInvoice(priceSelection.value, discountInput.value));
+
+    // Clear existing content
+    adminMessageArea.innerHTML = '';
+    adminMessageArea.appendChild(priceSelection);
+    adminMessageArea.appendChild(discountInput);
+    adminMessageArea.appendChild(generateBtn);
 }
 
 // Function to Display Invoice
@@ -603,7 +598,6 @@ function displayInvoice(priceType, discountPercent) {
         const lines = detail.split('\n');
         const windowNumber = lines[0];
         const sizeInfo = lines.find(line => line.includes('Custom Size Needed') || line.includes('Size To Order'));
-        const colorInfo = lines.find(line => line.includes('Color'));
         const closestSizeDetail = lines.find(line => line.includes('Closest Size To Order'));
         
         const match = sizeData.find(size => closestSizeDetail && size['Size(HxW)'] === closestSizeDetail.split(':')[1].trim());
@@ -611,49 +605,22 @@ function displayInvoice(priceType, discountPercent) {
         if (match) {
             const price = parseFloat(match[priceType]);
             totalAmount += price;
-            invoiceData.push({ windowNumber, sizeInfo, colorInfo, price });
+            invoiceData.push(`${windowNumber}\n${sizeInfo} - INR ${price}/-`);
         }
     });
     
     let discountAmount = (totalAmount * parseInt(discountPercent)) / 100;
     let finalAmount = totalAmount - discountAmount;
 
-    // Display Invoice
-    let invoiceContainer = document.getElementById('invoiceContainer');
-    let invoiceHTML = `<h3>Invoice</h3><table border="1" style="width: 100%; text-align: left;">
-        <tr>
-            <th>Window</th>
-            <th>Size</th>
-            <th>Color</th>
-            <th>Price (${priceType})</th>
-        </tr>`;
-    
-    invoiceData.forEach(item => {
-        invoiceHTML += `
-        <tr>
-            <td>${item.windowNumber}</td>
-            <td>${item.sizeInfo}</td>
-            <td>${item.colorInfo}</td>
-            <td>₹${item.price.toFixed(2)}</td>
-        </tr>`;
-    });
-    
-    invoiceHTML += `
-        <tr>
-            <td colspan="3" style="text-align: right; font-weight: bold;">Total:</td>
-            <td>₹${totalAmount.toFixed(2)}</td>
-        </tr>
-        <tr>
-            <td colspan="3" style="text-align: right; font-weight: bold;">Discount (${discountPercent}%):</td>
-            <td>- ₹${discountAmount.toFixed(2)}</td>
-        </tr>
-        <tr>
-            <td colspan="3" style="text-align: right; font-weight: bold;">Final Total:</td>
-            <td>₹${finalAmount.toFixed(2)}</td>
-        </tr>
-    </table>`;
-    
-    invoiceContainer.innerHTML += invoiceHTML;
+    // Display Invoice in Admin Message Area
+    let invoiceMessage = `\n\n<b>Invoice:</b>\n${invoiceData.join('\n')}\n\n<b>Total:</b> INR ${totalAmount.toFixed(2)}/-`;
+    if (discountAmount > 0) {
+        invoiceMessage += `\n<b>Discount (${discountPercent}%):</b> - INR ${discountAmount.toFixed(2)}/-`;
+    }
+    invoiceMessage += `\n<b>Final Total:</b> INR ${finalAmount.toFixed(2)}/-`;
+
+    let adminMessageArea = document.getElementById('adminMessageArea');
+    adminMessageArea.innerHTML += `<pre>${invoiceMessage}</pre>`;
 }
 
 
