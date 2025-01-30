@@ -597,10 +597,10 @@ function displayInvoice(priceType, discountPercent) {
     calculatedOrderDetails.forEach(detail => {
         const lines = detail.split('\n');
         const windowNumber = lines[0];
-        const sizeInfo = lines.find(line => line.includes('Custom Size Needed') || line.includes('Size To Order'));
-        const closestSizeDetail = lines.find(line => line.includes('Closest Size To Order'));
+        const sizeInfo = lines.find(line => line.includes('Custom Size Needed') || line.includes('Size:'));
+        const closestSizeDetail = lines.find(line => line.includes('Closest Size To Order') || line.includes('Size:'));
         
-        const match = sizeData.find(size => closestSizeDetail && size['Size(HxW)'] === closestSizeDetail.split(':')[1].trim());
+        const match = sizeData.find(size => closestSizeDetail && (size['Size(HxW)'] === closestSizeDetail.split(':')[1].trim() || size['Size(HxW)'] === sizeInfo.split(':')[1].trim()));
         
         if (match) {
             const price = parseFloat(match[priceType]);
@@ -622,7 +622,6 @@ function displayInvoice(priceType, discountPercent) {
     let adminMessageArea = document.getElementById('adminMessageArea');
     adminMessageArea.innerHTML += `<pre>${invoiceMessage}</pre>`;
 }
-
 
 // Share Functionality
 document.getElementById('shareButton').addEventListener('click', function () {
