@@ -449,6 +449,13 @@ function toggleAdminInterface() {
         formatButton.className = 'admin-button'; // Use CSS class for buttons
         formatButton.addEventListener('click', formatMessageForWhatsApp);
         adminContainer.appendChild(formatButton);
+        
+        // Add Create Invoice Button
+        const invoiceButton = document.createElement('button');
+        invoiceButton.innerText = 'Create Invoice';
+        invoiceButton.className = 'admin-button';
+        invoiceButton.addEventListener('click', generateInvoice);
+        adminContainer.appendChild(invoiceButton);
 
         // Add Message Display Area
         const adminMessageArea = document.createElement('div');
