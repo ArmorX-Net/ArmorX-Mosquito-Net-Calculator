@@ -275,11 +275,11 @@ function calculateSizes() {
     const unit = document.getElementById('unit').value;
     const numWindows = parseInt(document.getElementById('numWindows').value);
     const messageArea = document.getElementById('messageArea');
-    let orderDetails = []; // Temporary array for current calculation
+    let orderDetails = []; // This is your plain text details (if still needed)
 
-    let isExceeded = false; // Flag to check if size exceeds the limit
-
-    messageArea.innerHTML = ''; // Clear previous messages
+    // Clear previous order data (structured orderData) and messages
+    orderData = [];
+    messageArea.innerHTML = '';
 
     for (let i = 1; i <= numWindows; i++) {
         const height = parseFloat(document.getElementById(`height${i}`).value);
@@ -299,20 +299,30 @@ function calculateSizes() {
         if (exactMatch) {
             const match = exactMatch.match;
             const note = exactMatch.note || '';
+            // Append plain text details as before (if needed)
             orderDetails.push(`Window ${i}: Exact Match Found: No Customization Needed\n- Size: ${match['Size(HxW)']} ${match['Unit']}\n- Color: ${getColorName(color)}\n- Link: ${match['Amazon Link']}\n${note}`);
             messageArea.innerHTML += formatExactMatch(i, match, height, width, unit, color);
-            continue; // Skip the rest of the logic for this window
+            // Populate structured orderData
+            orderData.push({
+                windowNumber: i,
+                matchType: "Exact",
+                size: unit === 'Inch'
+                      ? `${height} x ${width} Inches (12 Inches = 1 Foot)`
+                      : `${height} x ${width} ${unit}`,
+                priceRecord: match
+            });
+            continue; // Skip the rest for this window
         }
 
-        // Only check for dimensions exceeding limits during closest match
+        // Check for dimensions exceeding limits
         const exceedsLimit =
             !(
-                (widthCm <= 183 && heightCm <= 230) || 
+                (widthCm <= 183 && heightCm <= 230) ||
                 (widthCm <= 230 && heightCm <= 183)
             );
 
         if (exceedsLimit) {
-            isExceeded = true; // Set the flag to true
+            // Handle exceeded sizes (if needed, you may choose not to add to orderData)
             orderDetails.push(`Window ${i}: Size exceeds limit.\n- Custom Size: ${height} x ${width} ${unit}\n- Custom Size in Cm: ${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} Cm\n- Color: ${getColorName(color)}`);
             messageArea.innerHTML += `
                 <div class="message info">
@@ -326,26 +336,34 @@ function calculateSizes() {
                     </p>
                 </div>
             `;
-            continue; // Skip finding closest match
+            // Optionally, you can add a record for the exceeded size if you want it invoiced.
+            continue;
         }
 
-        // Find closest match
+        // Find closest match if no exact match is found
         const closestMatch = findClosestMatch(height, width, color, unit);
         if (closestMatch) {
             const match = closestMatch.match;
             const convertedSize = closestMatch.convertedSize;
             orderDetails.push(`Window ${i}: Closest Match Found: Customization Needed\n- Custom Size Needed: ${height} x ${width} ${unit}\n- Custom Size in Cm: ${convertedSize}\n- Closest Size Ordered: ${match['Height(H)']} x ${match['Width(W)']} Cm\n- Color: ${getColorName(color)}\n- Link: ${match['Amazon Link']}`);
             messageArea.innerHTML += formatClosestMatch(i, match, height, width, convertedSize, unit, color);
+            // Populate structured orderData for closest match
+            orderData.push({
+                windowNumber: i,
+                matchType: "Closest",
+                size: `${height} x ${width} ${unit}`, // Use the customer's input size here
+                priceRecord: match
+            });
         } else {
             messageArea.innerHTML += `<p class="error">No suitable match found for Window ${i}.</p>`;
         }
     }
 
-    // Store the calculated details for admin access
+    // Store the calculated details for admin access if needed (still keeping the plain text)
     calculatedOrderDetails = orderDetails;
 
-    // Pass the `isExceeded` flag to the WhatsApp link generator
-    generateWhatsAppLink(orderDetails, isExceeded);
+    // Generate WhatsApp link as before
+    generateWhatsAppLink(orderDetails, /* isExceeded flag if applicable */ false);
 }
 
 // Dynamic input field generation for windows
