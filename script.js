@@ -549,83 +549,86 @@ function formatMessageForWhatsApp() {
     }
 }
 
-// Invoice Generation
+// Global variable holding structured order data (populate this in your calculateSizes logic)
+let orderData = []; 
+
+// --- ADMIN PANEL: Invoice Generation Functions ---
+
+// Function to create and display the controls (price type dropdown, discount input, and button)
 function generateInvoice() {
-    if (!sizeData || calculatedOrderDetails.length === 0) {
-        alert("No order details found. Please run the calculator first.");
-        return;
-    }
-    
-    let adminMessageArea = document.getElementById('adminMessageArea');
-    if (!adminMessageArea) return;
-    
-    // Price selection dropdown
-    const priceSelection = document.createElement('select');
-    priceSelection.innerHTML = `
-        <option value="Selling Price">Selling Price</option>
-        <option value="Deal Price">Deal Price</option>
-        <option value="Event Price">Event Price</option>
-    `;
-    priceSelection.id = 'priceSelection';
+  if (!orderData || orderData.length === 0) {
+    alert("No order details found. Please run the calculator first.");
+    return;
+  }
 
-    // Discount input field
-    const discountInput = document.createElement('input');
-    discountInput.type = 'number';
-    discountInput.id = 'discountInput';
-    discountInput.placeholder = 'Enter Discount %';
-    discountInput.min = '0';
-    discountInput.max = '100';
+  const adminMessageArea = document.getElementById('adminMessageArea');
+  if (!adminMessageArea) return;
 
-    // Generate Invoice Button
-    const generateBtn = document.createElement('button');
-    generateBtn.innerText = 'Generate Invoice';
-    generateBtn.className = 'admin-button';
-    generateBtn.addEventListener('click', () => displayInvoice(priceSelection.value, discountInput.value));
+  // Create Price Type Dropdown
+  const priceSelection = document.createElement('select');
+  priceSelection.id = 'priceSelection';
+  priceSelection.innerHTML = `
+    <option value="Selling Price">Selling Price</option>
+    <option value="Deal Price">Deal Price</option>
+    <option value="Event Price">Event Price</option>
+  `;
 
-    // Clear existing content
-    adminMessageArea.innerHTML = '';
-    adminMessageArea.appendChild(priceSelection);
-    adminMessageArea.appendChild(discountInput);
-    adminMessageArea.appendChild(generateBtn);
+  // Create Discount Input Field
+  const discountInput = document.createElement('input');
+  discountInput.type = 'number';
+  discountInput.id = 'discountInput';
+  discountInput.placeholder = 'Enter Discount %';
+  discountInput.min = '0';
+  discountInput.max = '100';
+
+  // Create Generate Invoice Button
+  const generateBtn = document.createElement('button');
+  generateBtn.className = 'admin-button';
+  generateBtn.innerText = 'Generate Invoice';
+  generateBtn.addEventListener('click', () => {
+    displayInvoice(priceSelection.value, discountInput.value);
+  });
+
+  // Clear the admin message area and add the controls
+  adminMessageArea.innerHTML = '';
+  adminMessageArea.appendChild(priceSelection);
+  adminMessageArea.appendChild(discountInput);
+  adminMessageArea.appendChild(generateBtn);
 }
 
-// Function to Display Invoice
+// Function to calculate and display the invoice based on the selected price type and discount
 function displayInvoice(priceType, discountPercent) {
-    let invoiceData = [];
-    let totalAmount = 0;
-    
-    calculatedOrderDetails.forEach(detail => {
-        const lines = detail.split('\n');
-        const windowNumber = lines[0];
-        const sizeInfo = lines.find(line => line.includes('Custom Size Needed') || line.includes('Size:'));
-        const closestSizeDetail = lines.find(line => line.includes('Closest Size To Order') || line.includes('Size:'));
-        
-        let match = sizeData.find(size => size['Size(HxW)'].trim() === (closestSizeDetail ? closestSizeDetail.split(':')[1].trim() : sizeInfo.split(':')[1].trim()));
-        
-        if (!match) {
-            match = sizeData.find(size => size['Size(HxW)'].trim() === sizeInfo.split(':')[1].trim());
-        }
-        
-        if (match) {
-            const price = parseFloat(match[priceType]);
-            totalAmount += price;
-            invoiceData.push(`${windowNumber}\n${sizeInfo} - INR ${price}/-`);
-        }
-    });
-    
-    let discountAmount = (totalAmount * parseInt(discountPercent)) / 100;
-    let finalAmount = totalAmount - discountAmount;
+  let invoiceData = [];
+  let totalAmount = 0;
 
-    // Display Invoice in Admin Message Area
-    let invoiceMessage = `\n\n<b>Invoice:</b>\n${invoiceData.join('\n')}\n\n<b>Total:</b> INR ${totalAmount.toFixed(2)}/-`;
-    if (discountAmount > 0) {
-        invoiceMessage += `\n<b>Discount (${discountPercent}%):</b> - INR ${discountAmount.toFixed(2)}/-`;
-    }
-    invoiceMessage += `\n<b>Final Total:</b> INR ${finalAmount.toFixed(2)}/-`;
+  // Iterate over each net order (Exact or Closest) from our structured orderData
+  orderData.forEach(item => {
+    // Retrieve the price from the JSON record using the selected price type.
+    const price = parseFloat(item.priceRecord[priceType]);
+    totalAmount += price;
 
-    let adminMessageArea = document.getElementById('adminMessageArea');
-    adminMessageArea.innerHTML += `<pre>${invoiceMessage}</pre>`;
+    // Format the invoice line for the current net.
+    invoiceData.push(
+      `Window ${item.windowNumber}\nSize: ${item.size}\nPrice: INR ${price}/-`
+    );
+  });
+
+  // Compute discount and final total
+  const discountAmount = (totalAmount * parseFloat(discountPercent)) / 100;
+  const finalAmount = totalAmount - discountAmount;
+
+  // Build the invoice message
+  let invoiceMessage = `<b>Invoice:</b>\n${invoiceData.join('\n\n')}\n\n<b>Total:</b> INR ${totalAmount.toFixed(2)}/-`;
+  if (discountAmount > 0) {
+    invoiceMessage += `\n<b>Discount (${discountPercent}%):</b> - INR ${discountAmount.toFixed(2)}/-`;
+  }
+  invoiceMessage += `\n<b>Final Total:</b> INR ${finalAmount.toFixed(2)}/-`;
+
+  // Append the invoice display to the admin message area
+  const adminMessageArea = document.getElementById('adminMessageArea');
+  adminMessageArea.innerHTML += `<pre>${invoiceMessage}</pre>`;
 }
+
 // Share Functionality
 document.getElementById('shareButton').addEventListener('click', function () {
     const shareData = {
