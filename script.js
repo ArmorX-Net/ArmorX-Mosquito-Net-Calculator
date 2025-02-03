@@ -570,9 +570,9 @@ function formatMessageForWhatsApp() {
 // Global variable holding structured order data (populate this in your calculateSizes logic)
 let orderData = []; 
 
-// --- ADMIN PANEL: Invoice Generation Functions ---
+// --- ADMIN PANEL: Invoice Generation Functions (Updated GUI) ---
 
-// Function to create and display the controls (price type dropdown, discount input, and button)
+// Function to create (or update) the invoice controls panel
 function generateInvoice() {
   if (!orderData || orderData.length === 0) {
     alert("No order details found. Please run the calculator first.");
@@ -582,7 +582,23 @@ function generateInvoice() {
   const adminMessageArea = document.getElementById('adminMessageArea');
   if (!adminMessageArea) return;
 
-  // Create Price Type Dropdown
+  // Check if an invoice controls container already exists
+  let invoiceContainer = document.getElementById('invoiceControls');
+  if (!invoiceContainer) {
+    invoiceContainer = document.createElement('div');
+    invoiceContainer.id = 'invoiceControls';
+    // Arrange controls vertically with a gap
+    invoiceContainer.style.display = 'flex';
+    invoiceContainer.style.flexDirection = 'column';
+    invoiceContainer.style.gap = '10px';
+    invoiceContainer.style.marginBottom = '20px';
+    adminMessageArea.appendChild(invoiceContainer);
+  } else {
+    // Clear existing controls to rebuild them
+    invoiceContainer.innerHTML = '';
+  }
+
+  // Create Price Type Dropdown (placed on top)
   const priceSelection = document.createElement('select');
   priceSelection.id = 'priceSelection';
   priceSelection.innerHTML = `
@@ -590,49 +606,51 @@ function generateInvoice() {
     <option value="Deal Price">Deal Price</option>
     <option value="Event Price">Event Price</option>
   `;
+  invoiceContainer.appendChild(priceSelection);
 
-  // Create Discount Input Field
+  // Create Discount Input Field (placed below the dropdown)
   const discountInput = document.createElement('input');
   discountInput.type = 'number';
   discountInput.id = 'discountInput';
   discountInput.placeholder = 'Enter Discount %';
   discountInput.min = '0';
   discountInput.max = '100';
+  invoiceContainer.appendChild(discountInput);
 
-  // Create Generate Invoice Button
+  // Create Generate Invoice Button (placed at the bottom)
   const generateBtn = document.createElement('button');
   generateBtn.className = 'admin-button';
   generateBtn.innerText = 'Generate Invoice';
   generateBtn.addEventListener('click', () => {
+    // Remove any previous invoice display
+    const existingInvoice = document.getElementById('invoiceDisplay');
+    if (existingInvoice) {
+      existingInvoice.remove();
+    }
+    // Generate and display the invoice using the current selections
     displayInvoice(priceSelection.value, discountInput.value);
   });
-
-  // Clear the admin message area and add the controls
-  adminMessageArea.innerHTML = '';
-  adminMessageArea.appendChild(priceSelection);
-  adminMessageArea.appendChild(discountInput);
-  adminMessageArea.appendChild(generateBtn);
+  invoiceContainer.appendChild(generateBtn);
 }
 
-// Function to calculate and display the invoice based on the selected price type and discount
+// Function to calculate and display the invoice
 function displayInvoice(priceType, discountPercent) {
   let invoiceData = [];
   let totalAmount = 0;
 
-  // Iterate over each net order (Exact or Closest) from our structured orderData
+  // Iterate over each net order stored in the global orderData array
   orderData.forEach(item => {
     // Retrieve the price from the JSON record using the selected price type.
     const price = parseFloat(item.priceRecord[priceType]);
     totalAmount += price;
-
-    // Format the invoice line for the current net.
+    // Format the invoice line for this net.
     invoiceData.push(
       `Window ${item.windowNumber}\nSize: ${item.size}\nPrice: INR ${price}/-`
     );
   });
 
   // Compute discount and final total
-  const discountAmount = (totalAmount * parseFloat(discountPercent)) / 100;
+  const discountAmount = (totalAmount * parseFloat(discountPercent || 0)) / 100;
   const finalAmount = totalAmount - discountAmount;
 
   // Build the invoice message
@@ -642,9 +660,15 @@ function displayInvoice(priceType, discountPercent) {
   }
   invoiceMessage += `\n<b>Final Total:</b> INR ${finalAmount.toFixed(2)}/-`;
 
-  // Append the invoice display to the admin message area
+  // Create a container for the invoice display
+  const invoiceDisplay = document.createElement('div');
+  invoiceDisplay.id = 'invoiceDisplay';
+  invoiceDisplay.style.marginTop = '20px';
+  invoiceDisplay.innerHTML = `<pre>${invoiceMessage}</pre>`;
+
+  // Append the invoice display to the Admin Panel area
   const adminMessageArea = document.getElementById('adminMessageArea');
-  adminMessageArea.innerHTML += `<pre>${invoiceMessage}</pre>`;
+  adminMessageArea.appendChild(invoiceDisplay);
 }
 
 // Share Functionality
