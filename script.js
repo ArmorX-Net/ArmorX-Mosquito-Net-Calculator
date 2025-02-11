@@ -129,7 +129,7 @@ function findClosestMatch(height, width, color, unit) {
     return closestMatch
         ? {
               match: closestMatch,
-              convertedSize: ${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} cm,
+              convertedSize: `${roundToNearestHalf(heightCm)} x ${roundToNearestHalf(widthCm)} cm`,
           }
         : null;
 }
