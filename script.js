@@ -109,24 +109,24 @@ function findExactMatch(height, width, color, unit) {
 
 // Helper: Find closest match in cm using independent closest-value selection
 function findClosestMatch(height, width, color, unit) {
-    // Convert user input to centimeters
+    // Convert user input to centimeters.
     const [heightCm, widthCm] = normalizeSizes(height, width, unit);
-
-    // Filter the JSON records by unit and color
+    
+    // Filter the JSON records by unit and color.
     const filteredData = sizeData.filter(size =>
         size['Unit'] === 'Cm' && size['Color'].toUpperCase() === color
     );
-
-    // Extract candidate heights and widths from the filtered records
+    
+    // Extract candidate heights and widths from the filtered records.
     const candidateHeights = filteredData.map(size => size['Height(H)']);
     const candidateWidths  = filteredData.map(size => size['Width(W)']);
-
-    // Remove duplicates and sort each list
+    
+    // Remove duplicates and sort each list.
     const uniqueHeights = Array.from(new Set(candidateHeights)).sort((a, b) => a - b);
     const uniqueWidths  = Array.from(new Set(candidateWidths)).sort((a, b) => a - b);
-
-    // Helper: Returns the candidate value that is closest to inputValue.
-    // In case of a tie, it returns the larger candidate.
+    
+    // Helper function: Returns the candidate value that is closest to inputValue.
+    // In case of a tie (equal differences), it returns the larger candidate.
     function getClosest(candidateArray, inputValue) {
         let closest = candidateArray[0];
         let minDiff = Math.abs(candidateArray[0] - inputValue);
@@ -141,22 +141,22 @@ function findClosestMatch(height, width, color, unit) {
         });
         return closest;
     }
-
-    // Find the closest candidate for each dimension
+    
+    // Find the closest candidate for each dimension.
     const closestHeight = getClosest(uniqueHeights, heightCm);
     const closestWidth  = getClosest(uniqueWidths, widthCm);
-
-    // Try to locate a record in the filtered data with these chosen dimensions
+    
+    // Try to locate a record in the filtered data with these chosen dimensions.
     let chosenRecord = filteredData.find(size =>
         size['Height(H)'] === closestHeight && size['Width(W)'] === closestWidth
     );
-    // If not found, try swapped orientation (since order doesn't matter)
+    // If not found, try the swapped orientation (since order doesn't matter).
     if (!chosenRecord) {
         chosenRecord = filteredData.find(size =>
             size['Height(H)'] === closestWidth && size['Width(W)'] === closestHeight
         );
     }
-    // If still not found, create a record-like object
+    // If still not found, create a record-like object.
     if (!chosenRecord) {
         chosenRecord = {
             "Height(H)": closestHeight,
@@ -166,16 +166,12 @@ function findClosestMatch(height, width, color, unit) {
             "Amazon Link": "#"
         };
     }
-
-    return closestMatch
-        ? {
-              match: chosenRecord,
-              convertedSize: `${closestHeight} x ${closestWidth} cm`
-          }
-        : {
-              match: chosenRecord,
-              convertedSize: `${closestHeight} x ${closestWidth} cm`
-          };
+    
+    // Return the object with the chosen record and a display string.
+    return {
+        match: chosenRecord,
+        convertedSize: `${closestHeight} x ${closestWidth} cm`
+    };
 }
 
 // Helper: Round to nearest 0.5
