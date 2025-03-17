@@ -701,9 +701,9 @@ function displayInvoice(priceType, discountPercent) {
     const price = parseFloat(item.priceRecord[priceType]);
     const windowTotal = price * qty;
     totalAmount += windowTotal;
-    // Format the invoice line for this window, rounding all numbers to the nearest integer
+    // Format the invoice line for this window (rounding all numbers to the nearest integer)
     invoiceData.push(
-      `Window ${item.windowNumber}\nSize: ${item.size}\nQuantity: ${qty}\nPrice: INR ${Math.round(price)}/- x ${qty} = INR ${Math.round(windowTotal)}/-`
+      `Window ${item.windowNumber}\nSize: ${item.size} - ${qty} qty\nPrice: INR ${Math.round(price)}/- x ${qty} = INR ${Math.round(windowTotal)}/-`
     );
   });
 
@@ -731,8 +731,8 @@ function displayInvoice(priceType, discountPercent) {
 document.getElementById('shareButton').addEventListener('click', function () {
     const shareData = {
         title: 'ArmorX Window Mosquito Net Calculator',
-        text: "Hey look what I found! Try out this amazing ArmorX calculator to get a perfect customize fit *Window Mosquito Net* protection for your home. It's so easy to use! Check it out yourself.",
-        url: 'https://armorx-net.github.io/ArmorX-Mosquito-Net-Calculator/'
+        text: "Hey look what I found! Try out this amazing ArmorX calculator to get a perfect customize fit *Mosquito Net* protection for your home. It's so easy to use! Check it out yourself.",
+        url: 'https://armorx-net.github.io/ArmorX-Mosquito-Nets/'
     };
 
     // Check if Web Share API is supported
