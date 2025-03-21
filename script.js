@@ -535,7 +535,7 @@ function copyAdminText() {
     }
 }
 
-// Function to Format Message for WhatsApp Admin Panel
+// Function to Format Message for WhatsApp Admin Panel (Updated)
 function formatMessageForWhatsApp() {
     const adminMessageArea = document.getElementById('adminMessageArea');
 
@@ -562,7 +562,7 @@ function formatMessageForWhatsApp() {
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
 
-                // Get the window quantity from the global orderData (this stores the quantity selected by admin)
+                // Get the window quantity from the admin input (defaulting to 1 if not found)
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
                 const qtyInput = document.getElementById(`qty${windowNumber}`);
                 const qty = qtyInput ? qtyInput.value : 1;
@@ -578,7 +578,7 @@ function formatMessageForWhatsApp() {
                     colorDetail,
                     'CLICK HERE: To Order *Closest Size* on Amazon:',
                     linkDetail,
-                    `Select Qty: *${qty} qty*`  // Add the quantity selected by Admin
+                    `Select Qty: *${qty} qty*`
                 ];
             } else if (lines.some(line => line.includes('Exact Match Found'))) {
                 const sizeDetail = lines.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
@@ -586,7 +586,7 @@ function formatMessageForWhatsApp() {
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
                 const originalUnitNote = lines.find(line => line.includes('(Original:')); // Find the original unit note
 
-                // Get the window quantity from the global orderData (this stores the quantity selected by admin)
+                // Get the window quantity from the admin input (defaulting to 1 if not found)
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
                 const qtyInput = document.getElementById(`qty${windowNumber}`);
                 const qty = qtyInput ? qtyInput.value : 1;
@@ -598,15 +598,47 @@ function formatMessageForWhatsApp() {
                     colorDetail,
                     'CLICK HERE: To Order *Exact Size* on Amazon:',
                     linkDetail,
-                    `Select Qty: *${qty} qty*`  // Add the quantity selected by Admin
+                    `Select Qty: *${qty} qty*`
                 ];
             }
 
             return formattedLines.filter(Boolean).join('\n');
         }).join('\n\n');
 
-        // Display the formatted message in the admin area
-        adminMessageArea.innerText = formattedMessage;
+        // Build dynamic custom sizes list for ALL windows using the values already displayed in the calculator.
+        const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
+        let customSizesList = "";
+        for (let i = 1; i <= numWindows; i++) {
+            const heightInput = document.getElementById(`height${i}`);
+            const widthInput = document.getElementById(`width${i}`);
+            const unitInput = document.getElementById('unit');
+            const qtyInput = document.getElementById(`qty${i}`);
+            const heightVal = heightInput ? heightInput.value : "";
+            const widthVal = widthInput ? widthInput.value : "";
+            const unitVal = unitInput ? unitInput.value : "";
+            const qtyVal = qtyInput ? qtyInput.value : 1;
+
+            if (heightVal && widthVal) {
+                // Format exactly as displayed in the calculator's "Custom Size Needed" section.
+                customSizesList += `Window ${i}: ${heightVal} ${unitVal} x ${widthVal} ${unitVal} - ${qtyVal} qty\n`;
+            }
+        }
+
+        // Additional text to append at the bottom of the message with dynamic custom sizes for all windows
+        const additionalText = `
+*********************************************************************
+*Note:* The *Closest size* is for order processing only. The net will be *altered to your custom size* -
+Black | White | Grey | Cream
+Custom Size Details:
+${customSizesList.trim()}
+and will be shipped under the same order ID.
+
+Hence, please provide the *17 Digit Order ID# Number IMMEDIATELY* after placing your Amazon order & get your order confirmed by Team ARMORX.
+*********************************************************************
+`;
+
+        // Display the formatted message along with the additional dynamic text in the admin area
+        adminMessageArea.innerText = formattedMessage + "\n\n" + additionalText;
     }
 }
 
