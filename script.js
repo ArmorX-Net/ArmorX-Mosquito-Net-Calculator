@@ -619,8 +619,9 @@ function formatMessageForWhatsApp() {
             const qtyVal = qtyInput ? qtyInput.value : 1;
 
             if (heightVal && widthVal) {
-                // Format exactly as displayed in the calculator's "Custom Size Needed" section.
-                customSizesList += `${heightVal} ${unitVal} x ${widthVal} ${unitVal} - ${qtyVal} qty\n`;
+                // Convert measurement unit to lower case (e.g., "Feet" becomes "feet")
+                const lowerUnitVal = unitVal.toLowerCase();
+                customSizesList += `${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty\n`;
             }
         }
 
@@ -637,6 +638,10 @@ ${customSizesList.trim()}
 - Your *17 Digit Amazon Order ID#* Number 
 - Confirm Preferred *Color*
 `;
+        // Display the formatted message along with the additional dynamic text in the admin area
+        adminMessageArea.innerText = formattedMessage + "\n\n" + additionalText;
+    }
+}
 
         // Display the formatted message along with the additional dynamic text in the admin area
         adminMessageArea.innerText = formattedMessage + "\n\n" + additionalText;
