@@ -605,7 +605,7 @@ function formatMessageForWhatsApp() {
             return formattedLines.filter(Boolean).join('\n');
         }).join('\n\n');
 
-        // Build dynamic custom sizes list for ALL windows using the values already displayed in the calculator.
+        // Build dynamic custom sizes list for ALL windows without "Window X:" prefix
         const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
         let customSizesList = "";
         for (let i = 1; i <= numWindows; i++) {
@@ -620,21 +620,22 @@ function formatMessageForWhatsApp() {
 
             if (heightVal && widthVal) {
                 // Format exactly as displayed in the calculator's "Custom Size Needed" section.
-                customSizesList += `Window ${i}: ${heightVal} ${unitVal} x ${widthVal} ${unitVal} - ${qtyVal} qty\n`;
+                customSizesList += `${heightVal} ${unitVal} x ${widthVal} ${unitVal} - ${qtyVal} qty\n`;
             }
         }
 
-        // Additional text to append at the bottom of the message with dynamic custom sizes for all windows
+        // Additional text with the new format
         const additionalText = `
-*********************************************************************
-*Note:* The *Closest size* is for order processing only. The net will be *altered to your custom size* -
+***************************
+Note: The *Closest size* is for order processing only. The net will be *altered to your custom size* and will be shipped under the same order ID.
+
 Black | White | Grey | Cream
 Custom Size Details:
 ${customSizesList.trim()}
-and will be shipped under the same order ID.
 
-Hence, please provide the *17 Digit Order ID# Number IMMEDIATELY* after placing your Amazon order & get your order confirmed by Team ARMORX.
-*********************************************************************
+*VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*
+- Your *17 Digit Amazon Order ID#* Number 
+- Confirm Preferred *Color*
 `;
 
         // Display the formatted message along with the additional dynamic text in the admin area
