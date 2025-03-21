@@ -632,7 +632,7 @@ function formatMessageForWhatsApp() {
 - Your *17 Digit Amazon Order ID#* Number 
 - Confirm Preferred *Color*
 
-*Note:* The *Closest size* is for order processing only. The net will be *altered to your custom size* and will be shipped under the same order ID.
+*Note:* The *Closest size* is for order processing only. The net will be *altered to your exact custom size* and will be shipped under the same order ID.
 
 Black | White | Grey | Cream
 Custom Size Details:
