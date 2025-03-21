@@ -627,7 +627,7 @@ function formatMessageForWhatsApp() {
 
         // Additional text with the new format
         const additionalText = `
-***************************
+*****************************************************
 Note: The *Closest size* is for order processing only. The net will be *altered to your custom size* and will be shipped under the same order ID.
 
 Black | White | Grey | Cream
@@ -637,11 +637,8 @@ ${customSizesList.trim()}
 *VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*
 - Your *17 Digit Amazon Order ID#* Number 
 - Confirm Preferred *Color*
+
 `;
-        // Display the formatted message along with the additional dynamic text in the admin area
-        adminMessageArea.innerText = formattedMessage + "\n\n" + additionalText;
-    }
-}
 
         // Display the formatted message along with the additional dynamic text in the admin area
         adminMessageArea.innerText = formattedMessage + "\n\n" + additionalText;
