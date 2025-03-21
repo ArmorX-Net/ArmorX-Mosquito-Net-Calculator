@@ -757,6 +757,20 @@ function displayInvoice(priceType, discountPercent) {
   }
   invoiceMessage += `\n<b>Final Total:</b> INR ${Math.round(finalAmount)}/-`;
 
+  // Append additional static text at the end of the invoice
+  invoiceMessage += `
+  
+Free express delivery in *48-72 working hours.*
+
+To confirm the above quotation please share:
+🔹*Name, Address, Pincode, Phone Number and Email ID* 
+🔹*Preferred Color:* Black | Grey | Cream | White
+
+We will share an invoice; post which you can pay via GPay, PayTM, or bank transfer.
+
+Looking forward to serving you soon!
+Team ARMORX`;
+
   // Create a container for the invoice display and append it to the admin panel
   const invoiceDisplay = document.createElement('div');
   invoiceDisplay.id = 'invoiceDisplay';
