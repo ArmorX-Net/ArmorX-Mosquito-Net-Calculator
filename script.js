@@ -762,11 +762,11 @@ function displayInvoice(priceType, discountPercent) {
   
 Free express delivery in *48-72 working hours.*
 
-To confirm the above quotation please share:
+To confirm the above order please share:
 🔹*Name, Address, Pincode, Phone Number and Email ID* 
 🔹*Preferred Color:* Black | Grey | Cream | White
 
-We will share an invoice; post which you can pay via GPay, PayTM, or bank transfer.
+Once the order is confirmed, we will share an official invoice; after which you can pay via GPay, PayTM, UPI or bank transfer.
 
 Looking forward to serving you soon!
 Team ARMORX`;
