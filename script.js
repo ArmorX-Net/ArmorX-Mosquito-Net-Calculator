@@ -301,6 +301,11 @@ function generateWhatsAppLink(orderDetails, isExceeded = false) {
 
 // Main calculation logic
 function calculateSizes() {
+     // Hide the bottom WhatsApp icon once the calculation is initiated
+    const supportIcon = document.querySelector('.whatsapp-icon-bottom');
+    if (supportIcon) {
+        supportIcon.style.display = 'none';
+    }
     const unit = document.getElementById('unit').value;
     const numWindows = parseInt(document.getElementById('numWindows').value);
     const messageArea = document.getElementById('messageArea');
@@ -734,6 +739,18 @@ document.getElementById('shareButton').addEventListener('click', function () {
         text: "Hey look what I found! Try out this amazing ArmorX calculator to get a perfect customize fit *Mosquito Net* protection for your home. It's so easy to use! Check it out yourself.",
         url: 'https://armorx-net.github.io/ArmorX-Mosquito-Nets/'
     };
+
+    // Trigger shake animation on the bottom-right WhatsApp icon every 10 seconds
+setInterval(() => {
+  const icon = document.querySelector('.whatsapp-icon-bottom');
+  if (icon) {
+    icon.classList.add('shake');
+    // Remove the shake class after the animation duration (0.5s)
+    setTimeout(() => {
+      icon.classList.remove('shake');
+    }, 50);
+  }
+}, 1000);
 
     // Check if Web Share API is supported
     if (navigator.share) {
