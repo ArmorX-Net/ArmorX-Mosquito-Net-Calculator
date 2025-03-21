@@ -751,7 +751,7 @@ function displayInvoice(priceType, discountPercent) {
   const discountAmount = (totalAmount * parseFloat(discountPercent || 0)) / 100;
   const finalAmount = totalAmount - discountAmount;
 
-  let invoiceMessage = `<b>Invoice:</b>\n${invoiceData.join('\n\n')}\n\n<b>Total:</b> INR ${Math.round(totalAmount)}/-`;
+  let invoiceMessage = `<b>Quotation:</b>\n${invoiceData.join('\n\n')}\n\n<b>Total:</b> INR ${Math.round(totalAmount)}/-`;
   if (discountAmount > 0) {
     invoiceMessage += `\n<b>Discount (${discountPercent}%):</b> - INR ${Math.round(discountAmount)}/-`;
   }
