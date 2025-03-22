@@ -470,6 +470,7 @@ function toggleFaq(faqElement) {
     }
 }
 
+
 // Admin Panel
 function toggleAdminInterface() {
     isAdminVisible = !isAdminVisible;
@@ -519,6 +520,32 @@ function toggleAdminInterface() {
     }
 
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
+}
+
+// Helper Debounce Function update Qty to delay rapid-fire updates
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+// Function to Update the WhatsApp message preview based on current quantities
+function updateAdminPreviews() {
+    formatMessageForWhatsApp();
+    
+    // If the invoice preview panel exists (i.e. after Generate Invoice has been clicked),
+    // update the invoice preview as well.
+    const priceSelection = document.getElementById('priceSelection');
+    const discountInput = document.getElementById('discountInput');
+    if (priceSelection && discountInput) {
+        const existingInvoice = document.getElementById('invoiceDisplay');
+        if (existingInvoice) {
+            existingInvoice.remove(); // Remove old invoice preview
+            displayInvoice(priceSelection.value, discountInput.value);
+        }
+    }
 }
 
 // Function to Copy text from Admin Panel
@@ -696,20 +723,25 @@ function generateInvoice() {
   invoiceContainer.appendChild(discountInput);
 
   // Create a container for the Quantity fields (one per window)
-  let qtyContainer = document.createElement('div');
-  qtyContainer.id = 'qtyContainer';
-  qtyContainer.style.display = 'flex';
-  qtyContainer.style.flexDirection = 'column';
-  qtyContainer.style.gap = '5px';
-  qtyContainer.style.marginBottom = '10px';
+let qtyContainer = document.createElement('div');
+qtyContainer.id = 'qtyContainer';
+qtyContainer.style.display = 'flex';
+qtyContainer.style.flexDirection = 'column';
+qtyContainer.style.gap = '5px';
+qtyContainer.style.marginBottom = '10px';
 
-  // For each window in orderData, add a quantity input (default = 1)
-  orderData.forEach((item) => {
+// For each window in orderData, add a quantity input (default = 1)
+orderData.forEach((item) => {
     let qtyDiv = document.createElement('div');
     qtyDiv.innerHTML = `Window ${item.windowNumber} Quantity: <input type="number" id="qty${item.windowNumber}" value="1" min="1" style="width:50px;">`;
     qtyContainer.appendChild(qtyDiv);
-  });
-  invoiceContainer.appendChild(qtyContainer);
+});
+invoiceContainer.appendChild(qtyContainer);
+
+// Attach live update event listeners to all quantity inputs (debounced)
+document.querySelectorAll('[id^="qty"]').forEach(input => {
+    input.addEventListener('input', debounce(updateAdminPreviews, 300));
+});
 
   // Create Generate Invoice Button (placed at the bottom)
   const generateBtn = document.createElement('button');
