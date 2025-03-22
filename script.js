@@ -536,6 +536,39 @@ function copyAdminText() {
     }
 }
 
+// Helper function to update the Custom Size Details block
+function updateCustomSizesPre() {
+    const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
+    let customSizesList = [];
+    for (let i = 1; i <= numWindows; i++) {
+        // Use the invoice qty input (which is kept in sync with the WhatsApp input)
+        const invoiceQtyInput = document.getElementById(`qty${i}`);
+        const qtyVal = invoiceQtyInput ? invoiceQtyInput.value : 1;
+        const heightInput = document.getElementById(`height${i}`);
+        const widthInput = document.getElementById(`width${i}`);
+        const unitInput = document.getElementById('unit');
+        const heightVal = heightInput ? heightInput.value : "";
+        const widthVal = widthInput ? widthInput.value : "";
+        const unitVal = unitInput ? unitInput.value : "";
+        if (heightVal && widthVal) {
+            const lowerUnitVal = unitVal.toLowerCase();
+            customSizesList.push(`${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty`);
+        }
+    }
+    const customSizesPre = document.getElementById('customSizesPre');
+    if (customSizesPre) {
+        customSizesPre.innerText = 
+`*****************************************************
+*VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*
+- Your *17 Digit Amazon Order ID#* Number 
+- Confirm Preferred *Color*
+*Note:* The *Closest size* is for order processing only. The net will be *altered to your exact custom size* and will be shipped under the same order ID.
+Black | White | Grey | Cream
+Custom Size Details:
+${customSizesList.join('\n')}`;
+    }
+}
+
 // Function to Format Message for WhatsApp Admin Panel with interactive Qty fields (Updated Format)
 function formatMessageForWhatsApp() {
     const adminMessageArea = document.getElementById('adminMessageArea');
@@ -656,10 +689,9 @@ function formatMessageForWhatsApp() {
             qtyLine.style.alignItems = 'center';
             qtyLine.style.margin = '0';
 
-            // Create the text element showing the qty value (which will be included when copying)
+            // Create the text element showing the qty value (to be copied)
             const qtyText = document.createElement('span');
             qtyText.id = `whatsappQtyText${windowNumber}`;
-            // Get current qty from invoice input if available, or default to 1
             const invoiceQtyInput = document.getElementById(`qty${windowNumber}`);
             let currentQty = invoiceQtyInput ? invoiceQtyInput.value : 1;
             qtyText.innerText = `Select Qty: *${currentQty} qty*`;
@@ -673,16 +705,15 @@ function formatMessageForWhatsApp() {
             qtyInput.value = currentQty;
             qtyInput.style.width = '50px';
             qtyInput.style.marginLeft = '10px';
-            // When the WhatsApp qty is changed, update the invoice qty and update the text display
+            // When the WhatsApp qty is changed, update the invoice qty, update the display text, and update custom sizes
             qtyInput.addEventListener('input', function() {
                 const newQty = qtyInput.value;
-                // Update the corresponding invoice input field
                 const invoiceInput = document.getElementById(`qty${windowNumber}`);
                 if (invoiceInput) {
                     invoiceInput.value = newQty;
                 }
-                // Update the display text (the asterisk formatting is preserved in plain text)
                 qtyText.innerText = `Select Qty: *${newQty} qty*`;
+                updateCustomSizesPre();
             });
             qtyLine.appendChild(qtyInput);
             windowDiv.appendChild(qtyLine);
@@ -691,40 +722,13 @@ function formatMessageForWhatsApp() {
             adminMessageArea.appendChild(windowDiv);
         });
 
-        // --- Build Custom Size Details section with updated qty values ---
-        const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
-        let customSizesList = [];
-        for (let i = 1; i <= numWindows; i++) {
-            const heightInput = document.getElementById(`height${i}`);
-            const widthInput = document.getElementById(`width${i}`);
-            const unitInput = document.getElementById('unit');
-            const qtyInput = document.getElementById(`qty${i}`);
-            const heightVal = heightInput ? heightInput.value : "";
-            const widthVal = widthInput ? widthInput.value : "";
-            const unitVal = unitInput ? unitInput.value : "";
-            const qtyVal = qtyInput ? qtyInput.value : 1;
-
-            if (heightVal && widthVal) {
-                const lowerUnitVal = unitVal.toLowerCase();
-                customSizesList.push(`${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty`);
-            }
-        }
-        const customSizesText = customSizesList.join('\n');
-
-        // --- Append additional text (using a pre element for preserving newlines) ---
+        // --- Append additional text for Custom Size Details ---
         const additionalPre = document.createElement('pre');
+        additionalPre.id = 'customSizesPre';
         additionalPre.style.margin = '0';
         additionalPre.style.whiteSpace = 'pre-wrap';
-        additionalPre.innerText = 
-`*****************************************************
-*VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*
-- Your *17 Digit Amazon Order ID#* Number 
-- Confirm Preferred *Color*
-*Note:* The *Closest size* is for order processing only. The net will be *altered to your exact custom size* and will be shipped under the same order ID.
-Black | White | Grey | Cream
-Custom Size Details:
-${customSizesText}`;
         adminMessageArea.appendChild(additionalPre);
+        updateCustomSizesPre();
     }
 }
 
@@ -748,14 +752,12 @@ function generateInvoice() {
   if (!invoiceContainer) {
     invoiceContainer = document.createElement('div');
     invoiceContainer.id = 'invoiceControls';
-    // Arrange controls vertically with a gap
     invoiceContainer.style.display = 'flex';
     invoiceContainer.style.flexDirection = 'column';
     invoiceContainer.style.gap = '10px';
     invoiceContainer.style.marginBottom = '20px';
     adminMessageArea.appendChild(invoiceContainer);
   } else {
-    // Clear existing controls to rebuild them
     invoiceContainer.innerHTML = '';
   }
 
@@ -786,17 +788,25 @@ function generateInvoice() {
   qtyContainer.style.gap = '5px';
   qtyContainer.style.marginBottom = '10px';
 
-  // For each window in orderData, add a quantity input (default = 1)
+  // For each window in orderData, add a quantity input (default = 1 or current value)
   orderData.forEach((item) => {
     let qtyDiv = document.createElement('div');
-    qtyDiv.innerHTML = `Window ${item.windowNumber} Quantity: <input type="number" id="qty${item.windowNumber}" value="1" min="1" style="width:50px;">`;
-    // When the invoice qty changes, update the WhatsApp qty field if it exists
+    // Use the current WhatsApp qty if available
+    const whatsappQtyInput = document.getElementById(`whatsappQty${item.windowNumber}`);
+    const currentQty = whatsappQtyInput ? whatsappQtyInput.value : 1;
+    qtyDiv.innerHTML = `Window ${item.windowNumber} Quantity: <input type="number" id="qty${item.windowNumber}" value="${currentQty}" min="1" style="width:50px;">`;
+    // When the invoice qty changes, update the corresponding WhatsApp qty and the custom sizes block
     const qtyInput = qtyDiv.querySelector('input');
     qtyInput.addEventListener('input', function() {
         let whatsappInput = document.getElementById(`whatsappQty${item.windowNumber}`);
         if (whatsappInput) {
             whatsappInput.value = qtyInput.value;
+            const whatsappText = document.getElementById(`whatsappQtyText${item.windowNumber}`);
+            if (whatsappText) {
+                whatsappText.innerText = `Select Qty: *${qtyInput.value} qty*`;
+            }
         }
+        updateCustomSizesPre();
     });
     qtyContainer.appendChild(qtyDiv);
   });
@@ -807,12 +817,10 @@ function generateInvoice() {
   generateBtn.className = 'admin-button';
   generateBtn.innerText = 'Generate Invoice';
   generateBtn.addEventListener('click', () => {
-    // Remove any previous invoice display
     const existingInvoice = document.getElementById('invoiceDisplay');
     if (existingInvoice) {
       existingInvoice.remove();
     }
-    // Generate and display the invoice using the current selections
     displayInvoice(priceSelection.value, discountInput.value);
   });
   invoiceContainer.appendChild(generateBtn);
@@ -825,20 +833,16 @@ function displayInvoice(priceType, discountPercent) {
 
   // Iterate over each net order stored in the global orderData array
   orderData.forEach(item => {
-    // Retrieve the quantity from the corresponding input field (default to 1 if missing)
     let qtyInput = document.getElementById(`qty${item.windowNumber}`);
     let qty = qtyInput ? parseInt(qtyInput.value) : 1;
-    // Retrieve the price from the JSON record using the selected price type
     const price = parseFloat(item.priceRecord[priceType]);
     const windowTotal = price * qty;
     totalAmount += windowTotal;
-    // Format the invoice line for this window (rounding all numbers to the nearest integer)
     invoiceData.push(
       `Window ${item.windowNumber}\nSize: ${item.size} - ${qty} qty\nPrice: INR ${Math.round(price)}/- x ${qty} = INR ${Math.round(windowTotal)}/-`
     );
   });
 
-  // Compute discount and final total, then round them to integers
   const discountAmount = (totalAmount * parseFloat(discountPercent || 0)) / 100;
   const finalAmount = totalAmount - discountAmount;
 
@@ -848,7 +852,6 @@ function displayInvoice(priceType, discountPercent) {
   }
   invoiceMessage += `\n<b>Final Total:</b> INR ${Math.round(finalAmount)}/-`;
 
-  // Append additional static text at the end of the invoice
   invoiceMessage += `
 
 Free express delivery in *48-72 working hours.*  
@@ -862,7 +865,6 @@ Once the order is confirmed, we will share an official invoice; after which you 
 Looking forward to serving you soon!
 Team ARMORX`;
 
-  // Create a container for the invoice display and append it to the admin panel
   const invoiceDisplay = document.createElement('div');
   invoiceDisplay.id = 'invoiceDisplay';
   invoiceDisplay.style.marginTop = '20px';
@@ -871,6 +873,7 @@ Team ARMORX`;
   const adminMessageArea = document.getElementById('adminMessageArea');
   adminMessageArea.appendChild(invoiceDisplay);
 }
+
 
 // Share Functionality
 document.getElementById('shareButton').addEventListener('click', function () {
