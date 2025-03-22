@@ -711,6 +711,11 @@ function generateInvoice() {
   });
   invoiceContainer.appendChild(qtyContainer);
 
+  // Attach live update event listeners to all quantity inputs (debounced)
+  document.querySelectorAll('[id^="qty"]').forEach(input => {
+    input.addEventListener('input', debounce(updateAdminPreviews, 300));
+  });
+
   // Create Generate Invoice Button (placed at the bottom)
   const generateBtn = document.createElement('button');
   generateBtn.className = 'admin-button';
