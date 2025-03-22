@@ -525,7 +525,8 @@ function toggleAdminInterface() {
 function copyAdminText() {
     const adminMessageArea = document.getElementById('adminMessageArea');
     if (adminMessageArea) {
-        const textToCopy = adminMessageArea.innerText;
+        // Use textContent to copy plain text without the HTML elements
+        let textToCopy = adminMessageArea.innerText;
         navigator.clipboard.writeText(textToCopy)
             .then(() => alert('Text copied to clipboard!'))
             .catch((err) => {
@@ -535,77 +536,132 @@ function copyAdminText() {
     }
 }
 
-// Function to Format Message for WhatsApp Admin Panel (Updated)
+// Function to Format Message for WhatsApp Admin Panel with interactive Qty fields
 function formatMessageForWhatsApp() {
     const adminMessageArea = document.getElementById('adminMessageArea');
+    adminMessageArea.innerHTML = ''; // Clear previous content
 
-    // Use the dynamically calculated orderDetails
     if (calculatedOrderDetails.length === 0) {
         adminMessageArea.innerText = 'No calculated order details available. Please run the calculator first.';
     } else {
-        // Generate a simplified message format for the admin panel
-        const formattedMessage = calculatedOrderDetails.map((detail) => {
+        // Loop through each calculated order detail to create interactive elements
+        calculatedOrderDetails.forEach((detail) => {
             const lines = detail.split('\n');
-            let windowHeader = lines[0]; // Example: "Window 1:"
-            let formattedLines = [];
-
-            // Remove unnecessary match type text after the header
+            let windowHeader = lines[0];
             if (windowHeader.includes('Closest Match Found') || windowHeader.includes('Exact Match Found')) {
-                windowHeader = windowHeader.split(':')[0] + ':';  // Keep only "Window X:"
+                windowHeader = windowHeader.split(':')[0] + ':';
             }
+            // Extract window number (assumes header format "Window X:")
+            const windowNumber = parseInt(windowHeader.split(' ')[1]);
 
-            // Process the remaining lines for closest or exact matches
+            // Create a container for this window’s detail
+            const windowDiv = document.createElement('div');
+            windowDiv.className = 'window-detail';
+            
+            // Add header (e.g., "Window 1:")
+            const headerEl = document.createElement('h4');
+            headerEl.innerText = windowHeader;
+            windowDiv.appendChild(headerEl);
+
+            // Process details based on match type
             if (lines.some(line => line.includes('Closest Match Found'))) {
                 const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
                 const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm'));
                 const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
-
-                // Get the window quantity from the admin input (defaulting to 1 if not found)
-                const windowNumber = parseInt(windowHeader.split(' ')[1]);
-                const qtyInput = document.getElementById(`qty${windowNumber}`);
-                const qty = qtyInput ? qtyInput.value : 1;
-
-                // Replace "Closest Size Ordered" with "Closest Size to Order"
+                
+                // Replace text as needed
                 let updatedClosestSizeDetail = closestSizeDetail ? closestSizeDetail.replace('Closest Size Ordered', 'Closest Size to Order') : null;
-
-                formattedLines = [
-                    windowHeader,
-                    customSizeDetail,
-                    customSizeInCm,
-                    updatedClosestSizeDetail,
-                    colorDetail,
-                    'CLICK HERE: To Order *Closest Size* on Amazon:',
-                    linkDetail,
-                    `Select Qty: *${qty} qty*`
-                ];
+                
+                if (customSizeDetail) { 
+                    const p = document.createElement('p'); 
+                    p.innerText = customSizeDetail; 
+                    windowDiv.appendChild(p); 
+                }
+                if (customSizeInCm) { 
+                    const p = document.createElement('p'); 
+                    p.innerText = customSizeInCm; 
+                    windowDiv.appendChild(p); 
+                }
+                if (updatedClosestSizeDetail) { 
+                    const p = document.createElement('p'); 
+                    p.innerText = updatedClosestSizeDetail; 
+                    windowDiv.appendChild(p); 
+                }
+                if (colorDetail) { 
+                    const p = document.createElement('p'); 
+                    p.innerText = colorDetail; 
+                    windowDiv.appendChild(p); 
+                }
+                const orderLinkText = document.createElement('p');
+                orderLinkText.innerText = 'CLICK HERE: To Order *Closest Size* on Amazon:';
+                windowDiv.appendChild(orderLinkText);
+                if (linkDetail) { 
+                    const p = document.createElement('p'); 
+                    p.innerText = linkDetail; 
+                    windowDiv.appendChild(p); 
+                }
             } else if (lines.some(line => line.includes('Exact Match Found'))) {
                 const sizeDetail = lines.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
-                const originalUnitNote = lines.find(line => line.includes('(Original:')); // Find the original unit note
-
-                // Get the window quantity from the admin input (defaulting to 1 if not found)
-                const windowNumber = parseInt(windowHeader.split(' ')[1]);
-                const qtyInput = document.getElementById(`qty${windowNumber}`);
-                const qty = qtyInput ? qtyInput.value : 1;
-
-                formattedLines = [
-                    windowHeader,
-                    originalUnitNote, // Include the original unit note, if available
-                    sizeDetail,
-                    colorDetail,
-                    'CLICK HERE: To Order *Exact Size* on Amazon:',
-                    linkDetail,
-                    `Select Qty: *${qty} qty*`
-                ];
+                const originalUnitNote = lines.find(line => line.includes('(Original:'));
+                
+                if (originalUnitNote) { 
+                    const p = document.createElement('p'); 
+                    p.innerText = originalUnitNote; 
+                    windowDiv.appendChild(p); 
+                }
+                if (sizeDetail) { 
+                    const p = document.createElement('p'); 
+                    p.innerText = sizeDetail; 
+                    windowDiv.appendChild(p); 
+                }
+                if (colorDetail) { 
+                    const p = document.createElement('p'); 
+                    p.innerText = colorDetail; 
+                    windowDiv.appendChild(p); 
+                }
+                const orderLinkText = document.createElement('p');
+                orderLinkText.innerText = 'CLICK HERE: To Order *Exact Size* on Amazon:';
+                windowDiv.appendChild(orderLinkText);
+                if (linkDetail) { 
+                    const p = document.createElement('p'); 
+                    p.innerText = linkDetail; 
+                    windowDiv.appendChild(p); 
+                }
             }
+            
+            // Add interactive Qty input field for this window
+            const qtyLabel = document.createElement('span');
+            qtyLabel.innerText = "Select Qty: ";
+            windowDiv.appendChild(qtyLabel);
+            
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'number';
+            qtyInput.id = `whatsappQty${windowNumber}`;
+            qtyInput.min = 1;
+            qtyInput.style.width = '50px';
+            // Get the current qty from the invoice section if available, default to 1 otherwise
+            const invoiceQtyInput = document.getElementById(`qty${windowNumber}`);
+            let currentQty = invoiceQtyInput ? invoiceQtyInput.value : 1;
+            qtyInput.value = currentQty;
+            // When the WhatsApp qty is changed, update the invoice qty input accordingly
+            qtyInput.addEventListener('input', function() {
+                const invoiceInput = document.getElementById(`qty${windowNumber}`);
+                if (invoiceInput) {
+                    invoiceInput.value = qtyInput.value;
+                }
+            });
+            windowDiv.appendChild(qtyInput);
 
-            return formattedLines.filter(Boolean).join('\n');
-        }).join('\n\n');
-
-        // Build dynamic custom sizes list for ALL windows without "Window X:" prefix
+            // Append this window’s details to the admin message area
+            adminMessageArea.appendChild(windowDiv);
+            adminMessageArea.appendChild(document.createElement('br'));
+        });
+        
+        // Build dynamic custom sizes list for ALL windows
         const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
         let customSizesList = "";
         for (let i = 1; i <= numWindows; i++) {
@@ -617,31 +673,27 @@ function formatMessageForWhatsApp() {
             const widthVal = widthInput ? widthInput.value : "";
             const unitVal = unitInput ? unitInput.value : "";
             const qtyVal = qtyInput ? qtyInput.value : 1;
-
+    
             if (heightVal && widthVal) {
-                // Convert measurement unit to lower case (e.g., "Feet" becomes "feet")
+                // Use <br> tags for line breaks in the additional text
                 const lowerUnitVal = unitVal.toLowerCase();
-                customSizesList += `${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty\n`;
+                customSizesList += `${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty<br>`;
             }
         }
-
-        // Additional text with the new format
-        const additionalText = `
-*****************************************************
-*VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*
-- Your *17 Digit Amazon Order ID#* Number 
-- Confirm Preferred *Color*
-
-*Note:* The *Closest size* is for order processing only. The net will be *altered to your exact custom size* and will be shipped under the same order ID.
-
-Black | White | Grey | Cream
-Custom Size Details:
-${customSizesList.trim()}
-
-`;
-
-        // Display the formatted message along with the additional dynamic text in the admin area
-        adminMessageArea.innerText = formattedMessage + "\n\n" + additionalText;
+    
+        // Additional static/dynamic text added after the window details
+        const additionalDiv = document.createElement('div');
+        additionalDiv.innerHTML = `
+*****************************************************<br>
+*VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*<br>
+- Your *17 Digit Amazon Order ID#* Number <br>
+- Confirm Preferred *Color*<br><br>
+*Note:* The *Closest size* is for order processing only. The net will be *altered to your exact custom size* and will be shipped under the same order ID.<br><br>
+Black | White | Grey | Cream<br>
+Custom Size Details:<br>
+${customSizesList}
+        `;
+        adminMessageArea.appendChild(additionalDiv);
     }
 }
 
@@ -707,6 +759,14 @@ function generateInvoice() {
   orderData.forEach((item) => {
     let qtyDiv = document.createElement('div');
     qtyDiv.innerHTML = `Window ${item.windowNumber} Quantity: <input type="number" id="qty${item.windowNumber}" value="1" min="1" style="width:50px;">`;
+    // When the invoice qty changes, update the WhatsApp qty field if it exists
+    const qtyInput = qtyDiv.querySelector('input');
+    qtyInput.addEventListener('input', function() {
+        let whatsappInput = document.getElementById(`whatsappQty${item.windowNumber}`);
+        if (whatsappInput) {
+            whatsappInput.value = qtyInput.value;
+        }
+    });
     qtyContainer.appendChild(qtyDiv);
   });
   invoiceContainer.appendChild(qtyContainer);
@@ -759,8 +819,8 @@ function displayInvoice(priceType, discountPercent) {
 
   // Append additional static text at the end of the invoice
   invoiceMessage += `
-  
-Free express delivery in *48-72 working hours.*
+
+Free express delivery in *48-72 working hours.*  
 
 To confirm the above order please share:
 🔹*Name, Address, Pincode, Phone Number and Email ID* 
