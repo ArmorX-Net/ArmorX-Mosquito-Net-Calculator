@@ -534,31 +534,25 @@ function generatePlainTextWhatsAppMessage() {
     if (calculatedOrderDetails.length === 0) {
         return 'No calculated order details available. Please run the calculator first.';
     } else {
-        // Generate a simplified message format for the admin panel
+        // Generate formatted message for each window (using old formatting logic)
         const formattedMessage = calculatedOrderDetails.map((detail) => {
             const lines = detail.split('\n');
-            let windowHeader = lines[0]; // Example: "Window 1:"
+            let windowHeader = lines[0]; // e.g., "Window 1:"
             let formattedLines = [];
-
-            // Remove unnecessary match type text after the header
             if (windowHeader.includes('Closest Match Found') || windowHeader.includes('Exact Match Found')) {
                 windowHeader = windowHeader.split(':')[0] + ':';
             }
-
-            // Process details for closest or exact matches
             if (lines.some(line => line.includes('Closest Match Found'))) {
                 const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
                 const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm'));
                 const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
-                // Get the window quantity from the admin input (defaulting to 1 if not found)
+                // Get current quantity from the admin input (defaulting to 1)
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
                 const qtyInput = document.getElementById(`qty${windowNumber}`);
                 const qty = qtyInput ? qtyInput.value : 1;
-                // Replace "Closest Size Ordered" with "Closest Size to Order"
                 let updatedClosestSizeDetail = closestSizeDetail ? closestSizeDetail.replace('Closest Size Ordered', 'Closest Size to Order') : null;
-
                 formattedLines = [
                     windowHeader,
                     customSizeDetail,
@@ -574,11 +568,9 @@ function generatePlainTextWhatsAppMessage() {
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
                 const originalUnitNote = lines.find(line => line.includes('(Original:'));
-                // Get the window quantity from the admin input (defaulting to 1 if not found)
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
                 const qtyInput = document.getElementById(`qty${windowNumber}`);
                 const qty = qtyInput ? qtyInput.value : 1;
-
                 formattedLines = [
                     windowHeader,
                     originalUnitNote,
@@ -589,11 +581,10 @@ function generatePlainTextWhatsAppMessage() {
                     `Select Qty: *${qty} qty*`
                 ];
             }
-
             return formattedLines.filter(Boolean).join('\n');
         }).join('\n\n');
 
-        // Build dynamic custom sizes list for ALL windows without "Window X:" prefix
+        // Build dynamic custom sizes list for ALL windows (without "Window X:" prefix)
         const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
         let customSizesList = "";
         for (let i = 1; i <= numWindows; i++) {
@@ -605,7 +596,6 @@ function generatePlainTextWhatsAppMessage() {
             const widthVal = widthInput ? widthInput.value : "";
             const unitVal = unitInput ? unitInput.value : "";
             const qtyVal = qtyInput ? qtyInput.value : 1;
-
             if (heightVal && widthVal) {
                 const lowerUnitVal = unitVal.toLowerCase();
                 customSizesList += `${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty\n`;
@@ -628,12 +618,24 @@ ${customSizesList.trim()}
     }
 }
 
-// Function to Copy text from Admin Panel using plain text from generatePlainTextWhatsAppMessage()
+// Modified copy function that offers the user a choice if both WhatsApp and Invoice messages exist.
 function copyAdminText() {
-    const plainText = generatePlainTextWhatsAppMessage();
+    let invoiceDisplay = document.getElementById('invoiceDisplay');
+    let option = "1";
+    if (invoiceDisplay) {
+        option = prompt("Enter 1 to copy WhatsApp message, 2 to copy Invoice Quotation, or 3 to copy both", "1");
+    }
+    let textToCopy = "";
+    if (option === "2" && invoiceDisplay) {
+        textToCopy = invoiceDisplay.innerText;
+    } else if (option === "3" && invoiceDisplay) {
+        textToCopy = generatePlainTextWhatsAppMessage() + "\n\n" + invoiceDisplay.innerText;
+    } else {
+        textToCopy = generatePlainTextWhatsAppMessage();
+    }
     // Use a temporary textarea to copy the text exactly
     const tempTextArea = document.createElement('textarea');
-    tempTextArea.value = plainText;
+    tempTextArea.value = textToCopy;
     document.body.appendChild(tempTextArea);
     tempTextArea.select();
     document.execCommand('copy');
