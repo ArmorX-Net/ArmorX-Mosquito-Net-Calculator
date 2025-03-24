@@ -523,6 +523,16 @@ function toggleAdminInterface() {
         adminMessageArea.className = 'admin-message-area'; // Use CSS class for message area
         adminContainer.appendChild(adminMessageArea);
 
+        // Dropdown for Copy Selection
+        const copySelect = document.createElement('select');
+        copySelect.id = 'copySelect';
+        copySelect.innerHTML = `
+            <option value="1">Copy WhatsApp Message</option>
+            <option value="2">Copy Invoice Quotation</option>
+            <option value="3">Copy Both WhatsApp & Quotation</option>
+        `;
+        adminContainer.appendChild(copySelect);
+
         document.body.appendChild(adminContainer);
     }
 
@@ -620,19 +630,34 @@ ${customSizesList.trim()}
 
 // Modified copy function that offers the user a choice if both WhatsApp and Invoice messages exist.
 function copyAdminText() {
-    let invoiceDisplay = document.getElementById('invoiceDisplay');
-    let option = "1";
-    if (invoiceDisplay) {
-        option = prompt("Enter 1 to copy WhatsApp message, 2 to copy Invoice Quotation, or 3 to copy both", "1");
-    }
+    const copyOption = document.getElementById('copySelect').value;
     let textToCopy = "";
-    if (option === "2" && invoiceDisplay) {
-        textToCopy = invoiceDisplay.innerText;
-    } else if (option === "3" && invoiceDisplay) {
-        textToCopy = generatePlainTextWhatsAppMessage() + "\n\n" + invoiceDisplay.innerText;
-    } else {
+
+    // Option 1 - WhatsApp message
+    if (copyOption === "1") {
         textToCopy = generatePlainTextWhatsAppMessage();
     }
+    // Option 2 - Invoice Quotation
+    else if (copyOption === "2") {
+        const invoiceDisplay = document.getElementById('invoiceDisplay');
+        if (invoiceDisplay) {
+            textToCopy = invoiceDisplay.innerText;
+        } else {
+            alert("No invoice available to copy.");
+            return;
+        }
+    }
+    // Option 3 - Both WhatsApp message and Invoice Quotation
+    else if (copyOption === "3") {
+        const invoiceDisplay = document.getElementById('invoiceDisplay');
+        if (invoiceDisplay) {
+            textToCopy = generatePlainTextWhatsAppMessage() + "\n\n" + invoiceDisplay.innerText;
+        } else {
+            alert("No invoice available to copy.");
+            return;
+        }
+    }
+
     // Use a temporary textarea to copy the text exactly
     const tempTextArea = document.createElement('textarea');
     tempTextArea.value = textToCopy;
@@ -641,47 +666,6 @@ function copyAdminText() {
     document.execCommand('copy');
     document.body.removeChild(tempTextArea);
     alert('Text copied to clipboard!');
-}
-
-// Helper function to update the Custom Size Details block (used in the interactive UI)
-function updateCustomSizesPre() {
-    const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
-    let customSizesList = [];
-    for (let i = 1; i <= numWindows; i++) {
-        let qtyVal;
-        const invoiceQtyInput = document.getElementById(`qty${i}`);
-        if (invoiceQtyInput) {
-            qtyVal = invoiceQtyInput.value;
-        } else if (windowQtyValues[i] !== undefined) {
-            qtyVal = windowQtyValues[i];
-        } else {
-            qtyVal = 1;
-        }
-        const heightInput = document.getElementById(`height${i}`);
-        const widthInput = document.getElementById(`width${i}`);
-        const unitInput = document.getElementById('unit');
-        const heightVal = heightInput ? heightInput.value : "";
-        const widthVal = widthInput ? widthInput.value : "";
-        const unitVal = unitInput ? unitInput.value : "";
-        if (heightVal && widthVal) {
-            const lowerUnitVal = unitVal.toLowerCase();
-            customSizesList.push(`${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty`);
-        }
-    }
-    const customSizesPre = document.getElementById('customSizesPre');
-    if (customSizesPre) {
-        customSizesPre.innerText = 
-`*****************************************************
-*VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*
-- Your *17 Digit Amazon Order ID#* Number 
-- Confirm Preferred *Color*
-
-*Note:* The *Closest size* is for order processing only. The net will be *altered to your exact custom size* and will be shipped under the same order ID.
-
-Black | White | Grey | Cream
-Custom Size Details:
-${customSizesList.join('\n')}`;
-    }
 }
 
 // Function to Format Message for WhatsApp Admin Panel with interactive Qty fields (Updated Format)
@@ -862,143 +846,6 @@ function formatMessageForWhatsApp() {
         adminMessageArea.appendChild(additionalPre);
         updateCustomSizesPre();
     }
-}
-
-// --- ADMIN PANEL: Invoice Generation Functions (Updated GUI with Quantity) ---
-
-// Function to create (or update) the invoice controls panel
-function generateInvoice() {
-  if (!orderData || orderData.length === 0) {
-    alert("No order details found. Please run the calculator first.");
-    return;
-  }
-
-  const adminMessageArea = document.getElementById('adminMessageArea');
-  if (!adminMessageArea) return;
-
-  // Check if an invoice controls container already exists
-  let invoiceContainer = document.getElementById('invoiceControls');
-  if (!invoiceContainer) {
-    invoiceContainer = document.createElement('div');
-    invoiceContainer.id = 'invoiceControls';
-    invoiceContainer.style.display = 'flex';
-    invoiceContainer.style.flexDirection = 'column';
-    invoiceContainer.style.gap = '10px';
-    invoiceContainer.style.marginBottom = '20px';
-    adminMessageArea.appendChild(invoiceContainer);
-  } else {
-    invoiceContainer.innerHTML = '';
-  }
-
-  // Create Price Type Dropdown (placed on top)
-  const priceSelection = document.createElement('select');
-  priceSelection.id = 'priceSelection';
-  priceSelection.innerHTML = ` 
-    <option value="Selling Price">Selling Price</option>
-    <option value="Deal Price">Deal Price</option>
-    <option value="Event Price">Event Price</option>
-  `;
-  invoiceContainer.appendChild(priceSelection);
-
-  // Create Discount Input Field (placed below the dropdown)
-  const discountInput = document.createElement('input');
-  discountInput.type = 'number';
-  discountInput.id = 'discountInput';
-  discountInput.placeholder = 'Enter Discount %';
-  discountInput.min = '0';
-  discountInput.max = '100';
-  invoiceContainer.appendChild(discountInput);
-
-  // Create a container for the Quantity fields (one per window)
-  let qtyContainer = document.createElement('div');
-  qtyContainer.id = 'qtyContainer';
-  qtyContainer.style.display = 'flex';
-  qtyContainer.style.flexDirection = 'column';
-  qtyContainer.style.gap = '5px';
-  qtyContainer.style.marginBottom = '10px';
-
-  // For each window in orderData, add a quantity input (default = current value if available)
-  orderData.forEach((item) => {
-    let qtyDiv = document.createElement('div');
-    const currentQty = (windowQtyValues[item.windowNumber] !== undefined) ? windowQtyValues[item.windowNumber] : 1;
-    qtyDiv.innerHTML = `Window ${item.windowNumber} Quantity: <input type="number" id="qty${item.windowNumber}" value="${currentQty}" min="1" style="width:50px;">`;
-    const qtyInput = qtyDiv.querySelector('input');
-    qtyInput.addEventListener('input', function() {
-        let whatsappInput = document.getElementById(`whatsappQty${item.windowNumber}`);
-        if (whatsappInput) {
-            whatsappInput.value = qtyInput.value;
-            const whatsappText = document.getElementById(`whatsappQtyText${item.windowNumber}`);
-            if (whatsappText) {
-                whatsappText.innerText = `Select Qty: *${qtyInput.value} qty*`;
-            }
-        }
-        windowQtyValues[item.windowNumber] = qtyInput.value;
-        updateCustomSizesPre();
-    });
-    qtyContainer.appendChild(qtyDiv);
-  });
-  invoiceContainer.appendChild(qtyContainer);
-
-  // Create Generate Invoice Button (placed at the bottom)
-  const generateBtn = document.createElement('button');
-  generateBtn.className = 'admin-button';
-  generateBtn.innerText = 'Generate Invoice';
-  generateBtn.addEventListener('click', () => {
-    const existingInvoice = document.getElementById('invoiceDisplay');
-    if (existingInvoice) {
-      existingInvoice.remove();
-    }
-    displayInvoice(priceSelection.value, discountInput.value);
-  });
-  invoiceContainer.appendChild(generateBtn);
-}
-
-// Function to calculate and display the invoice with integer totals
-function displayInvoice(priceType, discountPercent) {
-  let invoiceData = [];
-  let totalAmount = 0;
-
-  // Iterate over each net order stored in the global orderData array
-  orderData.forEach(item => {
-    let qtyInput = document.getElementById(`qty${item.windowNumber}`);
-    let qty = qtyInput ? parseInt(qtyInput.value) : 1;
-    const price = parseFloat(item.priceRecord[priceType]);
-    const windowTotal = price * qty;
-    totalAmount += windowTotal;
-    invoiceData.push(
-      `Window ${item.windowNumber}\nSize: ${item.size} - ${qty} qty\nPrice: INR ${Math.round(price)}/- x ${qty} = INR ${Math.round(windowTotal)}/-`
-    );
-  });
-
-  const discountAmount = (totalAmount * parseFloat(discountPercent || 0)) / 100;
-  const finalAmount = totalAmount - discountAmount;
-
-  let invoiceMessage = `<b>Quotation:</b>\n${invoiceData.join('\n\n')}\n\n<b>Total:</b> INR ${Math.round(totalAmount)}/-`;
-  if (discountAmount > 0) {
-    invoiceMessage += `\n<b>Discount (${discountPercent}%):</b> - INR ${Math.round(discountAmount)}/-`;
-  }
-  invoiceMessage += `\n<b>Final Total:</b> INR ${Math.round(finalAmount)}/-`;
-
-  invoiceMessage += `
-
-Free express delivery in *48-72 working hours.*  
-
-To confirm the above order please share:
-🔹*Name, Address, Pincode, Phone Number and Email ID* 
-🔹*Preferred Color:* Black | Grey | Cream | White
-
-Once the order is confirmed, we will share an official invoice; after which you can pay via GPay, PayTM, UPI or bank transfer.
-
-Looking forward to serving you soon!
-Team ARMORX`;
-
-  const invoiceDisplay = document.createElement('div');
-  invoiceDisplay.id = 'invoiceDisplay';
-  invoiceDisplay.style.marginTop = '20px';
-  invoiceDisplay.innerHTML = `<pre>${invoiceMessage}</pre>`;
-
-  const adminMessageArea = document.getElementById('adminMessageArea');
-  adminMessageArea.appendChild(invoiceDisplay);
 }
 
 // Share Functionality
