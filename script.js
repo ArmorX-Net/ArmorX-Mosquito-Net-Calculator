@@ -473,6 +473,7 @@ function toggleFaq(faqElement) {
 // Global variables
 let orderData = [];            // Populated in your calculateSizes logic
 let windowQtyValues = {};      // Stores current qty per window (keyed by window number)
+let justRecalculated = false;  // Should be set to true by your "Find Closest Matches" button
 
 // Admin Panel
 function toggleAdminInterface() {
@@ -525,13 +526,14 @@ function toggleAdminInterface() {
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
 }
 
-// Function to Copy text from Admin Panel
+// Function to Copy text from Admin Panel (cleans up extra newlines)
 function copyAdminText() {
     const adminMessageArea = document.getElementById('adminMessageArea');
     if (adminMessageArea) {
-        // Use textContent to copy plain text without the HTML elements
-        let textToCopy = adminMessageArea.innerText;
-        navigator.clipboard.writeText(textToCopy)
+        let rawText = adminMessageArea.innerText;
+        // Replace double (or more) newlines with a single newline
+        let cleanedText = rawText.replace(/\n\s*\n/g, "\n");
+        navigator.clipboard.writeText(cleanedText)
             .then(() => alert('Text copied to clipboard!'))
             .catch((err) => {
                 console.error('Error copying text: ', err);
@@ -581,6 +583,17 @@ ${customSizesList.join('\n')}`;
 
 // Function to Format Message for WhatsApp Admin Panel with interactive Qty fields (Updated Format)
 function formatMessageForWhatsApp() {
+    // If the user has just re-calculated (via "Find Closest Matches"), reset qty values to 1.
+    if (justRecalculated) {
+        const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
+        for (let i = 1; i <= numWindows; i++) {
+            windowQtyValues[i] = 1;
+            let invoiceQty = document.getElementById(`qty${i}`);
+            if (invoiceQty) invoiceQty.value = 1;
+        }
+        justRecalculated = false;
+    }
+
     const adminMessageArea = document.getElementById('adminMessageArea');
     adminMessageArea.innerHTML = ''; // Clear previous content
 
@@ -598,7 +611,7 @@ function formatMessageForWhatsApp() {
             // Extract window number (assumes header format "Window X:")
             const windowNumber = parseInt(windowHeader.split(' ')[1]);
 
-            // Determine current quantity:
+            // Determine current quantity: if an invoice qty exists or a stored value, use it; otherwise default to 1.
             let currentQty;
             const invoiceQtyInput = document.getElementById(`qty${windowNumber}`);
             if (invoiceQtyInput) {
