@@ -529,14 +529,12 @@ function toggleAdminInterface() {
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
 }
 
-// Function to Copy text from Admin Panel (cleans up extra newlines)
+// Function to Copy text from Admin Panel
 function copyAdminText() {
     const adminMessageArea = document.getElementById('adminMessageArea');
     if (adminMessageArea) {
-        let rawText = adminMessageArea.innerText;
-        // Replace 2 or more consecutive newlines with exactly 1 newlines.
-        let cleanedText = rawText.replace(/\n{2,}/g, "\n");
-        navigator.clipboard.writeText(cleanedText)
+        const textToCopy = adminMessageArea.innerText;
+        navigator.clipboard.writeText(textToCopy)
             .then(() => alert('Text copied to clipboard!'))
             .catch((err) => {
                 console.error('Error copying text: ', err);
