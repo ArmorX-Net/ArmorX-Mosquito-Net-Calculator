@@ -477,6 +477,7 @@ function toggleFaq(faqElement) {
 let orderData = [];            // Populated in your calculateSizes logic
 let windowQtyValues = {};      // Stores current qty per window (keyed by window number)
 let justRecalculated = false;  // Should be set to true by your "Find Closest Matches" button
+let isAdminVisible = false;    // Admin panel visibility state
 
 // Admin Panel
 function toggleAdminInterface() {
@@ -539,15 +540,62 @@ function toggleAdminInterface() {
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
 }
 
+// Admin Key Combination Listener
+window.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.shiftKey && event.code === 'KeyU') {
+        event.preventDefault(); // Prevent default browser behavior (open DevTools)
+        toggleAdminInterface(); // Toggle the admin interface visibility
+    }
+});
+
+// Function to Copy text from Admin Panel
+function copyAdminText() {
+    const copyOption = document.getElementById('copySelect').value;
+    let textToCopy = "";
+
+    // Option 1 - WhatsApp message
+    if (copyOption === "1") {
+        textToCopy = generatePlainTextWhatsAppMessage();
+    }
+    // Option 2 - Invoice Quotation
+    else if (copyOption === "2") {
+        const invoiceDisplay = document.getElementById('invoiceDisplay');
+        if (invoiceDisplay) {
+            textToCopy = invoiceDisplay.innerText;
+        } else {
+            alert("No invoice available to copy.");
+            return;
+        }
+    }
+    // Option 3 - Both WhatsApp message and Invoice Quotation
+    else if (copyOption === "3") {
+        const invoiceDisplay = document.getElementById('invoiceDisplay');
+        if (invoiceDisplay) {
+            textToCopy = generatePlainTextWhatsAppMessage() + "\n\n" + invoiceDisplay.innerText;
+        } else {
+            alert("No invoice available to copy.");
+            return;
+        }
+    }
+
+    // Use a temporary textarea to copy the text exactly
+    const tempTextArea = document.createElement('textarea');
+    tempTextArea.value = textToCopy;
+    document.body.appendChild(tempTextArea);
+    tempTextArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempTextArea);
+    alert('Text copied to clipboard!');
+}
+
 // New helper function to generate the plain text WhatsApp message exactly as in the old code
 function generatePlainTextWhatsAppMessage() {
     if (calculatedOrderDetails.length === 0) {
         return 'No calculated order details available. Please run the calculator first.';
     } else {
-        // Generate formatted message for each window (using old formatting logic)
         const formattedMessage = calculatedOrderDetails.map((detail) => {
             const lines = detail.split('\n');
-            let windowHeader = lines[0]; // e.g., "Window 1:"
+            let windowHeader = lines[0]; 
             let formattedLines = [];
             if (windowHeader.includes('Closest Match Found') || windowHeader.includes('Exact Match Found')) {
                 windowHeader = windowHeader.split(':')[0] + ':';
@@ -558,7 +606,6 @@ function generatePlainTextWhatsAppMessage() {
                 const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
-                // Get current quantity from the admin input (defaulting to 1)
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
                 const qtyInput = document.getElementById(`qty${windowNumber}`);
                 const qty = qtyInput ? qtyInput.value : 1;
@@ -594,7 +641,6 @@ function generatePlainTextWhatsAppMessage() {
             return formattedLines.filter(Boolean).join('\n');
         }).join('\n\n');
 
-        // Build dynamic custom sizes list for ALL windows (without "Window X:" prefix)
         const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
         let customSizesList = "";
         for (let i = 1; i <= numWindows; i++) {
