@@ -470,6 +470,10 @@ function toggleFaq(faqElement) {
     }
 }
 
+// Global variables
+let orderData = [];            // Populated in your calculateSizes logic
+let windowQtyValues = {};      // Stores current qty per window (keyed by window number)
+
 // Admin Panel
 function toggleAdminInterface() {
     isAdminVisible = !isAdminVisible;
@@ -541,9 +545,15 @@ function updateCustomSizesPre() {
     const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
     let customSizesList = [];
     for (let i = 1; i <= numWindows; i++) {
-        // Use the invoice qty input (which is kept in sync with the WhatsApp input)
+        let qtyVal;
         const invoiceQtyInput = document.getElementById(`qty${i}`);
-        const qtyVal = invoiceQtyInput ? invoiceQtyInput.value : 1;
+        if (invoiceQtyInput) {
+            qtyVal = invoiceQtyInput.value;
+        } else if (windowQtyValues[i] !== undefined) {
+            qtyVal = windowQtyValues[i];
+        } else {
+            qtyVal = 1;
+        }
         const heightInput = document.getElementById(`height${i}`);
         const widthInput = document.getElementById(`width${i}`);
         const unitInput = document.getElementById('unit');
@@ -588,10 +598,20 @@ function formatMessageForWhatsApp() {
             // Extract window number (assumes header format "Window X:")
             const windowNumber = parseInt(windowHeader.split(' ')[1]);
 
+            // Determine current quantity:
+            let currentQty;
+            const invoiceQtyInput = document.getElementById(`qty${windowNumber}`);
+            if (invoiceQtyInput) {
+                currentQty = invoiceQtyInput.value;
+            } else if (windowQtyValues[windowNumber] !== undefined) {
+                currentQty = windowQtyValues[windowNumber];
+            } else {
+                currentQty = 1;
+            }
+
             // Create a container for this window’s detail
             const windowDiv = document.createElement('div');
             windowDiv.className = 'window-detail';
-            // Remove default margins so that copy-pasted text is tight
             windowDiv.style.margin = '0';
 
             // Add header (e.g., "Window 1:")
@@ -621,7 +641,6 @@ function formatMessageForWhatsApp() {
                     windowDiv.appendChild(p); 
                 }
                 if (closestSizeDetail) { 
-                    // Replace text as needed
                     let updatedClosestSizeDetail = closestSizeDetail.replace('Closest Size Ordered', 'Closest Size to Order');
                     let p = document.createElement('p'); 
                     p.innerText = updatedClosestSizeDetail;
@@ -683,7 +702,6 @@ function formatMessageForWhatsApp() {
             }
             
             // --- Add Qty line with both text and input box ---
-            // Create a container so they appear inline
             const qtyLine = document.createElement('div');
             qtyLine.style.display = 'flex';
             qtyLine.style.alignItems = 'center';
@@ -692,8 +710,6 @@ function formatMessageForWhatsApp() {
             // Create the text element showing the qty value (to be copied)
             const qtyText = document.createElement('span');
             qtyText.id = `whatsappQtyText${windowNumber}`;
-            const invoiceQtyInput = document.getElementById(`qty${windowNumber}`);
-            let currentQty = invoiceQtyInput ? invoiceQtyInput.value : 1;
             qtyText.innerText = `Select Qty: *${currentQty} qty*`;
             qtyLine.appendChild(qtyText);
 
@@ -705,7 +721,6 @@ function formatMessageForWhatsApp() {
             qtyInput.value = currentQty;
             qtyInput.style.width = '50px';
             qtyInput.style.marginLeft = '10px';
-            // When the WhatsApp qty is changed, update the invoice qty, update the display text, and update custom sizes
             qtyInput.addEventListener('input', function() {
                 const newQty = qtyInput.value;
                 const invoiceInput = document.getElementById(`qty${windowNumber}`);
@@ -713,6 +728,7 @@ function formatMessageForWhatsApp() {
                     invoiceInput.value = newQty;
                 }
                 qtyText.innerText = `Select Qty: *${newQty} qty*`;
+                windowQtyValues[windowNumber] = newQty;
                 updateCustomSizesPre();
             });
             qtyLine.appendChild(qtyInput);
@@ -731,9 +747,6 @@ function formatMessageForWhatsApp() {
         updateCustomSizesPre();
     }
 }
-
-// Global variable holding structured order data (populate this in your calculateSizes logic)
-let orderData = [];
 
 // --- ADMIN PANEL: Invoice Generation Functions (Updated GUI with Quantity) ---
 
@@ -788,14 +801,11 @@ function generateInvoice() {
   qtyContainer.style.gap = '5px';
   qtyContainer.style.marginBottom = '10px';
 
-  // For each window in orderData, add a quantity input (default = 1 or current value)
+  // For each window in orderData, add a quantity input (default = current value if available)
   orderData.forEach((item) => {
     let qtyDiv = document.createElement('div');
-    // Use the current WhatsApp qty if available
-    const whatsappQtyInput = document.getElementById(`whatsappQty${item.windowNumber}`);
-    const currentQty = whatsappQtyInput ? whatsappQtyInput.value : 1;
+    const currentQty = (windowQtyValues[item.windowNumber] !== undefined) ? windowQtyValues[item.windowNumber] : 1;
     qtyDiv.innerHTML = `Window ${item.windowNumber} Quantity: <input type="number" id="qty${item.windowNumber}" value="${currentQty}" min="1" style="width:50px;">`;
-    // When the invoice qty changes, update the corresponding WhatsApp qty and the custom sizes block
     const qtyInput = qtyDiv.querySelector('input');
     qtyInput.addEventListener('input', function() {
         let whatsappInput = document.getElementById(`whatsappQty${item.windowNumber}`);
@@ -806,6 +816,7 @@ function generateInvoice() {
                 whatsappText.innerText = `Select Qty: *${qtyInput.value} qty*`;
             }
         }
+        windowQtyValues[item.windowNumber] = qtyInput.value;
         updateCustomSizesPre();
     });
     qtyContainer.appendChild(qtyDiv);
@@ -873,7 +884,6 @@ Team ARMORX`;
   const adminMessageArea = document.getElementById('adminMessageArea');
   adminMessageArea.appendChild(invoiceDisplay);
 }
-
 
 // Share Functionality
 document.getElementById('shareButton').addEventListener('click', function () {
