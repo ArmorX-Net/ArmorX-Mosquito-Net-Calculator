@@ -534,8 +534,8 @@ function copyAdminText() {
     const adminMessageArea = document.getElementById('adminMessageArea');
     if (adminMessageArea) {
         let rawText = adminMessageArea.innerText;
-        // Replace 3 or more consecutive newlines with exactly 2 newlines.
-        let cleanedText = rawText.replace(/\n{3,}/g, "\n\n");
+        // Replace 2 or more consecutive newlines with exactly 1 newlines.
+        let cleanedText = rawText.replace(/\n{2,}/g, "\n");
         navigator.clipboard.writeText(cleanedText)
             .then(() => alert('Text copied to clipboard!'))
             .catch((err) => {
