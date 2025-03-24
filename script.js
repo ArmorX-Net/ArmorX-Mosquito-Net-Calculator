@@ -529,21 +529,119 @@ function toggleAdminInterface() {
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
 }
 
-// Function to Copy text from Admin Panel
-function copyAdminText() {
-    const adminMessageArea = document.getElementById('adminMessageArea');
-    if (adminMessageArea) {
-        const textToCopy = adminMessageArea.innerText;
-        navigator.clipboard.writeText(textToCopy)
-            .then(() => alert('Text copied to clipboard!'))
-            .catch((err) => {
-                console.error('Error copying text: ', err);
-                alert('Failed to copy text. Please try again.');
-            });
+// New helper function to generate the plain text WhatsApp message exactly as in the old code
+function generatePlainTextWhatsAppMessage() {
+    if (calculatedOrderDetails.length === 0) {
+        return 'No calculated order details available. Please run the calculator first.';
+    } else {
+        // Generate a simplified message format for the admin panel
+        const formattedMessage = calculatedOrderDetails.map((detail) => {
+            const lines = detail.split('\n');
+            let windowHeader = lines[0]; // Example: "Window 1:"
+            let formattedLines = [];
+
+            // Remove unnecessary match type text after the header
+            if (windowHeader.includes('Closest Match Found') || windowHeader.includes('Exact Match Found')) {
+                windowHeader = windowHeader.split(':')[0] + ':';
+            }
+
+            // Process details for closest or exact matches
+            if (lines.some(line => line.includes('Closest Match Found'))) {
+                const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
+                const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm'));
+                const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
+                const colorDetail = lines.find(line => line.startsWith('- Color'));
+                const linkDetail = lines.find(line => line.startsWith('- Link'));
+                // Get the window quantity from the admin input (defaulting to 1 if not found)
+                const windowNumber = parseInt(windowHeader.split(' ')[1]);
+                const qtyInput = document.getElementById(`qty${windowNumber}`);
+                const qty = qtyInput ? qtyInput.value : 1;
+                // Replace "Closest Size Ordered" with "Closest Size to Order"
+                let updatedClosestSizeDetail = closestSizeDetail ? closestSizeDetail.replace('Closest Size Ordered', 'Closest Size to Order') : null;
+
+                formattedLines = [
+                    windowHeader,
+                    customSizeDetail,
+                    customSizeInCm,
+                    updatedClosestSizeDetail,
+                    colorDetail,
+                    'CLICK HERE: To Order *Closest Size* on Amazon:',
+                    linkDetail,
+                    `Select Qty: *${qty} qty*`
+                ];
+            } else if (lines.some(line => line.includes('Exact Match Found'))) {
+                const sizeDetail = lines.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
+                const colorDetail = lines.find(line => line.startsWith('- Color'));
+                const linkDetail = lines.find(line => line.startsWith('- Link'));
+                const originalUnitNote = lines.find(line => line.includes('(Original:'));
+                // Get the window quantity from the admin input (defaulting to 1 if not found)
+                const windowNumber = parseInt(windowHeader.split(' ')[1]);
+                const qtyInput = document.getElementById(`qty${windowNumber}`);
+                const qty = qtyInput ? qtyInput.value : 1;
+
+                formattedLines = [
+                    windowHeader,
+                    originalUnitNote,
+                    sizeDetail,
+                    colorDetail,
+                    'CLICK HERE: To Order *Exact Size* on Amazon:',
+                    linkDetail,
+                    `Select Qty: *${qty} qty*`
+                ];
+            }
+
+            return formattedLines.filter(Boolean).join('\n');
+        }).join('\n\n');
+
+        // Build dynamic custom sizes list for ALL windows without "Window X:" prefix
+        const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
+        let customSizesList = "";
+        for (let i = 1; i <= numWindows; i++) {
+            const heightInput = document.getElementById(`height${i}`);
+            const widthInput = document.getElementById(`width${i}`);
+            const unitInput = document.getElementById('unit');
+            const qtyInput = document.getElementById(`qty${i}`);
+            const heightVal = heightInput ? heightInput.value : "";
+            const widthVal = widthInput ? widthInput.value : "";
+            const unitVal = unitInput ? unitInput.value : "";
+            const qtyVal = qtyInput ? qtyInput.value : 1;
+
+            if (heightVal && widthVal) {
+                const lowerUnitVal = unitVal.toLowerCase();
+                customSizesList += `${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty\n`;
+            }
+        }
+
+        const additionalText = `
+*****************************************************
+*VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*
+- Your *17 Digit Amazon Order ID#* Number 
+- Confirm Preferred *Color*
+
+*Note:* The *Closest size* is for order processing only. The net will be *altered to your exact custom size* and will be shipped under the same order ID.
+
+Black | White | Grey | Cream
+Custom Size Details:
+${customSizesList.trim()}
+`;
+        return formattedMessage + "\n\n" + additionalText;
     }
 }
 
-// Helper function to update the Custom Size Details block
+// Function to Copy text from Admin Panel using plain text from generatePlainTextWhatsAppMessage()
+function copyAdminText() {
+    const plainText = generatePlainTextWhatsAppMessage();
+    // Use a temporary textarea to copy the text exactly
+    const tempTextArea = document.createElement('textarea');
+    tempTextArea.value = plainText;
+    document.body.appendChild(tempTextArea);
+    tempTextArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempTextArea);
+    alert('Text copied to clipboard!');
+}
+
+// Helper function to update the Custom Size Details block (used in the interactive UI)
 function updateCustomSizesPre() {
     const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
     let customSizesList = [];
