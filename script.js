@@ -301,6 +301,9 @@ function generateWhatsAppLink(orderDetails, isExceeded = false) {
 
 // Main calculation logic
 function calculateSizes() {
+    // Set the flag so that the next "Format WhatsApp Message" resets quantities to 1.
+    justRecalculated = true;
+    
      // Hide the bottom WhatsApp icon once the calculation is initiated
     const supportIcon = document.querySelector('.whatsapp-icon-bottom');
     if (supportIcon) {
