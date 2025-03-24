@@ -531,18 +531,16 @@ function toggleAdminInterface() {
 
 // Function to Copy text from Admin Panel (cleans up extra newlines)
 function copyAdminText() {
-    const adminMessageArea = document.getElementById('adminMessageArea');
-    if (adminMessageArea) {
-        let rawText = adminMessageArea.innerText;
-        // Replace double (or more) newlines with a single newline
-        let cleanedText = rawText.replace(/\n\s*\n/g, "\n");
-        navigator.clipboard.writeText(cleanedText)
-            .then(() => alert('Text copied to clipboard!'))
-            .catch((err) => {
-                console.error('Error copying text: ', err);
-                alert('Failed to copy text. Please try again.');
-            });
-    }
+  const adminMessageArea = document.getElementById('adminMessageArea');
+  if (adminMessageArea) {
+    const plainText = adminMessageArea.innerText; // this gives you plain text
+    navigator.clipboard.writeText(plainText)
+      .then(() => alert('Text copied to clipboard!'))
+      .catch((err) => {
+        console.error('Error copying text: ', err);
+        alert('Failed to copy text. Please try again.');
+      });
+  }
 }
 
 // Helper function to update the Custom Size Details block
