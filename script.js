@@ -477,7 +477,6 @@ function toggleFaq(faqElement) {
 let orderData = [];            // Populated in your calculateSizes logic
 let windowQtyValues = {};      // Stores current qty per window (keyed by window number)
 let justRecalculated = false;  // Should be set to true by your "Find Closest Matches" button
-let isAdminVisible = false;    // Admin panel visibility state
 
 // Admin Panel
 function toggleAdminInterface() {
@@ -551,7 +550,7 @@ function generatePlainTextWhatsAppMessage() {
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
                 // Get current quantity from the admin input (defaulting to 1)
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
-                const qtyInput = document.getElementById(`qty${windowNumber}`);
+                const qtyInput = document.getElementById(qty${windowNumber});
                 const qty = qtyInput ? qtyInput.value : 1;
                 let updatedClosestSizeDetail = closestSizeDetail ? closestSizeDetail.replace('Closest Size Ordered', 'Closest Size to Order') : null;
                 formattedLines = [
@@ -562,7 +561,7 @@ function generatePlainTextWhatsAppMessage() {
                     colorDetail,
                     'CLICK HERE: To Order *Closest Size* on Amazon:',
                     linkDetail,
-                    `Select Qty: *${qty} qty*`
+                    Select Qty: *${qty} qty*
                 ];
             } else if (lines.some(line => line.includes('Exact Match Found'))) {
                 const sizeDetail = lines.find(line => line.startsWith('- Size:') || line.startsWith('- Size To Order'));
@@ -570,7 +569,7 @@ function generatePlainTextWhatsAppMessage() {
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
                 const originalUnitNote = lines.find(line => line.includes('(Original:'));
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
-                const qtyInput = document.getElementById(`qty${windowNumber}`);
+                const qtyInput = document.getElementById(qty${windowNumber});
                 const qty = qtyInput ? qtyInput.value : 1;
                 formattedLines = [
                     windowHeader,
@@ -579,7 +578,7 @@ function generatePlainTextWhatsAppMessage() {
                     colorDetail,
                     'CLICK HERE: To Order *Exact Size* on Amazon:',
                     linkDetail,
-                    `Select Qty: *${qty} qty*`
+                    Select Qty: *${qty} qty*
                 ];
             }
             return formattedLines.filter(Boolean).join('\n');
@@ -589,21 +588,21 @@ function generatePlainTextWhatsAppMessage() {
         const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
         let customSizesList = "";
         for (let i = 1; i <= numWindows; i++) {
-            const heightInput = document.getElementById(`height${i}`);
-            const widthInput = document.getElementById(`width${i}`);
+            const heightInput = document.getElementById(height${i});
+            const widthInput = document.getElementById(width${i});
             const unitInput = document.getElementById('unit');
-            const qtyInput = document.getElementById(`qty${i}`);
+            const qtyInput = document.getElementById(qty${i});
             const heightVal = heightInput ? heightInput.value : "";
             const widthVal = widthInput ? widthInput.value : "";
             const unitVal = unitInput ? unitInput.value : "";
             const qtyVal = qtyInput ? qtyInput.value : 1;
             if (heightVal && widthVal) {
                 const lowerUnitVal = unitVal.toLowerCase();
-                customSizesList += `${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty\n`;
+                customSizesList += ${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty\n;
             }
         }
 
-        const additionalText = `
+        const additionalText = 
 *****************************************************
 *VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*
 - Your *17 Digit Amazon Order ID#* Number 
@@ -614,7 +613,7 @@ function generatePlainTextWhatsAppMessage() {
 Black | White | Grey | Cream
 Custom Size Details:
 ${customSizesList.trim()}
-`;
+;
         return formattedMessage + "\n\n" + additionalText;
     }
 }
@@ -650,7 +649,7 @@ function updateCustomSizesPre() {
     let customSizesList = [];
     for (let i = 1; i <= numWindows; i++) {
         let qtyVal;
-        const invoiceQtyInput = document.getElementById(`qty${i}`);
+        const invoiceQtyInput = document.getElementById(qty${i});
         if (invoiceQtyInput) {
             qtyVal = invoiceQtyInput.value;
         } else if (windowQtyValues[i] !== undefined) {
@@ -658,21 +657,21 @@ function updateCustomSizesPre() {
         } else {
             qtyVal = 1;
         }
-        const heightInput = document.getElementById(`height${i}`);
-        const widthInput = document.getElementById(`width${i}`);
+        const heightInput = document.getElementById(height${i});
+        const widthInput = document.getElementById(width${i});
         const unitInput = document.getElementById('unit');
         const heightVal = heightInput ? heightInput.value : "";
         const widthVal = widthInput ? widthInput.value : "";
         const unitVal = unitInput ? unitInput.value : "";
         if (heightVal && widthVal) {
             const lowerUnitVal = unitVal.toLowerCase();
-            customSizesList.push(`${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty`);
+            customSizesList.push(${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty);
         }
     }
     const customSizesPre = document.getElementById('customSizesPre');
     if (customSizesPre) {
         customSizesPre.innerText = 
-`*****************************************************
+*****************************************************
 *VERY IMPORTANT:* To confirm your customization, *IMMEDIATELY SHARE:*
 - Your *17 Digit Amazon Order ID#* Number 
 - Confirm Preferred *Color*
@@ -681,7 +680,7 @@ function updateCustomSizesPre() {
 
 Black | White | Grey | Cream
 Custom Size Details:
-${customSizesList.join('\n')}`;
+${customSizesList.join('\n')};
     }
 }
 
@@ -692,7 +691,7 @@ function formatMessageForWhatsApp() {
         const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
         for (let i = 1; i <= numWindows; i++) {
             windowQtyValues[i] = 1;
-            let invoiceQty = document.getElementById(`qty${i}`);
+            let invoiceQty = document.getElementById(qty${i});
             if (invoiceQty) invoiceQty.value = 1;
         }
         justRecalculated = false;
@@ -717,7 +716,7 @@ function formatMessageForWhatsApp() {
 
             // Determine current quantity: if an invoice qty exists or a stored value, use it; otherwise default to 1.
             let currentQty;
-            const invoiceQtyInput = document.getElementById(`qty${windowNumber}`);
+            const invoiceQtyInput = document.getElementById(qty${windowNumber});
             if (invoiceQtyInput) {
                 currentQty = invoiceQtyInput.value;
             } else if (windowQtyValues[windowNumber] !== undefined) {
@@ -826,25 +825,25 @@ function formatMessageForWhatsApp() {
 
             // Create the text element showing the qty value (to be copied)
             const qtyText = document.createElement('span');
-            qtyText.id = `whatsappQtyText${windowNumber}`;
-            qtyText.innerText = `Select Qty: *${currentQty} qty*`;
+            qtyText.id = whatsappQtyText${windowNumber};
+            qtyText.innerText = Select Qty: *${currentQty} qty*;
             qtyLine.appendChild(qtyText);
 
             // Create the input field for updating qty
             const qtyInput = document.createElement('input');
             qtyInput.type = 'number';
-            qtyInput.id = `whatsappQty${windowNumber}`;
+            qtyInput.id = whatsappQty${windowNumber};
             qtyInput.min = 1;
             qtyInput.value = currentQty;
             qtyInput.style.width = '50px';
             qtyInput.style.marginLeft = '10px';
             qtyInput.addEventListener('input', function() {
                 const newQty = qtyInput.value;
-                const invoiceInput = document.getElementById(`qty${windowNumber}`);
+                const invoiceInput = document.getElementById(qty${windowNumber});
                 if (invoiceInput) {
                     invoiceInput.value = newQty;
                 }
-                qtyText.innerText = `Select Qty: *${newQty} qty*`;
+                qtyText.innerText = Select Qty: *${newQty} qty*;
                 windowQtyValues[windowNumber] = newQty;
                 updateCustomSizesPre();
             });
@@ -863,6 +862,143 @@ function formatMessageForWhatsApp() {
         adminMessageArea.appendChild(additionalPre);
         updateCustomSizesPre();
     }
+}
+
+// --- ADMIN PANEL: Invoice Generation Functions (Updated GUI with Quantity) ---
+
+// Function to create (or update) the invoice controls panel
+function generateInvoice() {
+  if (!orderData || orderData.length === 0) {
+    alert("No order details found. Please run the calculator first.");
+    return;
+  }
+
+  const adminMessageArea = document.getElementById('adminMessageArea');
+  if (!adminMessageArea) return;
+
+  // Check if an invoice controls container already exists
+  let invoiceContainer = document.getElementById('invoiceControls');
+  if (!invoiceContainer) {
+    invoiceContainer = document.createElement('div');
+    invoiceContainer.id = 'invoiceControls';
+    invoiceContainer.style.display = 'flex';
+    invoiceContainer.style.flexDirection = 'column';
+    invoiceContainer.style.gap = '10px';
+    invoiceContainer.style.marginBottom = '20px';
+    adminMessageArea.appendChild(invoiceContainer);
+  } else {
+    invoiceContainer.innerHTML = '';
+  }
+
+  // Create Price Type Dropdown (placed on top)
+  const priceSelection = document.createElement('select');
+  priceSelection.id = 'priceSelection';
+  priceSelection.innerHTML =  
+    <option value="Selling Price">Selling Price</option>
+    <option value="Deal Price">Deal Price</option>
+    <option value="Event Price">Event Price</option>
+  ;
+  invoiceContainer.appendChild(priceSelection);
+
+  // Create Discount Input Field (placed below the dropdown)
+  const discountInput = document.createElement('input');
+  discountInput.type = 'number';
+  discountInput.id = 'discountInput';
+  discountInput.placeholder = 'Enter Discount %';
+  discountInput.min = '0';
+  discountInput.max = '100';
+  invoiceContainer.appendChild(discountInput);
+
+  // Create a container for the Quantity fields (one per window)
+  let qtyContainer = document.createElement('div');
+  qtyContainer.id = 'qtyContainer';
+  qtyContainer.style.display = 'flex';
+  qtyContainer.style.flexDirection = 'column';
+  qtyContainer.style.gap = '5px';
+  qtyContainer.style.marginBottom = '10px';
+
+  // For each window in orderData, add a quantity input (default = current value if available)
+  orderData.forEach((item) => {
+    let qtyDiv = document.createElement('div');
+    const currentQty = (windowQtyValues[item.windowNumber] !== undefined) ? windowQtyValues[item.windowNumber] : 1;
+    qtyDiv.innerHTML = Window ${item.windowNumber} Quantity: <input type="number" id="qty${item.windowNumber}" value="${currentQty}" min="1" style="width:50px;">;
+    const qtyInput = qtyDiv.querySelector('input');
+    qtyInput.addEventListener('input', function() {
+        let whatsappInput = document.getElementById(whatsappQty${item.windowNumber});
+        if (whatsappInput) {
+            whatsappInput.value = qtyInput.value;
+            const whatsappText = document.getElementById(whatsappQtyText${item.windowNumber});
+            if (whatsappText) {
+                whatsappText.innerText = Select Qty: *${qtyInput.value} qty*;
+            }
+        }
+        windowQtyValues[item.windowNumber] = qtyInput.value;
+        updateCustomSizesPre();
+    });
+    qtyContainer.appendChild(qtyDiv);
+  });
+  invoiceContainer.appendChild(qtyContainer);
+
+  // Create Generate Invoice Button (placed at the bottom)
+  const generateBtn = document.createElement('button');
+  generateBtn.className = 'admin-button';
+  generateBtn.innerText = 'Generate Invoice';
+  generateBtn.addEventListener('click', () => {
+    const existingInvoice = document.getElementById('invoiceDisplay');
+    if (existingInvoice) {
+      existingInvoice.remove();
+    }
+    displayInvoice(priceSelection.value, discountInput.value);
+  });
+  invoiceContainer.appendChild(generateBtn);
+}
+
+// Function to calculate and display the invoice with integer totals
+function displayInvoice(priceType, discountPercent) {
+  let invoiceData = [];
+  let totalAmount = 0;
+
+  // Iterate over each net order stored in the global orderData array
+  orderData.forEach(item => {
+    let qtyInput = document.getElementById(qty${item.windowNumber});
+    let qty = qtyInput ? parseInt(qtyInput.value) : 1;
+    const price = parseFloat(item.priceRecord[priceType]);
+    const windowTotal = price * qty;
+    totalAmount += windowTotal;
+    invoiceData.push(
+      Window ${item.windowNumber}\nSize: ${item.size} - ${qty} qty\nPrice: INR ${Math.round(price)}/- x ${qty} = INR ${Math.round(windowTotal)}/-
+    );
+  });
+
+  const discountAmount = (totalAmount * parseFloat(discountPercent || 0)) / 100;
+  const finalAmount = totalAmount - discountAmount;
+
+  let invoiceMessage = <b>Quotation:</b>\n${invoiceData.join('\n\n')}\n\n<b>Total:</b> INR ${Math.round(totalAmount)}/-;
+  if (discountAmount > 0) {
+    invoiceMessage += \n<b>Discount (${discountPercent}%):</b> - INR ${Math.round(discountAmount)}/-;
+  }
+  invoiceMessage += \n<b>Final Total:</b> INR ${Math.round(finalAmount)}/-;
+
+  invoiceMessage += 
+
+Free express delivery in *48-72 working hours.*  
+
+To confirm the above order please share:
+🔹*Name, Address, Pincode, Phone Number and Email ID* 
+🔹*Preferred Color:* Black | Grey | Cream | White
+
+Once the order is confirmed, we will share an official invoice; after which you can pay via GPay, PayTM, UPI or bank transfer.
+
+Looking forward to serving you soon!
+Team ARMORX;
+
+  const invoiceDisplay = document.createElement('div');
+  invoiceDisplay.id = 'invoiceDisplay';
+  invoiceDisplay.style.marginTop = '20px';
+  invoiceDisplay.innerHTML = <pre>${invoiceMessage}</pre>;
+
+  const adminMessageArea = document.getElementById('adminMessageArea');
+  adminMessageArea.appendChild(invoiceDisplay);
 }
 
 // Share Functionality
