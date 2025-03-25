@@ -529,6 +529,18 @@ function toggleAdminInterface() {
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
 }
 
+// Helper function to update the WhatsApp Quantity based on input value
+function updateWhatsAppQty(windowNumber) {
+    const qtyInput = document.getElementById(`whatsappQty${windowNumber}`);
+    const qtyText = document.getElementById(`whatsappQtyText${windowNumber}`);
+
+    if (qtyInput && qtyText) {
+        const newQty = qtyInput.value || 1;
+        qtyText.innerText = `Select Qty: *${newQty} qty*`;
+        windowQtyValues[windowNumber] = newQty; // Update the global state
+    }
+}
+
 // New helper function to generate the plain text WhatsApp message exactly as in the old code
 function generatePlainTextWhatsAppMessage() {
     if (calculatedOrderDetails.length === 0) {
@@ -542,16 +554,15 @@ function generatePlainTextWhatsAppMessage() {
             if (windowHeader.includes('Closest Match Found') || windowHeader.includes('Exact Match Found')) {
                 windowHeader = windowHeader.split(':')[0] + ':';
             }
+
             if (lines.some(line => line.includes('Closest Match Found'))) {
                 const customSizeDetail = lines.find(line => line.startsWith('- Custom Size Needed'));
                 const customSizeInCm = lines.find(line => line.startsWith('- Custom Size in Cm'));
                 const closestSizeDetail = lines.find(line => line.startsWith('- Closest Size Ordered'));
                 const colorDetail = lines.find(line => line.startsWith('- Color'));
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
-                // Get current quantity from the admin input (defaulting to 1)
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
-                const qtyInput = document.getElementById(`qty${windowNumber}`);
-                const qty = qtyInput && qtyInput.value !== '' ? qtyInput.value : 1; // Ensure correct qty is fetched
+                const qty = windowQtyValues[windowNumber] || 1; // Use the global qty state for WhatsApp window
                 let updatedClosestSizeDetail = closestSizeDetail ? closestSizeDetail.replace('Closest Size Ordered', 'Closest Size to Order') : null;
                 formattedLines = [
                     windowHeader,
@@ -569,8 +580,7 @@ function generatePlainTextWhatsAppMessage() {
                 const linkDetail = lines.find(line => line.startsWith('- Link'));
                 const originalUnitNote = lines.find(line => line.includes('(Original:'));
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
-                const qtyInput = document.getElementById(`qty${windowNumber}`);
-                const qty = qtyInput && qtyInput.value !== '' ? qtyInput.value : 1; // Ensure correct qty is fetched
+                const qty = windowQtyValues[windowNumber] || 1; // Use the global qty state for WhatsApp window
                 formattedLines = [
                     windowHeader,
                     originalUnitNote,
@@ -641,6 +651,15 @@ function copyAdminText() {
     document.execCommand('copy');
     document.body.removeChild(tempTextArea);
     alert('Text copied to clipboard!');
+}
+
+// Update function to ensure that the WhatsApp quantity field reflects changes
+function updateWhatsAppMessageQty(windowNumber) {
+    const qtyInput = document.getElementById(`whatsappQty${windowNumber}`);
+    const qtyText = document.getElementById(`whatsappQtyText${windowNumber}`);
+    const qty = qtyInput ? qtyInput.value : 1;
+    qtyText.innerText = `Select Qty: *${qty} qty*`;
+    windowQtyValues[windowNumber] = qty; // Update global quantity state
 }
 
 // Helper function to update the Custom Size Details block (used in the interactive UI)
