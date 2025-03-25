@@ -551,7 +551,7 @@ function generatePlainTextWhatsAppMessage() {
                 // Get current quantity from the admin input (defaulting to 1)
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
                 const qtyInput = document.getElementById(`qty${windowNumber}`);
-                const qty = qtyInput ? qtyInput.value : 1;
+                const qty = qtyInput && qtyInput.value !== '' ? qtyInput.value : 1; // Ensure correct qty is fetched
                 let updatedClosestSizeDetail = closestSizeDetail ? closestSizeDetail.replace('Closest Size Ordered', 'Closest Size to Order') : null;
                 formattedLines = [
                     windowHeader,
@@ -570,7 +570,7 @@ function generatePlainTextWhatsAppMessage() {
                 const originalUnitNote = lines.find(line => line.includes('(Original:'));
                 const windowNumber = parseInt(windowHeader.split(' ')[1]);
                 const qtyInput = document.getElementById(`qty${windowNumber}`);
-                const qty = qtyInput ? qtyInput.value : 1;
+                const qty = qtyInput && qtyInput.value !== '' ? qtyInput.value : 1; // Ensure correct qty is fetched
                 formattedLines = [
                     windowHeader,
                     originalUnitNote,
