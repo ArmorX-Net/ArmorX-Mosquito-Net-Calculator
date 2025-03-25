@@ -479,6 +479,7 @@ let windowQtyValues = {};      // Stores current qty per window (keyed by window
 let justRecalculated = false;  // Should be set to true by your "Find Closest Matches" button
 
 // Admin Panel
+// Admin Panel function to toggle the visibility and create the necessary elements
 function toggleAdminInterface() {
     isAdminVisible = !isAdminVisible;
 
@@ -496,21 +497,11 @@ function toggleAdminInterface() {
         adminTitle.style.color = '#333';
         adminContainer.appendChild(adminTitle);
 
-        // Add Dropdown for Content Selection
-        const contentSelect = document.createElement('select');
-        contentSelect.id = 'contentSelect';
-        contentSelect.innerHTML = `
-            <option value="1">WhatsApp message</option>
-            <option value="2">Invoice Quotation</option>
-            <option value="3">Both WhatsApp and Invoice</option>
-        `;
-        adminContainer.appendChild(contentSelect);
-
         // Add Copy Button
         const copyButton = document.createElement('button');
         copyButton.innerText = 'Copy Text';
         copyButton.className = 'admin-button'; // Use CSS class for buttons
-        copyButton.addEventListener('click', copyAdminText);
+        copyButton.addEventListener('click', showCopyOptions);
         adminContainer.appendChild(copyButton);
 
         // Add Format Message for WhatsApp Button
@@ -533,10 +524,40 @@ function toggleAdminInterface() {
         adminMessageArea.className = 'admin-message-area'; // Use CSS class for message area
         adminContainer.appendChild(adminMessageArea);
 
+        // Create Dropdown for Content Selection (Initially hidden)
+        const contentSelectWrapper = document.createElement('div');
+        contentSelectWrapper.id = 'contentSelectWrapper';
+        contentSelectWrapper.style.display = 'none'; // Hide it by default
+
+        const contentSelect = document.createElement('select');
+        contentSelect.id = 'contentSelect';
+        contentSelect.innerHTML = `
+            <option value="1">WhatsApp message</option>
+            <option value="2">Invoice Quotation</option>
+            <option value="3">Both WhatsApp and Invoice</option>
+        `;
+        contentSelectWrapper.appendChild(contentSelect);
+        adminContainer.appendChild(contentSelectWrapper);
+
         document.body.appendChild(adminContainer);
     }
 
     adminContainer.style.display = isAdminVisible ? 'block' : 'none';
+}
+
+// Function to show the dropdown options when Copy is clicked
+function showCopyOptions() {
+    const invoiceDisplay = document.getElementById('invoiceDisplay');
+    const contentSelectWrapper = document.getElementById('contentSelectWrapper');
+    
+    // Only show the options if the Invoice is displayed
+    if (invoiceDisplay) {
+        contentSelectWrapper.style.display = 'block'; // Show the dropdown options
+    } else {
+        contentSelectWrapper.style.display = 'none'; // Hide the dropdown options (for WhatsApp only)
+    }
+
+    copyAdminText();
 }
 
 // New helper function to generate the plain text WhatsApp message exactly as in the old code
@@ -628,10 +649,10 @@ ${customSizesList.trim()}
     }
 }
 
-// Modified copy function that offers the user a choice if both WhatsApp and Invoice messages exist.
+// Modified copy function with dropdown offers choice if both WhatsApp and Invoice messages exist.
 function copyAdminText() {
     let invoiceDisplay = document.getElementById('invoiceDisplay');
-    let selectedOption = document.getElementById('contentSelect').value;
+    let selectedOption = document.getElementById('contentSelect') ? document.getElementById('contentSelect').value : '1';
 
     let textToCopy = "";
     if (selectedOption === "2" && invoiceDisplay) {
@@ -651,7 +672,6 @@ function copyAdminText() {
     document.body.removeChild(tempTextArea);
     alert('Text copied to clipboard!');
 }
-
 // Helper function to update the Custom Size Details block (used in the interactive UI)
 function updateCustomSizesPre() {
     const numWindows = parseInt(document.getElementById('numWindows').value) || 0;
