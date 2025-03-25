@@ -605,7 +605,7 @@ function generatePlainTextWhatsAppMessage() {
             const heightVal = heightInput ? heightInput.value : "";
             const widthVal = widthInput ? widthInput.value : "";
             const unitVal = unitInput ? unitInput.value : "";
-            const qtyVal = qtyInput ? qtyInput.value : 1;
+            const qtyVal = qtyInput ? qtyInput.value : windowQtyValues[i] || 1; // Ensure we are using the global qty value
             if (heightVal && widthVal) {
                 const lowerUnitVal = unitVal.toLowerCase();
                 customSizesList += `${heightVal} ${lowerUnitVal} x ${widthVal} ${lowerUnitVal} - ${qtyVal} qty\n`;
