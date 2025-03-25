@@ -496,6 +496,16 @@ function toggleAdminInterface() {
         adminTitle.style.color = '#333';
         adminContainer.appendChild(adminTitle);
 
+        // Add Dropdown for Content Selection
+        const contentSelect = document.createElement('select');
+        contentSelect.id = 'contentSelect';
+        contentSelect.innerHTML = `
+            <option value="1">WhatsApp message</option>
+            <option value="2">Invoice Quotation</option>
+            <option value="3">Both WhatsApp and Invoice</option>
+        `;
+        adminContainer.appendChild(contentSelect);
+
         // Add Copy Button
         const copyButton = document.createElement('button');
         copyButton.innerText = 'Copy Text';
@@ -621,18 +631,17 @@ ${customSizesList.trim()}
 // Modified copy function that offers the user a choice if both WhatsApp and Invoice messages exist.
 function copyAdminText() {
     let invoiceDisplay = document.getElementById('invoiceDisplay');
-    let option = "1";
-    if (invoiceDisplay) {
-        option = prompt("Enter 1 to copy WhatsApp message, 2 to copy Invoice Quotation, or 3 to copy both", "1");
-    }
+    let selectedOption = document.getElementById('contentSelect').value;
+
     let textToCopy = "";
-    if (option === "2" && invoiceDisplay) {
+    if (selectedOption === "2" && invoiceDisplay) {
         textToCopy = invoiceDisplay.innerText;
-    } else if (option === "3" && invoiceDisplay) {
+    } else if (selectedOption === "3" && invoiceDisplay) {
         textToCopy = generatePlainTextWhatsAppMessage() + "\n\n" + invoiceDisplay.innerText;
     } else {
         textToCopy = generatePlainTextWhatsAppMessage();
     }
+
     // Use a temporary textarea to copy the text exactly
     const tempTextArea = document.createElement('textarea');
     tempTextArea.value = textToCopy;
