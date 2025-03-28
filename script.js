@@ -614,7 +614,7 @@ function generatePlainTextWhatsAppMessage() {
 
         const additionalText = `
 *****************************************************
-*VERY IMPORTANT:* To Get your Customized sizes, after placing your Order on Amazon *IMMEDIATELY SHARE:*
+*VERY IMPORTANT:* To Get your custom size, after placing your Order on Amazon *IMMEDIATELY SHARE:*
 - Your *17 Digit Amazon Order ID#* Number 
 - Confirm Preferred *Color*
 
@@ -691,7 +691,7 @@ function updateCustomSizesPre() {
     if (customSizesPre) {
         customSizesPre.innerText = 
 `*****************************************************
-*VERY IMPORTANT:* To Get your Customized sizes, after placing your Order on Amazon *IMMEDIATELY SHARE:*
+*VERY IMPORTANT:* To Get your custom size, after placing your Order on Amazon *IMMEDIATELY SHARE:*
 - Your *17 Digit Amazon Order ID#* Number 
 - Confirm Preferred *Color*
 
