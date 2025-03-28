@@ -614,12 +614,11 @@ function generatePlainTextWhatsAppMessage() {
 
         const additionalText = `
 *****************************************************
-*VERY IMPORTANT:* To Get your Customized sizes, after placing your Amazon Order *IMMEDIATELY SHARE:*
+*VERY IMPORTANT:* To Get your Customized sizes, after placing your Order on Amazon *IMMEDIATELY SHARE:*
 - Your *17 Digit Amazon Order ID#* Number 
 - Confirm Preferred *Color*
 
 *Note:* The *Closest size* is for order processing only. The net will be *altered to your exact custom size* and will be shipped under the same order ID
-
 
 Custom Size Details:
 Black | White | Grey | Cream
@@ -692,12 +691,11 @@ function updateCustomSizesPre() {
     if (customSizesPre) {
         customSizesPre.innerText = 
 `*****************************************************
-*VERY IMPORTANT:* To Get your Customized sizes, after placing your Amazon Order *IMMEDIATELY SHARE:*
+*VERY IMPORTANT:* To Get your Customized sizes, after placing your Order on Amazon *IMMEDIATELY SHARE:*
 - Your *17 Digit Amazon Order ID#* Number 
 - Confirm Preferred *Color*
 
 *Note:* The *Closest size* is for order processing only. The net will be *altered to your exact custom size* and will be shipped under the same order ID
-
 
 Custom Size Details:
 Black | White | Grey | Cream
