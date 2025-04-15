@@ -999,6 +999,7 @@ function displayInvoice(priceType, discountPercent) {
   invoiceMessage += `\n<b>Final Total:</b> INR ${Math.round(finalAmount)}/-`;
 
   invoiceMessage += `
+REP CODE : 
 
 Free express delivery in *48-72 working hours.*  
 
