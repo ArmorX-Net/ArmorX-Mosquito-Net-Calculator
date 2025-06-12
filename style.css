@@ -531,3 +531,44 @@ iframe {
 #logoutConfirm:hover {
   background: #88c440;
 }
+/* Distributor Header Bar */
+.dist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #a4e053;       /* ArmorX Green */
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 8px 8px 0 0;      /* Round top corners */
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 12px;             /* Space below header */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Distributor text */
+.dist-header .dist-text {
+  flex: 1;
+}
+
+/* Logout button */
+.dist-header .dist-logout-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: background 0.2s ease;
+}
+.dist-header .dist-logout-btn:hover {
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+}
+
+/* Small SVG for exit icon */
+.dist-header .dist-logout-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
