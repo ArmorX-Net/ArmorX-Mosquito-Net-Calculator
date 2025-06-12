@@ -1,76 +1,93 @@
-// ───────── Distributor Mode ─────────
+// ── DISTRIBUTOR MODAL HOOKUP ──
 ;(function(){
-  const LOGO_SELECTOR = ".logo img";
+  const pwdField        = document.getElementById("distPwd");
+  const codeField       = document.getElementById("distCodeInput");
+  const loginModal      = document.getElementById("distLoginModal");
+  const logoutModal     = document.getElementById("distLogoutModal");
   const DIST_PWD        = "armorxpartner";
-  let pressTimer;
 
-  // 1) Long-press start/cancel
-  const logo = document.querySelector(LOGO_SELECTOR);
-  if (logo) {
-    logo.addEventListener("touchstart", startPress);
-    logo.addEventListener("mousedown", startPress);
-    logo.addEventListener("touchend", cancelPress);
-    logo.addEventListener("mouseup", cancelPress);
-  }
-
-  function startPress(){
-    pressTimer = setTimeout(openDistributorLogin, 3000);
-  }
-  function cancelPress(){
-    clearTimeout(pressTimer);
-  }
-
-  // 2) Show password + code prompts
+  // Show login modal
   function openDistributorLogin(){
-    const pwd = prompt("Distributor Access — enter password:");
-    if (pwd !== DIST_PWD) {
-      return alert("❌ Wrong password");
+    pwdField.value = "";
+    codeField.value = "";
+    loginModal.style.display = "flex";
+  }
+
+  // Hide login modal
+  document.getElementById("distLoginCancel")
+    .addEventListener("click", ()=> loginModal.style.display="none");
+
+  // Handle login submit
+  document.getElementById("distLoginSubmit").addEventListener("click", ()=>{
+    if (pwdField.value !== DIST_PWD) {
+      alert("❌ Incorrect password");
+      return;
     }
-    const code = prompt("✅ Password OK!  Enter your Distributor Code:");
+    const code = codeField.value.trim();
     if (!code) {
-      return alert("Distributor Code required.");
+      alert("Please enter your Distributor Code");
+      return;
     }
-    // save for future
     localStorage.setItem("distCode", code);
     sessionStorage.setItem("distMode", "true");
+    loginModal.style.display = "none";
     showDistBadge(code);
+  });
+
+  // Show logout confirmation
+  function askLogout(){
+    logoutModal.style.display = "flex";
   }
 
-  // 3) Inject the little badge with Logout
-  function showDistBadge(code){
-    if (document.getElementById("distBadge")) return;
-    const badge = document.createElement("div");
-    badge.id = "distBadge";
-    badge.style.cssText = `
-      position: absolute; top:0; right:0;
-      background:#f1f1f1; color:#333;
-      padding:6px 10px; font-size:14px;
-      border-bottom-left-radius:6px;
-      z-index:9999;
-    `;
-    badge.innerHTML = `
-      Distributor: <strong>${code}</strong>
-      <button id="logoutDist" style="
-        margin-left:8px; background:transparent;
-        border:none; font-size:16px; cursor:pointer;">×</button>
-    `;
-    document.querySelector(".container")?.prepend(badge);
-    document.getElementById("logoutDist")
-      .addEventListener("click", logoutDistributor);
-  }
+  // Cancel logout
+  document.getElementById("logoutCancel")
+    .addEventListener("click", ()=> logoutModal.style.display="none");
 
-  function logoutDistributor(){
+  // Confirm logout
+  document.getElementById("logoutConfirm")
+    .addEventListener("click", ()=>{
+      logoutModal.style.display = "none";
+      performLogout();
+    });
+
+  // Replace your old logoutDistributor with:
+  function performLogout(){
     localStorage.removeItem("distCode");
     sessionStorage.removeItem("distMode");
     document.getElementById("distBadge")?.remove();
   }
 
-  // 4) On page load, restore badge if already in session
+  // Override badge’s “×” to ask confirmation:
+  function showDistBadge(code){
+    if (document.getElementById("distBadge")) return;
+    const badge = document.createElement("div");
+    badge.id = "distBadge";
+    badge.innerHTML = `
+      Distributor: <strong>${code}</strong>
+      <button id="logoutDist">×</button>
+    `;
+    document.querySelector(".container")?.prepend(badge);
+    document.getElementById("logoutDist")
+      .addEventListener("click", askLogout);
+  }
+
+  // On load, restore if already logged in:
   window.addEventListener("load", () => {
-    const code = localStorage.getItem("distCode");
-    if (code && sessionStorage.getItem("distMode")==="true") {
+    if (sessionStorage.getItem("distMode")==="true") {
+      const code = localStorage.getItem("distCode");
       showDistBadge(code);
     }
+  });
+
+  // Hook your long-press to openDistributorLogin() as before
+  const logo = document.querySelector(".logo img");
+  let pressTimer;
+  if (logo) {
+    const start = ()=> pressTimer = setTimeout(openDistributorLogin, 3000);
+    const cancel = ()=> clearTimeout(pressTimer);
+    ["touchstart","mousedown"].forEach(evt=> logo.addEventListener(evt, start));
+    ["touchend","mouseup"].forEach(evt=> logo.addEventListener(evt, cancel));
+  }
   });
 
   // 5) Wrap your existing generateWhatsAppLink
