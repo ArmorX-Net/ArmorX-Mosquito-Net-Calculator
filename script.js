@@ -62,26 +62,31 @@
   }
 
   function showDistBadge(code){
-    if (document.getElementById("distBadge")) return;
-    const badge = document.createElement("div");
-    badge.id = "distBadge";
-    badge.style.cssText = `
-      position: absolute; top:0; right:0;
-      background:#f1f1f1; color:#333;
-      padding:6px 10px; font-size:14px;
-      border-bottom-left-radius:6px;
-      z-index:9999;
-    `;
-    badge.innerHTML = `
-      Distributor: <strong>${code}</strong>
-      <button id="logoutDist" style="
-        margin-left:8px; background:transparent;
-        border:none; font-size:16px; cursor:pointer;">×</button>
-    `;
-    document.querySelector(".container")?.prepend(badge);
-    document.getElementById("logoutDist")
-      .addEventListener("click", askLogout);
-  }
+  if (document.getElementById("distBadge")) return;
+
+  // Create the header bar
+  const badge = document.createElement("div");
+  badge.id = "distBadge";
+  badge.className = "dist-header";
+
+  badge.innerHTML = `
+    <span class="dist-text">Distributor Mode – ${code}</span>
+    <button class="dist-logout-btn" id="logoutDist" title="Logout">
+      <!-- Simple exit-arrow icon -->
+      <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 2v2h4V2h2v12h-2v-2H6v2H4V2h2zm1.646 5.646l1.708 1.708H3v2h6.354l-1.708 1.708 1.414 1.414L13.414 8 8.06 2.646 6.646 4.06z"/>
+      </svg>
+    </button>
+  `;
+
+  // Insert at top of container
+  const container = document.querySelector(".container");
+  container.prepend(badge);
+
+  // Hook logout to confirmation
+  document.getElementById("logoutDist")
+    .addEventListener("click", askLogout);
+}
 
   // On load, restore badge if session is active
   window.addEventListener("load", () => {
