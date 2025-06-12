@@ -535,27 +535,34 @@ iframe {
 .dist-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background: #f0fff4;
   color: #256029;
   border: 1px solid #a4e053;
   border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  margin-bottom: 12px; /* space below */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 10px 20px;           /* larger padding */
+  font-size: 16px;              /* overall text size up */
+  margin: 16px auto;            /* center horizontally, space above/below */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: fit-content;
 }
+
 .dist-chip .led {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   background: #4caf50;
   border-radius: 50%;
   box-shadow: 0 0 4px #4caf50;
   animation: pulse-led 1.5s infinite ease-in-out;
 }
-@keyframes pulse-led {
-  0%,100% { transform: scale(1);   opacity: 1; }
-  50%     { transform: scale(1.4); opacity: 0.6; }
+
+.dist-chip .dist-label {
+  font-weight: bold;
+  color: #000;                  /* black, impactful */
 }
+
+.dist-chip .dist-code {
+  font-weight: 600;
+  color: #256029;
+}
+
