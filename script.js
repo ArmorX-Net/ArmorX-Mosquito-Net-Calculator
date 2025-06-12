@@ -9,13 +9,13 @@
   if (logo) {
     const start = ()=> pressTimer = setTimeout(openDistributorLogin, 3000);
     const cancel = ()=> clearTimeout(pressTimer);
-    ["touchstart", "mousedown"].forEach(evt => logo.addEventListener(evt, start));
-    ["touchend",   "mouseup" ].forEach(evt => logo.addEventListener(evt, cancel));
+    ["touchstart","mousedown"].forEach(evt=> logo.addEventListener(evt, start));
+    ["touchend",  "mouseup"  ].forEach(evt=> logo.addEventListener(evt, cancel));
   }
 
   // Show the login modal
   function openDistributorLogin(){
-    document.getElementById("distPwd").value     = "";
+    document.getElementById("distPwd").value       = "";
     document.getElementById("distCodeInput").value = "";
     document.getElementById("distLoginModal").style.display = "flex";
   }
@@ -29,19 +29,15 @@
     .addEventListener("click", ()=> {
       const pwd  = document.getElementById("distPwd").value;
       const code = document.getElementById("distCodeInput").value.trim();
-      if (pwd !== DIST_PWD) {
-        return alert("❌ Incorrect password");
-      }
-      if (!code) {
-        return alert("Please enter your Distributor Code");
-      }
+      if (pwd !== DIST_PWD)       return alert("❌ Incorrect password");
+      if (!code)                  return alert("Please enter your Distributor Code");
       localStorage.setItem("distCode", code);
       sessionStorage.setItem("distMode", "true");
       document.getElementById("distLoginModal").style.display = "none";
       showDistBadge(code);
     });
 
-  // Badge & logout confirmation
+  // Logout confirmation
   function askLogout(){
     document.getElementById("distLogoutModal").style.display = "flex";
   }
@@ -61,34 +57,34 @@
     document.getElementById("distBadge")?.remove();
   }
 
- function showDistBadge(code) {
-  // avoid duplicates
-  if (document.getElementById("distBadge")) return;
-
-  // build the chip
-  const chip = document.createElement("div");
-  chip.id = "distBadge";
-  chip.className = "dist-chip";
-  chip.innerHTML = `
-    <span class="led"></span>
-    Distributor Mode ON: ${code}
-  `;
-
-  // insert right below the share button
-  const shareEl = document.querySelector(".share-container");
-  if (shareEl && shareEl.parentNode) {
-    shareEl.parentNode.insertBefore(chip, shareEl.nextSibling);
-  } else {
-    document.querySelector(".container")?.prepend(chip);
+  // The new “chip+LED” badge
+  function showDistBadge(code) {
+    if (document.getElementById("distBadge")) return;
+    const chip = document.createElement("div");
+    chip.id        = "distBadge";
+    chip.className = "dist-chip";
+    chip.innerHTML = `
+      <span class="led"></span>
+      Distributor Mode ON: ${code}
+    `;
+    const shareEl = document.querySelector(".share-container");
+    if (shareEl && shareEl.parentNode) {
+      shareEl.parentNode.insertBefore(chip, shareEl.nextSibling);
+    } else {
+      document.querySelector(".container")?.prepend(chip);
+    }
+    chip.addEventListener("click", askLogout);
   }
 
-  // clicking the chip asks to logout
-  chip.addEventListener("click", askLogout);
-}
-
+  // Restore badge on page load, if still in session
+  window.addEventListener("load", () => {
+    if (sessionStorage.getItem("distMode")==="true") {
+      const code = localStorage.getItem("distCode");
+      if (code) showDistBadge(code);
+    }
   });
 
-  // Override WhatsApp link generator
+  // Override WhatsApp link generator (inside the same IIFE!)
   const originalGenerate = window.generateWhatsAppLink;
   window.generateWhatsAppLink = function(orderDetails, isExceeded=false) {
     let messageBody = orderDetails.join("\n\n");
@@ -106,7 +102,8 @@
       </div>
     `;
   };
-})(); 
+
+})(); // <-- only one closing of the IIFE
 
 // Load the size data from the JSON file
 let sizeData;
