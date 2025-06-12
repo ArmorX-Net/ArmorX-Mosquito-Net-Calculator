@@ -1,3 +1,102 @@
+// ───────── Distributor Mode ─────────
+;(function(){
+  const LOGO_SELECTOR = ".logo img";
+  const DIST_PWD        = "armorxpartner";
+  let pressTimer;
+
+  // 1) Long-press start/cancel
+  const logo = document.querySelector(LOGO_SELECTOR);
+  if (logo) {
+    logo.addEventListener("touchstart", startPress);
+    logo.addEventListener("mousedown", startPress);
+    logo.addEventListener("touchend", cancelPress);
+    logo.addEventListener("mouseup", cancelPress);
+  }
+
+  function startPress(){
+    pressTimer = setTimeout(openDistributorLogin, 3000);
+  }
+  function cancelPress(){
+    clearTimeout(pressTimer);
+  }
+
+  // 2) Show password + code prompts
+  function openDistributorLogin(){
+    const pwd = prompt("Distributor Access — enter password:");
+    if (pwd !== DIST_PWD) {
+      return alert("❌ Wrong password");
+    }
+    const code = prompt("✅ Password OK!  Enter your Distributor Code:");
+    if (!code) {
+      return alert("Distributor Code required.");
+    }
+    // save for future
+    localStorage.setItem("distCode", code);
+    sessionStorage.setItem("distMode", "true");
+    showDistBadge(code);
+  }
+
+  // 3) Inject the little badge with Logout
+  function showDistBadge(code){
+    if (document.getElementById("distBadge")) return;
+    const badge = document.createElement("div");
+    badge.id = "distBadge";
+    badge.style.cssText = `
+      position: absolute; top:0; right:0;
+      background:#f1f1f1; color:#333;
+      padding:6px 10px; font-size:14px;
+      border-bottom-left-radius:6px;
+      z-index:9999;
+    `;
+    badge.innerHTML = `
+      Distributor: <strong>${code}</strong>
+      <button id="logoutDist" style="
+        margin-left:8px; background:transparent;
+        border:none; font-size:16px; cursor:pointer;">×</button>
+    `;
+    document.querySelector(".container")?.prepend(badge);
+    document.getElementById("logoutDist")
+      .addEventListener("click", logoutDistributor);
+  }
+
+  function logoutDistributor(){
+    localStorage.removeItem("distCode");
+    sessionStorage.removeItem("distMode");
+    document.getElementById("distBadge")?.remove();
+  }
+
+  // 4) On page load, restore badge if already in session
+  window.addEventListener("load", () => {
+    const code = localStorage.getItem("distCode");
+    if (code && sessionStorage.getItem("distMode")==="true") {
+      showDistBadge(code);
+    }
+  });
+
+  // 5) Wrap your existing generateWhatsAppLink
+  const originalGenerate = window.generateWhatsAppLink;
+  window.generateWhatsAppLink = function(orderDetails, isExceeded=false) {
+    // Build the base message
+    let messageBody = orderDetails.join("\n\n");
+    // Prepend DIST code if set
+    const distCode = localStorage.getItem("distCode");
+    if (distCode) {
+      messageBody = `DIST: ${distCode}\n\n` + messageBody;
+    }
+    // Now build/send the WhatsApp link exactly as your existing logic does:
+    const url = `https://wa.me/917304692553?text=${encodeURIComponent(messageBody)}`;
+    const messageArea = document.getElementById("messageArea");
+    messageArea.innerHTML += `
+      <div style="text-align:center; margin-top:20px;">
+        <a href="${url}" target="_blank" class="whatsapp-button">
+          <span>WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS</span>
+          <img src="https://i.postimg.cc/mk19S9bF/whatsapp.png" alt="WhatsApp Icon">
+        </a>
+      </div>
+    `;
+  };
+})();
+
 // Load the size data from the JSON file
 let sizeData;
 
