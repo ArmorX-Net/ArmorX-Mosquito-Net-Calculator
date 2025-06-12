@@ -59,22 +59,29 @@
 
   // The new “chip+LED” badge
   function showDistBadge(code) {
-    if (document.getElementById("distBadge")) return;
-    const chip = document.createElement("div");
-    chip.id        = "distBadge";
-    chip.className = "dist-chip";
-    chip.innerHTML = `
-      <span class="led"></span>
-      Distributor Mode ON: ${code}
-    `;
-    const shareEl = document.querySelector(".share-container");
-    if (shareEl && shareEl.parentNode) {
-      shareEl.parentNode.insertBefore(chip, shareEl.nextSibling);
-    } else {
-      document.querySelector(".container")?.prepend(chip);
-    }
-    chip.addEventListener("click", askLogout);
+  if (document.getElementById("distBadge")) return;
+
+  // build the chip
+  const chip = document.createElement("div");
+  chip.id        = "distBadge";
+  chip.className = "dist-chip";
+  chip.innerHTML = `
+    <span class="led"></span>
+    <span class="dist-label">Distributor Mode ON</span>
+    <span class="dist-code">${code}</span>
+  `;
+
+  // insert it under the share button, centered via CSS
+  const shareEl = document.querySelector(".share-container");
+  if (shareEl && shareEl.parentNode) {
+    shareEl.parentNode.insertBefore(chip, shareEl.nextSibling);
+  } else {
+    document.querySelector(".container")?.prepend(chip);
   }
+
+  // clicking the chip asks to logout
+  chip.addEventListener("click", askLogout);
+}
 
   // Restore badge on page load, if still in session
   window.addEventListener("load", () => {
