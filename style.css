@@ -531,46 +531,31 @@ iframe {
 #logoutConfirm:hover {
   background: #88c440;
 }
-/* Distributor Mode Banner */
-.dist-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(90deg, #88c440 0%, #a4e053 100%);
-  color: white;
-  border-radius: 8px;
-  padding: 8px 12px;
-  margin: 12px 0;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.dist-banner .dist-text {
-  display: flex;
+/* Distributor Mode Chip + LED */
+.dist-chip {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.dist-banner .dist-text svg {
-  width: 18px;
-  height: 18px;
-  fill: white;
-}
-
-.dist-banner .dist-logout-btn {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  border-radius: 50%;
-  padding: 4px;
+  background: #f0fff4;
+  color: #256029;
+  border: 1px solid #a4e053;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
+  margin-bottom: 12px; /* space below */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-.dist-banner .dist-logout-btn:hover {
-  background: rgba(255,255,255,0.4);
+.dist-chip .led {
+  width: 8px;
+  height: 8px;
+  background: #4caf50;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #4caf50;
+  animation: pulse-led 1.5s infinite ease-in-out;
 }
-.dist-banner .dist-logout-btn svg {
-  width: 16px;
-  height: 16px;
-  fill: white;
+@keyframes pulse-led {
+  0%,100% { transform: scale(1);   opacity: 1; }
+  50%     { transform: scale(1.4); opacity: 0.6; }
 }
