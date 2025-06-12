@@ -61,50 +61,31 @@
     document.getElementById("distBadge")?.remove();
   }
 
-  function showDistBadge(code) {
-  // don’t insert twice
+ function showDistBadge(code) {
+  // avoid duplicates
   if (document.getElementById("distBadge")) return;
 
-  // Build the banner
-  const banner = document.createElement("div");
-  banner.id = "distBadge";
-  banner.className = "dist-banner";
-  banner.innerHTML = `
-    <div class="dist-text">
-      <!-- lock icon -->
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 17a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2zm-8-3a3 3 0 016 0v3H10V7z"/>
-      </svg>
-      Distributor Mode: ${code}
-    </div>
-    <button class="dist-logout-btn" id="logoutDist" title="Logout">
-      <!-- exit icon -->
-      <svg viewBox="0 0 16 16" aria-hidden="true">
-        <path d="M6 2v2h4V2h2v12h-2v-2H6v2H4V2h2zm1.646 5.646l1.708 1.708H3v2h6.354l-1.708 1.708 1.414 1.414L13.414 8 8.06 2.646 6.646 4.06z"/>
-      </svg>
-    </button>
+  // build the chip
+  const chip = document.createElement("div");
+  chip.id = "distBadge";
+  chip.className = "dist-chip";
+  chip.innerHTML = `
+    <span class="led"></span>
+    Distributor Mode ON: ${code}
   `;
 
-  // Insert it just below the share button
+  // insert right below the share button
   const shareEl = document.querySelector(".share-container");
   if (shareEl && shareEl.parentNode) {
-    shareEl.parentNode.insertBefore(banner, shareEl.nextSibling);
+    shareEl.parentNode.insertBefore(chip, shareEl.nextSibling);
   } else {
-    // fallback: prepend to container
-    document.querySelector(".container")?.prepend(banner);
+    document.querySelector(".container")?.prepend(chip);
   }
 
-  // Wire up logout to confirmation
-  document.getElementById("logoutDist")
-    .addEventListener("click", askLogout);
+  // clicking the chip asks to logout
+  chip.addEventListener("click", askLogout);
 }
 
-  // On load, restore badge if session is active
-  window.addEventListener("load", () => {
-    if (sessionStorage.getItem("distMode")==="true") {
-      const code = localStorage.getItem("distCode");
-      if (code) showDistBadge(code);
-    }
   });
 
   // Override WhatsApp link generator
