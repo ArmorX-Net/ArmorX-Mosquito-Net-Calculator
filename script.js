@@ -1,109 +1,106 @@
-// ── DISTRIBUTOR MODAL HOOKUP ──
+// ── DISTRIBUTOR MODE + WHATSAPP INJECT ──
 ;(function(){
-  const pwdField        = document.getElementById("distPwd");
-  const codeField       = document.getElementById("distCodeInput");
-  const loginModal      = document.getElementById("distLoginModal");
-  const logoutModal     = document.getElementById("distLogoutModal");
-  const DIST_PWD        = "armorxpartner";
+  const DIST_PWD   = "armorxpartner";
+  const logoSel    = ".logo img";
+  let pressTimer;
 
-  // Show login modal
+  // Hook long-press on your logo
+  const logo = document.querySelector(logoSel);
+  if (logo) {
+    const start = ()=> pressTimer = setTimeout(openDistributorLogin, 3000);
+    const cancel = ()=> clearTimeout(pressTimer);
+    ["touchstart", "mousedown"].forEach(evt => logo.addEventListener(evt, start));
+    ["touchend",   "mouseup" ].forEach(evt => logo.addEventListener(evt, cancel));
+  }
+
+  // Show the login modal
   function openDistributorLogin(){
-    pwdField.value = "";
-    codeField.value = "";
-    loginModal.style.display = "flex";
+    document.getElementById("distPwd").value     = "";
+    document.getElementById("distCodeInput").value = "";
+    document.getElementById("distLoginModal").style.display = "flex";
   }
 
-  // Hide login modal
+  // Login modal buttons
   document.getElementById("distLoginCancel")
-    .addEventListener("click", ()=> loginModal.style.display="none");
+    .addEventListener("click", ()=> {
+      document.getElementById("distLoginModal").style.display = "none";
+    });
+  document.getElementById("distLoginSubmit")
+    .addEventListener("click", ()=> {
+      const pwd  = document.getElementById("distPwd").value;
+      const code = document.getElementById("distCodeInput").value.trim();
+      if (pwd !== DIST_PWD) {
+        return alert("❌ Incorrect password");
+      }
+      if (!code) {
+        return alert("Please enter your Distributor Code");
+      }
+      localStorage.setItem("distCode", code);
+      sessionStorage.setItem("distMode", "true");
+      document.getElementById("distLoginModal").style.display = "none";
+      showDistBadge(code);
+    });
 
-  // Handle login submit
-  document.getElementById("distLoginSubmit").addEventListener("click", ()=>{
-    if (pwdField.value !== DIST_PWD) {
-      alert("❌ Incorrect password");
-      return;
-    }
-    const code = codeField.value.trim();
-    if (!code) {
-      alert("Please enter your Distributor Code");
-      return;
-    }
-    localStorage.setItem("distCode", code);
-    sessionStorage.setItem("distMode", "true");
-    loginModal.style.display = "none";
-    showDistBadge(code);
-  });
-
-  // Show logout confirmation
+  // Badge & logout confirmation
   function askLogout(){
-    logoutModal.style.display = "flex";
+    document.getElementById("distLogoutModal").style.display = "flex";
   }
-
-  // Cancel logout
   document.getElementById("logoutCancel")
-    .addEventListener("click", ()=> logoutModal.style.display="none");
-
-  // Confirm logout
+    .addEventListener("click", ()=> {
+      document.getElementById("distLogoutModal").style.display = "none";
+    });
   document.getElementById("logoutConfirm")
-    .addEventListener("click", ()=>{
-      logoutModal.style.display = "none";
+    .addEventListener("click", ()=> {
+      document.getElementById("distLogoutModal").style.display = "none";
       performLogout();
     });
 
-  // Replace your old logoutDistributor with:
   function performLogout(){
     localStorage.removeItem("distCode");
     sessionStorage.removeItem("distMode");
     document.getElementById("distBadge")?.remove();
   }
 
-  // Override badge’s “×” to ask confirmation:
   function showDistBadge(code){
     if (document.getElementById("distBadge")) return;
     const badge = document.createElement("div");
     badge.id = "distBadge";
+    badge.style.cssText = `
+      position: absolute; top:0; right:0;
+      background:#f1f1f1; color:#333;
+      padding:6px 10px; font-size:14px;
+      border-bottom-left-radius:6px;
+      z-index:9999;
+    `;
     badge.innerHTML = `
       Distributor: <strong>${code}</strong>
-      <button id="logoutDist">×</button>
+      <button id="logoutDist" style="
+        margin-left:8px; background:transparent;
+        border:none; font-size:16px; cursor:pointer;">×</button>
     `;
     document.querySelector(".container")?.prepend(badge);
     document.getElementById("logoutDist")
       .addEventListener("click", askLogout);
   }
 
-  // On load, restore if already logged in:
+  // On load, restore badge if session is active
   window.addEventListener("load", () => {
     if (sessionStorage.getItem("distMode")==="true") {
       const code = localStorage.getItem("distCode");
-      showDistBadge(code);
+      if (code) showDistBadge(code);
     }
   });
 
-  // Hook your long-press to openDistributorLogin() as before
-  const logo = document.querySelector(".logo img");
-  let pressTimer;
-  if (logo) {
-    const start = ()=> pressTimer = setTimeout(openDistributorLogin, 3000);
-    const cancel = ()=> clearTimeout(pressTimer);
-    ["touchstart","mousedown"].forEach(evt=> logo.addEventListener(evt, start));
-    ["touchend","mouseup"].forEach(evt=> logo.addEventListener(evt, cancel));
-  }
-  });
-
-  // 5) Wrap your existing generateWhatsAppLink
+  // Override WhatsApp link generator
   const originalGenerate = window.generateWhatsAppLink;
   window.generateWhatsAppLink = function(orderDetails, isExceeded=false) {
-    // Build the base message
     let messageBody = orderDetails.join("\n\n");
-    // Prepend DIST code if set
     const distCode = localStorage.getItem("distCode");
     if (distCode) {
       messageBody = `DIST: ${distCode}\n\n` + messageBody;
     }
-    // Now build/send the WhatsApp link exactly as your existing logic does:
     const url = `https://wa.me/917304692553?text=${encodeURIComponent(messageBody)}`;
-    const messageArea = document.getElementById("messageArea");
-    messageArea.innerHTML += `
+    document.getElementById("messageArea").innerHTML += `
       <div style="text-align:center; margin-top:20px;">
         <a href="${url}" target="_blank" class="whatsapp-button">
           <span>WHATSAPP YOUR ORDER & CUSTOMIZATION DETAILS</span>
@@ -112,7 +109,7 @@
       </div>
     `;
   };
-})();
+})(); 
 
 // Load the size data from the JSON file
 let sizeData;
